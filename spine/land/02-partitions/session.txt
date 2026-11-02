@@ -1,0 +1,13 @@
+$ python extract/raw.py land catalogue data/catalogue/titles.csv --dt 2026-10-31
+catalogue: titles.csv -> source=catalogue/dt=2026-10-31/titles.csv
+$ python extract/raw.py land epg data/epg/2026-10-31.json --dt 2026-10-31
+epg: 2026-10-31.json -> source=epg/dt=2026-10-31/2026-10-31.json
+$ gcloud storage ls "$RAW/**"
+gs://sun-media-dev-raw/source=catalogue/dt=2026-10-31/titles.csv
+gs://sun-media-dev-raw/source=epg/dt=2026-10-31/2026-10-31.json
+$ gcloud storage ls $RAW
+gs://sun-media-dev-raw/source=catalogue/
+gs://sun-media-dev-raw/source=epg/
+$ gcloud storage ls "$RAW/source=*/dt=2026-10-31/**"
+gs://sun-media-dev-raw/source=catalogue/dt=2026-10-31/titles.csv
+gs://sun-media-dev-raw/source=epg/dt=2026-10-31/2026-10-31.json

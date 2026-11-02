@@ -1,0 +1,23 @@
+{
+ "source": "billing",
+ "dt": "2026-10-31",
+ "files": {
+  "charges.csv": 1068
+ },
+ "columns": {
+  "charges.csv": [
+   "charge_id",
+   "household_id",
+   "kind",
+   "reference",
+   "amount",
+   "status",
+   "posted_at",
+   "updated_at"
+  ]
+ },
+ "window": {
+  "from": "2026-10-31T00:00:00Z",
+  "to": "2026-11-01T00:00:00Z"
+ }
+}

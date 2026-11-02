@@ -1,0 +1,12 @@
+$ python extract/extract.py crm --dt 2026-10-30
+crm: households.csv 5000 rows
+crm: subscriptions.csv 5001 rows
+crm: packages.csv 4 rows
+crm: -> source=crm/dt=2026-10-30/
+$ python extract/extract.py billing --dt 2026-10-30
+billing: window (2026-10-30T00:00:00Z, 2026-10-31T00:00:00Z]
+billing: charges.csv 1051 rows
+billing: -> source=billing/dt=2026-10-30/
+$ gcloud storage ls "$RAW/**/_SUCCESS"
+gs://sun-media-dev-raw/source=billing/dt=2026-10-30/_SUCCESS
+gs://sun-media-dev-raw/source=crm/dt=2026-10-30/_SUCCESS

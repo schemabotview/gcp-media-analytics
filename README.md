@@ -12,18 +12,22 @@ Planned as one film (12 courses, 92 sections). Prerequisites:
 [`sql-bank`](https://github.com/schemabotview/sql-bank) and
 [`spark-ecommerce-analytics`](https://github.com/schemabotview/spark-ecommerce-analytics).
 
-**Status:** plan v1 awaiting the owner's review; no infra yet.
+**Status:** plan v1.1 awaiting the owner's review; infra built; the pilot (Course 5) has its four
+local sections authored. No GCP step is recorded yet.
 Plan: [`COURSE-PLAN.md`](COURSE-PLAN.md) · Rules and status: [`CLAUDE.md`](CLAUDE.md).
 
 ## Run
 
-Not built yet. Once infra lands:
-
 ```sh
 npm ci
-npm run dev                                # http://localhost:5173 · #/<course>-<section>
+npm run dev                                # http://localhost:5173 · #/land-paths-as-partitions
 npm run check                              # content + 4K render
+python scripts/spine.py                    # the spine: every step current (runs nothing)
+python -m sun_gen verify                   # the generator's planted facts
 ```
+
+Writing spine steps needs the pinned toolchain: `scripts/install-toolchain.sh`,
+`scripts/setup-postgres.sh`, `scripts/install-gcp-tools.sh` (as root).
 
 ## Layout
 

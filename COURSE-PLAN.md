@@ -1,6 +1,7 @@
 # Learn GCP by building a media & broadband analytics platform: full course, beginner to professional — plan
 
-**Plan status:** v1 draft, awaiting owner review (2026-11-02). Agreed with the owner: Python
+**Plan status:** v1.1, awaiting owner review (2026-11-02). v1.1: the pilot is Course 5; §5.3–5.5
+as built (windows by night, the watermark is the last published night); the facts `sun_gen` froze. Agreed with the owner: Python
 throughout (Beam and PySpark), the owner's GCP project for recorded steps, the company is **Sun**
 (fictional), no ML or AI features. Shared rules (section shape, ◆ detours, packaging, build order)
 are in `../CLAUDE.md`; this plan states only what is specific to this concept.
@@ -73,10 +74,10 @@ step is recorded, then frozen.
 | Dataproc Serverless runtime | *first use* | the recorded Spark batch |
 | spark-bigquery-connector | *first use* (matching the runtime) | Spark ↔ BigQuery |
 | Apache Airflow + `apache-airflow-providers-google` | *first use* (matching a Composer 3 image) | the nightly DAG, run with `airflow dags test` |
-| Google Cloud CLI (`gcloud`, `bq`, `gcloud storage`) | *first use* | reads, the data plane, the state bootstrap |
+| Google Cloud CLI (`gcloud`, `bq`, `gcloud storage`) | **570.0.0** (the image's) | reads, the data plane, the state bootstrap |
 | Pub/Sub emulator | (from the CLI's components) | local publish / pull |
-| fake-gcs-server | *first use* | GCS, emulated, for local landing |
-| google-cloud-* client libraries | *first use* (`requirements.txt`) | storage, pubsub, bigquery, secret-manager |
+| fake-gcs-server | **1.56.1** | GCS, emulated, for local landing |
+| google-cloud-* client libraries | `google-cloud-storage` **3.17.1**, `psycopg[binary]` **3.3.6**; the rest *first use* (`requirements.txt`) | storage, pubsub, bigquery, secret-manager |
 | Terraform | **1.17.0** (as `aws-ecommerce`, `azure-trade-finance`) | every resource; `.terraform.lock.hcl` committed |
 | `hashicorp/google` provider | *first use* | GCP resources |
 | GCP project | the owner's | every "recorded on GCP" step |
@@ -124,7 +125,7 @@ planted fault a named constant asserted by `python -m sun_gen verify`. Business 
 
 | planted fault | caught by | section |
 | --- | --- | --- |
-| the billing extract copied short | G1: do not publish, keep the old watermark | 5.5 |
+| the billing extract copied short: three rentals re-rated at 02:00:04, after the plan counted 1,068 | G1: do not publish (no `_SUCCESS`); the last published night stays 2026-10-30 | 5.5 |
 | the same event delivered twice (at-least-once) | dedupe by `event_id` in the window, again in Silver | 6.5, 7.6, 8.7 |
 | boxes with clocks minutes behind; events arriving late | event time, the watermark, allowed lateness | 7.3, 7.5 |
 | events out of order for one device | ordering keys; session windows | 6.6, 7.7 |
@@ -157,8 +158,11 @@ marked † are what `sun_gen` is built to produce; they are frozen when its `ver
 | datasets | `bronze`, `silver`, `gold`, `live`, `audit` (all `europe-west2`) |
 | tables | `bronze.viewing_events`, `bronze.subscribers`, `bronze.billing`, `silver.viewing_sessions`, `silver.dim_subscriber` (SCD2), `silver.dim_title`, `silver.epg_slots`, `gold.content_performance_daily`, `gold.qos_by_exchange`, `live.concurrent_viewers`, `audit.gate_results` |
 | derby | "Northbridge v Eastfield", title `T-5001`, channel `SUN-SPORTS-1`, 2026-10-31 17:30–19:25 UTC |
-| households | 5,000 † (`HH-10001` …); platforms `settop`, `app-ios`, `app-android`, `web` |
-| exchanges | 12 † (`EX-LDN-01` … `EX-MAN-03`); `EX-LDN-04` buffers in the second half † |
+| households | 5,000 (`HH-10001` … `HH-15000`), emails `@mail.example`, phones in Ofcom's drama range `07700 900xxx`; platforms `settop`, `app-ios`, `app-android`, `web` |
+| CRM | `packages` (`P-ESS` Essentials, `P-ENT` Entertainment, `P-SPT` Sports, `P-ULT` Ultimate), `households`, `subscriptions` (one row per version); `HH-10042` Entertainment → Sports on 2026-10-15; 37 households buy Sports on derby day |
+| billing | `charges` (`subscription`, `rental`, `upgrade`); a night's window is (dt 00:00, dt+1 00:00] on `updated_at`: dt=2026-10-30 holds 1,051, dt=2026-10-31 holds 1,068 |
+| EPG | six channels (`SUN-ONE`, `SUN-SPORTS-1/2`, `SUN-MOVIES-1/2`, `SUN-NEWS`); the gap: `SUN-MOVIES-2` 20:00–22:00 |
+| exchanges | 12: `EX-LDN-01`…`06`, `EX-BHM-01`…`03`, `EX-MAN-01`…`03`; `EX-LDN-04` buffers in the second half † |
 | the answer | derby peak 2,140 † concurrent households at 18:41; `EX-LDN-04` buffering ratio 4.1% † vs 0.6% † elsewhere |
 | alerts | notification channel `media-data@sun.example` |
 | ids | any other id (job, operation, run) as `…000NN` in order of first appearance |
@@ -292,9 +296,9 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 | --- | --- | --- | --- | --- |
 | 1 | Buckets and the raw zone | location, storage class, uniform bucket-level access | bucket → objects; flat names that look like folders | G |
 | 2 | Paths as partitions | `source=…/dt=2026-10-31/` | the raw zone's tree | L · E |
-| 3 | The nightly extracts | `extract.py`: CRM and billing from PostgreSQL | source → extract → raw | L · E |
-| 4 | The manifest | written FIRST: window, expected rows, files | manifest ↔ folder | L · E |
-| 5 | ⑂ G1 fails | the billing copy is short | G1: do not publish; the old watermark stays | L · E |
+| 3 | The nightly extracts | `extract.py`: the CRM as a snapshot, billing by window, dt=2026-10-30; each folder closed by `_SUCCESS`, unchecked | source → extract → raw; snapshot vs window | L · E |
+| 4 | The manifest | `plan` writes dt=2026-10-31's `_manifest.json` FIRST: window, expected rows, columns | plan → manifest → copy → G1 | L · E |
+| 5 | ⑂ G1 fails | the copy lands 1,065 of 1,068; G1 FAIL; only G1 writes `_SUCCESS` now | the night in order; G1's checks | L · E |
 | 6 | Retry-safe and sealed | `ifGenerationMatch=0` refuses an overwrite; `_SUCCESS` seals | a retry lands on the same path until sealed | G |
 | 7 | Immutable by policy | a retention policy; a delete refused | object → retention → refused | G |
 | 8 | Hot to cold | lifecycle rules in Terraform: Standard → Nearline → Coldline → Archive | an object's age on a timeline | G |
@@ -402,11 +406,13 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 4. Infrastructure as Terraform from Course 3 (2026-11-02).
 5. Repo `gcp-media-analytics`, public, under `schemabotview`; published at
    `graphl.in/gcp-media-analytics`.
+6. The pilot is Course 5, `land`, as azure-trade-finance (2026-11-02).
+7. A night's window is fixed by its `dt` — (dt 00:00, dt+1 00:00] on `updated_at` — and the
+   loaders' watermark is the newest night with a `_SUCCESS`. No mutable watermark object: the raw
+   bucket gets a retention policy in §5.7, which would refuse overwriting one (2026-11-02).
 
 ## Open
 
-- Pilot course: 5 (`land`, as azure-trade-finance), or 7 (`dataflow`, the film's most distinctive
-  part and the riskiest frame).
 - The *first use* pins.
 - Whether the owner's project sits in an organization: 2.2 (folders), 4.4 (the org policy refusing
   key files) and 12.7 (a second project) need one. Without it, 2.2 shows the project only and 4.4

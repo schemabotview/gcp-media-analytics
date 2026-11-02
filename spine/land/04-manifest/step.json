@@ -1,0 +1,3 @@
+{"from": "land/03-extracts", "changes": ["extract/extract.py"], "env": true, "venv": true,
+ "setup": ["psql -q -d crm -f data/crm/day-2026-10-31.sql", "psql -q -d billing -f data/billing/day-2026-10-31.sql"],
+ "capture": ["gs://sun-media-dev-raw/source=billing/dt=2026-10-31/_manifest.json"]}

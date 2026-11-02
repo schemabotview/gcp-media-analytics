@@ -1,0 +1,11 @@
+$ python extract/extract.py copy billing --dt 2026-10-31
+billing: 1065 rows -> source=billing/dt=2026-10-31/charges.csv
+$ python extract/g1.py billing --dt 2026-10-31
+  files                    1 of 1     PASS
+  charges.csv columns      8 of 8     PASS
+  charges.csv rows      1065 of 1068  FAIL
+G1 FAIL: billing dt=2026-10-31 is not published
+$ python extract/extract.py published billing
+billing: last published dt=2026-10-30
+$ psql billing -Atc "SELECT max(updated_at) FROM charges"
+2026-11-01 02:00:04+00

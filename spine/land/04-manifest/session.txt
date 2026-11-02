@@ -1,0 +1,8 @@
+$ python extract/extract.py plan billing --dt 2026-10-31
+billing: window (2026-10-31T00:00:00Z, 2026-11-01T00:00:00Z]
+billing: charges.csv expects 1068 rows
+manifest -> source=billing/dt=2026-10-31/_manifest.json
+$ gcloud storage ls "$RAW/source=billing/**"
+gs://sun-media-dev-raw/source=billing/dt=2026-10-30/_SUCCESS
+gs://sun-media-dev-raw/source=billing/dt=2026-10-30/charges.csv
+gs://sun-media-dev-raw/source=billing/dt=2026-10-31/_manifest.json

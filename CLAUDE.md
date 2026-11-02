@@ -18,7 +18,30 @@
 
 ## Status
 
-Plan v1 written 2026-11-02, awaiting the owner's review. Nothing built.
+Plan v1.1 (2026-11-02), awaiting the owner's review. 2026-11-02 (cloud session): **infra built, and
+the pilot's local half authored** — Course 5 §2–§5, checked and shot at 4K. No GCP step is recorded:
+the session had no `GOOGLE_PROJECT_ID` / credentials. Next:
+
+1. Owner review of `COURSE-PLAN.md` and of `#/land-paths-as-partitions` … `#/land-g1-fails`, and of
+   the map (`#/preview-map-land`, `#/preview-map-final`).
+2. Set the recording secrets (`GOOGLE_PROJECT_ID`, `GOOGLE_CREDENTIALS` = a service account's key
+   JSON; optional `GCS_SUFFIX` if `sun-media-dev-raw` is taken globally), then author §5.1 and
+   §5.6–5.8 (Terraform + recorded). The recorder (`spine.py --record`) has NOT run against a real
+   project yet: its first recording is its test — read every transcript, run `scripts/leaks.py`.
+3. Courses 3–4, then re-chain: §5.2 is the `first` step today; when Course 3 lands, `land/02`
+   becomes `from` its last step and every local step is written again (keys change, outputs should not).
+4. `sun_gen` has the CRM, billing, catalogue and EPG; viewing events and network telemetry come with
+   Course 6 (the derby peak and `EX-LDN-04`'s ratio are still †).
+
+**Built (infra):** the app (vite, shell `ConceptApp`, `--brand` #4285f4), `check-content`,
+`check-render`, `registry`, `shots` (also a bare scene id), `concept.json`; `sun_gen` + `verify`
+(12 planted facts); `scripts/spine.py` (local steps: PostgreSQL `crm` + `billing`, fake-gcs-server;
+GCP steps: recorder written, untested); `leaks.py`; `src/scenes/ide.ts`, `map.ts` (`BUILT` per
+course), `level.ts`, `lab.ts`, `tree.ts`, `fold.ts`, `csv.ts`; installers `install-toolchain.sh`
+(Python 3.14.9, Java 21), `setup-postgres.sh` (PostgreSQL 18.6, OS user `priya`),
+`install-gcp-tools.sh` (fake-gcs-server 1.56.1, Terraform 1.17.0). Not yet: `film.mjs`,
+`thumb-film.mjs`, the Colab notebook, `audio-manifest.json`, `titles.json` (port from
+azure-trade-finance when narration starts).
 
 | # | course | sections | status |
 |---|---|---|---|
@@ -26,7 +49,7 @@ Plan v1 written 2026-11-02, awaiting the owner's review. Nothing built.
 | 2 | `how-gcp-runs` | 7 | planned |
 | 3 | `start` | 8 | planned |
 | 4 | `secure` | 8 | planned |
-| 5 | `land` | 8 | planned (pilot) |
+| 5 | `land` | 8 | pilot: §2–§5 authored, narrated (text), 4K-checked (L · E); §1, §6–§8 need recording |
 | 6 | `stream` | 7 | planned |
 | 7 | `dataflow` | 9 | planned |
 | 8 | `lakehouse` | 9 | planned |
@@ -34,6 +57,19 @@ Plan v1 written 2026-11-02, awaiting the owner's review. Nothing built.
 | 10 | `serve` | 8 | planned |
 | 11 | `orchestrate` | 8 | planned |
 | 12 | `operate` | 9 | planned |
+
+## Spine (as built)
+
+- `python scripts/spine.py` checks without running; `--write land/04` restores `land/03`'s state
+  (`state/`: `db-crm.sql.gz`, `db-billing.sql.gz`, `gcs.tar.gz`, `work.tar.gz`) and runs only
+  `land/04`. Run as root; the shell is OS user `priya` in `/home/priya/viewing-pulse`.
+- The raw zone locally is fake-gcs-server on :4443 (`env.sh` points the Python client and gcloud at
+  it). It keeps object metadata in an xattr (`user.metadata`): `gcs.tar.gz` is GNU tar with
+  `--xattrs`, or a restored object stops being listed. The spine refuses to start if :4443 is taken.
+- Off-screen events are `setup`: sun_gen's `day-2026-10-31.sql` (before §5.4) and `rerate.sql`
+  (inside the §5.5 branch). Before Course 3 exists, §5.2's setup also loads the two databases.
+- `capture` takes `gs://<bucket>/<object>`, read back with `gcloud storage cat`.
+- Typed commands ≤ 78 columns (`$RAW` is `gs://sun-media-dev-raw`); code ≤ 79; the terminal holds 13 rows.
 
 ## Invariants
 
