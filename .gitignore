@@ -1,0 +1,14 @@
+node_modules
+dist
+dist-snapshot
+/out
+scripts/out
+.tmp
+/segments
+scripts/segments
+/images
+*.local
+.claude
+.DS_Store
+.venv
+__pycache__
