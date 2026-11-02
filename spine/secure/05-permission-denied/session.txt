@@ -1,2 +1,16 @@
 $ SA=sa-ingest@$TF_VAR_project_id.iam.gserviceaccount.com
+$ gcloud auth print-access-token --impersonate-service-account=$SA | wc -c
+WARNING: This command is using service account impersonation. All API calls will
+ be executed as [sa-ingest@sun-media-dev.iam.gserviceaccount.com].
+1025
 $ gcloud storage ls "$RAW/**" --impersonate-service-account=$SA
+WARNING: This command is using service account impersonation. All API calls will
+ be executed as [sa-ingest@sun-media-dev.iam.gserviceaccount.com].
+ERROR: (gcloud.storage.ls) [sa-ingest@sun-media-dev.iam.gserviceaccount.com] doe
+s not have permission to access b instance [sun-media-dev-raw] (or it may not ex
+ist): sa-ingest@sun-media-dev.iam.gserviceaccount.com does not have storage.obje
+cts.list access to the Google Cloud Storage bucket. Permission 'storage.objects.
+list' denied on resource '//storage.googleapis.com/projects/_/buckets/sun-media-
+dev-raw' (or it may not exist). This command is authenticated as priya@sun.examp
+le which is the active account specified by the [core/account] property. Imperso
+nation is used to impersonate sa-ingest@sun-media-dev.iam.gserviceaccount.com.

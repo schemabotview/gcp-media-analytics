@@ -1,9 +1,203 @@
 $ cd infra
 $ terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate
+Initializing the backend...
+
+Initializing modules...
+- secrets in modules/secrets
+
+Initializing provider plugins...
+- Reusing version 8.9.0 of hashicorp/google from the dependency lock file
+- Reusing version 3.9.1 of hashicorp/random from the dependency lock file
+- Using previously-installed hashicorp/google v8.9.0
+- Installing hashicorp/random v3.9.1...
+- Installed hashicorp/random v3.9.1 (signed by HashiCorp)
+
+Terraform has been successfully initialized!
 $ terraform apply -var-file=envs/dev.tfvars -auto-approve
+Acquiring state lock. This may take a few moments...
+data.google_project.this: Reading...
+data.google_project.this: Read complete after 1s [id=projects/sun-media-dev]
+module.storage.google_storage_bucket.raw: Refreshing state... [id=sun-media-dev-
+raw]
+google_project_service.budgets["billingbudgets.googleapis.com"]: Refreshing stat
+e... [id=sun-media-dev/billingbudgets.googleapis.com]
+google_project_service.budgets["monitoring.googleapis.com"]: Refreshing state...
+ [id=sun-media-dev/monitoring.googleapis.com]
+module.iam.google_service_account.job["sa-airflow"]: Refreshing state... [id=pro
+jects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam.gserviceaccount
+.com]
+module.iam.google_service_account.job["sa-dataproc"]: Refreshing state... [id=pr
+ojects/sun-media-dev/serviceAccounts/sa-dataproc@sun-media-dev.iam.gserviceaccou
+nt.com]
+module.iam.google_service_account.job["sa-dataflow"]: Refreshing state... [id=pr
+ojects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.iam.gserviceaccou
+nt.com]
+module.iam.google_service_account.job["sa-ingest"]: Refreshing state... [id=proj
+ects/sun-media-dev/serviceAccounts/sa-ingest@sun-media-dev.iam.gserviceaccount.c
+om]
+module.iam.google_service_account.job["sa-cicd"]: Refreshing state... [id=projec
+ts/sun-media-dev/serviceAccounts/sa-cicd@sun-media-dev.iam.gserviceaccount.com]
+google_monitoring_notification_channel.email: Refreshing state... [id=projects/s
+un-media-dev/notificationChannels/10000000000000000001]
+module.iam.google_service_account_iam_member.operator["sa-dataproc"]: Refreshing
+ state... [id=projects/sun-media-dev/serviceAccounts/sa-dataproc@sun-media-dev.i
+am.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya
+@sun.example]
+module.iam.google_service_account_iam_member.operator["sa-cicd"]: Refreshing sta
+te... [id=projects/sun-media-dev/serviceAccounts/sa-cicd@sun-media-dev.iam.gserv
+iceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@sun.exa
+mple]
+module.iam.google_service_account_iam_member.operator["sa-dataflow"]: Refreshing
+ state... [id=projects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.i
+am.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya
+@sun.example]
+module.iam.google_service_account_iam_member.operator["sa-airflow"]: Refreshing 
+state... [id=projects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam
+.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@s
+un.example]
+module.iam.google_service_account_iam_member.operator["sa-ingest"]: Refreshing s
+tate... [id=projects/sun-media-dev/serviceAccounts/sa-ingest@sun-media-dev.iam.g
+serviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@sun
+.example]
+google_billing_budget.month: Refreshing state... [id=billingAccounts/000000-0000
+00-000001/budgets/00000000-0000-0000-0000-000000001000]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # module.secrets.google_project_service.secretmanager will be created
+  + resource "google_project_service" "secretmanager" {
+      + deletion_policy    = "DELETE"
+      + disable_on_destroy = false
+      + id                 = (known after apply)
+      + project            = "sun-media-dev"
+      + service            = "secretmanager.googleapis.com"
+    }
+
+  # module.secrets.google_secret_manager_secret.crm will be created
+  + resource "google_secret_manager_secret" "crm" {
+      + create_time           = (known after apply)
+      + deletion_policy       = "DELETE"
+      + deletion_protection   = false
+      + effective_annotations = (known after apply)
+      + effective_labels      = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + expire_time           = (known after apply)
+      + id                    = (known after apply)
+      + name                  = (known after apply)
+      + project               = "sun-media-dev"
+      + secret_id             = "crm-db-password"
+      + terraform_labels      = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+
+      + replication {
+          + user_managed {
+              + replicas {
+                  + location = "europe-west2"
+                }
+            }
+        }
+    }
+
+  # module.secrets.google_secret_manager_secret_iam_member.ingest will be create
+d
+  + resource "google_secret_manager_secret_iam_member" "ingest" {
+      + etag      = (known after apply)
+      + id        = (known after apply)
+      + member    = "serviceAccount:sa-ingest@sun-media-dev.iam.gserviceaccount.
+com"
+      + project   = (known after apply)
+      + role      = "roles/secretmanager.secretAccessor"
+      + secret_id = (known after apply)
+    }
+
+  # module.secrets.google_secret_manager_secret_version.crm will be created
+  + resource "google_secret_manager_secret_version" "crm" {
+      + create_time     = (known after apply)
+      + deletion_policy = (known after apply)
+      + destroy_time    = (known after apply)
+      + enabled         = true
+      + id              = (known after apply)
+      + name            = (known after apply)
+      + project         = (known after apply)
+      + secret          = (known after apply)
+      + secret_data     = (sensitive value)
+      + secret_data_wo  = (write-only attribute)
+      + version         = (known after apply)
+    }
+
+  # module.secrets.random_password.crm will be created
+  + resource "random_password" "crm" {
+      + bcrypt_hash = (sensitive value)
+      + id          = (known after apply)
+      + length      = 32
+      + lower       = true
+      + min_lower   = 0
+      + min_numeric = 0
+      + min_special = 0
+      + min_upper   = 0
+      + number      = true
+      + numeric     = true
+      + result      = (sensitive value)
+      + special     = false
+      + upper       = true
+    }
+
+Plan: 5 to add, 0 to change, 0 to destroy.
+module.secrets.random_password.crm: Creating...
+module.secrets.random_password.crm: Creation complete after 0s [id=none]
+module.secrets.google_project_service.secretmanager: Creating...
+module.secrets.google_project_service.secretmanager: Creation complete after 4s 
+[id=sun-media-dev/secretmanager.googleapis.com]
+module.secrets.google_secret_manager_secret.crm: Creating...
+module.secrets.google_secret_manager_secret.crm: Creation complete after 1s [id=
+projects/sun-media-dev/secrets/crm-db-password]
+module.secrets.google_secret_manager_secret_version.crm: Creating...
+module.secrets.google_secret_manager_secret_version.crm: Creation complete after
+ 1s [id=projects/100000000001/secrets/crm-db-password/versions/1]
+module.secrets.google_secret_manager_secret_iam_member.ingest: Creating...
+module.secrets.google_secret_manager_secret_iam_member.ingest: Creation complete
+ after 4s [id=projects/sun-media-dev/secrets/crm-db-password/roles/secretmanager
+.secretAccessor/serviceAccount:sa-ingest@sun-media-dev.iam.gserviceaccount.com]
+
+Apply complete! Resources: 5 added, 0 changed, 0 destroyed.
 $ gcloud secrets versions list crm-db-password
+NAME  STATE    CREATED              DESTROYED
+1     enabled  2026-11-01T09:30:00  -
 $ AS=--impersonate-service-account
 $ SA=sa-ingest@$TF_VAR_project_id.iam.gserviceaccount.com
 $ gcloud secrets versions access latest --secret=crm-db-password $AS=$SA | wc -c
+WARNING: This command is using service account impersonation. All API calls will
+ be executed as [sa-ingest@sun-media-dev.iam.gserviceaccount.com].
+32
 $ DF=sa-dataflow@$TF_VAR_project_id.iam.gserviceaccount.com
 $ gcloud secrets versions access latest --secret=crm-db-password $AS=$DF
+WARNING: This command is using service account impersonation. All API calls will
+ be executed as [sa-dataflow@sun-media-dev.iam.gserviceaccount.com].
+ERROR: (gcloud.secrets.versions.access) PERMISSION_DENIED: Permission 'secretman
+ager.versions.access' denied on resource (or it may not exist). Remediate access
+ with this Troubleshooter URL or share it with your administrator - https://cons
+ole.cloud.google.com/iam-admin/troubleshooter/summary;errorId=CiQwMWExOWRkNi00OG
+VjLTdjM2YtYjc5MC02MmI4NThmMDg0ZGQSAA%3D%3D . This command is authenticated as pr
+iya@sun.example which is the active account specified by the [core/account] prop
+erty. Impersonation is used to impersonate sa-dataflow@sun-media-dev.iam.gservic
+eaccount.com.
+- '@type': type.googleapis.com/google.rpc.ErrorInfo
+  domain: iam.googleapis.com
+  metadata:
+    error_info_id: CiQwMWExOWRkNi00OGVjLTdjM2YtYjc5MC02MmI4NThmMDg0ZGQSAA==
+    permission: secretmanager.versions.access
+    troubleshooter_url: https://console.cloud.google.com/iam-admin/troubleshoote
+r/summary;errorId=CiQwMWExOWRkNi00OGVjLTdjM2YtYjc5MC02MmI4NThmMDg0ZGQSAA%3D%3D
+  reason: IAM_PERMISSION_DENIED
