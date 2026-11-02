@@ -182,10 +182,11 @@ marked † are what `sun_gen` is built to produce; they are frozen when its `ver
   windows, the watermark line and late events drawn on it. Built as a frame so 7.3–7.7 share a fit.
 - The Cloud Console is never screenshotted: what a page would show is drawn from the CLI's or API's
   own output.
-- **Engine prerequisite:** graphl-flow has no GCP icon set. A graphl-flow minor (0.9.0) adds one —
-  `gcs bigquery pubsub dataflow dataproc composer kms secretmanager gcpiam dataplex dlp
-  cloudlogging cloudmonitoring cloudbuild looker` — and ui-shell widens its peer range. Before
-  Course 3 is authored.
+- **Icons:** graphl-flow **0.9.0** adds Google Cloud's own icons — `gcs bigquery pubsub dataflow
+  dataproc composer cloudkms secretmanager gcpiam dataplex dlp cloudlogging cloudmonitoring
+  cloudbuild gcpproject gcpbilling` — plus brand marks `gcp` and `looker`. A key a scene needs that is
+  not there is added in graphl-flow (`scripts/gen-gcp-icons.mjs`), never drawn locally. ui-shell's
+  peer range (`>=0.2.0 <1`) already admits it.
 
 ## The spine
 
