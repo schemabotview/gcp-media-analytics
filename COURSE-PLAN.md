@@ -286,9 +286,9 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 
 | # | Section | Step | Side pane | Level |
 | --- | --- | --- | --- | --- |
-| 1 | Cloud IAM | `get-iam-policy`: principals, roles, bindings | an allow policy: role → members | G |
-| 2 | ◆ full scene: IAM inheritance | the project's policy and the bucket's (`projectOwner:` convenience members) | policies union down the hierarchy | G |
-| 3 | Service accounts | the five `sa-*` accounts in Terraform | one account per job, who wears it | G |
+| 1 | Cloud IAM | `get-iam-policy`, filtered: the binding count, `roles/editor`'s members, the owner count | an allow policy: role → members | G |
+| 2 | IAM inheritance (drawn in the side pane: it fits) | the project's policy and the bucket's (`projectOwner:` convenience members) | policies union down the hierarchy | G |
+| 3 | Service accounts | the five `sa-*` accounts in Terraform, listed from its state | one account per job, who wears it | G |
 | 4 | No key files | Priya may impersonate each SA (Terraform); no user-managed keys; a token minted on request. The org-policy refusal only if the project sits in an organization (Open) | person → token for the SA, short-lived | G |
 | 5 | ⑂ PERMISSION_DENIED | `sa-ingest` lists the raw zone: refused (`storage.objects.list`); §4.8 grants the narrow role | missing permission → the role that holds it | G |
 | 6 | Secret Manager | `crm-db-password` (a generated value, never printed: `wc -c`); `sa-ingest` reads it, `sa-dataflow` is refused | secret → versions → accessor | G |

@@ -18,21 +18,20 @@
 
 ## Status
 
-Plan v1.2 (2026-11-02), awaiting the owner's review. Cloud sessions 2026-11-02: **infra built; every
-LOCAL section of Courses 3 and 5 authored** (§3.1–3.4, §5.2–5.5), checked and shot at 4K. **Every GCP
-step of Courses 3–5 is PREPARED, not recorded** (§3.5–3.8, §4.1–4.8, §5.1, §5.6–5.8): Terraform
-written, `fmt`-clean and `terraform validate`d per step, the typed commands in each `session.txt`.
-`check:spine` lists them as "not written yet" — that is their true state. Next:
+Plan v1.2 (2026-11-02), awaiting the owner's review. Cloud sessions 2026-11-02: infra built;
+**Courses 3, 4 and 5 authored in full** — 24 sections, every one checked and shot at 4K: the local
+ones (§3.1–3.4, §5.2–5.5) replayed here, every GCP one (§3.5–3.8, Course 4, §5.1, §5.6–5.8) recorded
+once in the owner's project and normalised. `check:spine`: 24 steps, 0 problems. Next:
 
-1. Owner review of `COURSE-PLAN.md`, the eight routes (`#/start-five-sources` … `#/land-g1-fails`)
+1. Owner review of `COURSE-PLAN.md` and the 24 routes (`#/start-five-sources` … `#/land-lifecycle`),
    and the map (`#/preview-map-land`, `#/preview-map-final`).
-2. Recording, with the secrets set — see "Recording (runbook)" below.
-3. Author the GCP sections from their transcripts (scenes + narration), then Courses 1–2.
-4. Course 6: the producer plants the delivery faults (duplicates, slow clocks, poison message) on
-   top of `sun_gen.events`.
+2. Courses 1–2 (intro, how-gcp-runs: read-only GCP labs and concepts), then Course 6 (the producer
+   plants the delivery faults — duplicates, slow clocks, a poison message — on `sun_gen.events`).
+3. Narration audio once the frames are approved (port the Colab notebook, `audio-manifest.json`).
 
 **Built (infra):** the app (vite, shell `ConceptApp`, `--brand` #4285f4), `check-content`,
-`check-render`, `registry`, `shots` (also a bare scene id), `concept.json`; `sun_gen` + `verify`
+`check-render`, `registry`, `shots` (also a bare scene id), `concept.json`, `spine-files.mjs` (the
+explorer's file lists, `src/scenes/spine-files.ts`: run it after writing or recording a step); `sun_gen` + `verify`
 (20 planted facts, derby-day viewing and telemetry included); `scripts/spine.py` (local steps: PostgreSQL `crm` + `billing`, fake-gcs-server;
 GCP steps: recorder, used for Courses 3–5); `leaks.py`; `src/scenes/ide.ts`, `map.ts` (`BUILT` per
 course), `level.ts`, `lab.ts`, `tree.ts`, `fold.ts`, `csv.ts`; installers `install-toolchain.sh`
@@ -45,9 +44,9 @@ azure-trade-finance when narration starts).
 |---|---|---|---|
 | 1 | `intro` | 3 | planned |
 | 2 | `how-gcp-runs` | 7 | planned |
-| 3 | `start` | 8 | §1–§4 authored, narrated (text), 4K-checked (L); §5–§8 recorded on GCP, not yet authored |
-| 4 | `secure` | 8 | all eight recorded on GCP, not yet authored |
-| 5 | `land` | 8 | pilot: §2–§5 authored, narrated (text), 4K-checked (L · E); §1, §6–§8 recorded on GCP, not yet authored |
+| 3 | `start` | 8 | authored, narrated (text), 4K-checked: §1–§4 L, §5–§8 recorded on GCP |
+| 4 | `secure` | 8 | authored, narrated (text), 4K-checked; all recorded on GCP (§4.2 drawn in the side pane, not a ◆ full scene) |
+| 5 | `land` | 8 | authored, narrated (text), 4K-checked: §2–§5 L · E, §1, §6–§8 recorded on GCP |
 | 6 | `stream` | 7 | planned |
 | 7 | `dataflow` | 9 | planned |
 | 8 | `lakehouse` | 9 | planned |
