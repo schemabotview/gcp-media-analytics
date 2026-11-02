@@ -22,7 +22,8 @@ STEP, NEVER AGAIN AND AGAIN: each step is written once, starting from what the s
 
   Local   after its session, the step's whole state is saved beside it in state/: the two source
           databases (db-crm.sql.gz, db-billing.sql.gz, pg_dump), the raw zone (gcs.tar.gz,
-          fake-gcs-server's folder) and the working copy (work.tar.gz, without .venv).
+          fake-gcs-server's folder) and the working copy (work.tar.gz, without .venv or data/,
+          which sun_gen's cache lays back).
           `--write land/04` restores land/03's state, lays land/04's files, runs land/04's
           commands, saves land/04's state. A branch saves none: the step after it starts from the
           state before it.
@@ -70,6 +71,8 @@ step.json (other keys, all optional):
                           `gs://<bucket>/<object>` is an object, read back after the session
   {"volatile": true}      compared with digits, hex and UUIDs masked; or a list: ["uuid"], ["digits"]
   {"columns": 80}         the pane's width (default 80): output wider than it wraps, as a terminal does
+  {"local_state": true}   a GCP step that reads the source systems: the local parent's databases are
+                          restored first (§5.6 copies billing to the real bucket)
 """
 from __future__ import annotations
 
@@ -521,7 +524,7 @@ def save_state(step: Path, lake: Lake) -> None:
     run(['tar', '--xattrs', '--xattrs-include=user.*', '--sort=name', '--mtime=2026-10-31 00:00Z', '--owner=0', '--group=0',
          '--numeric-owner', '-czf', str(d / 'gcs.tar.gz'), '-C', str(lake.dir), '.'])
     lake.start()
-    _tar(WORK, d / 'work.tar.gz', skip={'.venv'})
+    _tar(WORK, d / 'work.tar.gz', skip={'.venv', 'data'})
 
 
 def restore_state(step: Path | None, lake: Lake) -> None:
@@ -543,6 +546,10 @@ def restore_state(step: Path | None, lake: Lake) -> None:
     run(['tar', '--xattrs', '--xattrs-include=user.*', '-xzf', str(d / 'gcs.tar.gz'), '-C', str(lake.dir)])
     lake.start()
     _untar(d / 'work.tar.gz', WORK)
+    # data/ is not archived (the day's viewing events alone are ~100 MB): sun_gen's parts every step
+    # up to here asked for, from the generator's cache
+    for part in sorted({p for s in lineage_of(step) for p in config_of(s).get('generated', [])}):
+        shutil.copytree(generated(part), WORK / 'data' / part, dirs_exist_ok=True)
     run(['chown', '-R', f'{USER}:{USER}', str(WORK)])
 
 
@@ -576,10 +583,12 @@ FACTS = {  # COURSE-PLAN.md, "Facts": what a real value is shown as
     'project': 'sun-media-dev',
     'number': '100000000001',
     'account': 'priya@sun.example',
+    'billing': '000000-000000-000001',
+    'host': 'priya-laptop',
 }
 TRANSPORT = ('Connection reset by peer', 'connection reset by peer', 'i/o timeout', 'TLS handshake timeout',
              'RemoteDisconnected', 'Connection aborted', 'ServiceUnavailable', '503 Service Unavailable')
-SECRETS = ('GOOGLE_PROJECT_ID', 'GOOGLE_CREDENTIALS')
+SECRETS = ('GOOGLE_PROJECT_ID', 'GOOGLE_CREDENTIALS')  # and GOOGLE_BILLING_ACCOUNT for §3.8's budget
 
 # The last moment in Sun's data (sun_gen's RERATE_AT, §5.5's race): every timestamp at or before it is
 # the business's own and is never shifted; a recording happens after it.
@@ -612,7 +621,7 @@ class Normaliser:
         from datetime import datetime
         for real, shown in self.names.items():
             text = text.replace(real, shown)
-        for kind in ('account', 'project', 'number'):  # the account's email holds the project id
+        for kind in ('account', 'billing', 'host', 'project', 'number'):  # the account's email holds the project id
             if self.real.get(kind):
                 text = re.sub(re.escape(self.real[kind]), FACTS[kind], text, flags=re.I)
 
@@ -676,13 +685,28 @@ def record(step: Path) -> int:
         sys.exit('✗ gcloud auth failed (the output is not printed: it may hold a secret)')
     account = json.loads(os.environ['GOOGLE_CREDENTIALS']).get('client_email', '')
     number = as_user(f'gcloud projects describe {project} --format="value(projectNumber)"', env).stdout.strip()
-    real = {'project': project, 'number': number, 'account': account,
+    import socket
+    real = {'project': project, 'number': number, 'account': account, 'host': socket.gethostname(),
+            'billing': os.environ.get('GOOGLE_BILLING_ACCOUNT', ''),
             'client': json.loads(os.environ['GOOGLE_CREDENTIALS']).get('client_id', '')}
+    if os.environ.get('GOOGLE_BILLING_ACCOUNT'):  # §3.8's budget: gcp.sh hands it to Terraform
+        env['GOOGLE_BILLING_ACCOUNT'] = os.environ['GOOGLE_BILLING_ACCOUNT']
     suffix = os.environ.get('GCS_SUFFIX', '')  # bucket names are global: the owner's may carry a suffix
     names = {f'{b}{suffix}': b for b in BUCKETS + ('sun-media-dev-tfstate',)} if suffix else {}
     norm = Normaliser(real, names)
-    lay(step)
-    transcript, captured, raw = session_of(step, env, normalise=norm.output)
+    lake = None
+    if config.get('local_state'):  # a GCP step that also reads the source systems (§5.6)
+        parent = state_parent(step)
+        if parent is None or not recorded_ok(parent)[0]:
+            sys.exit(f'✗ {name_of(step)} needs its local parent\'s saved state, written and current')
+        lake = Lake()
+        restore_state(parent, lake)
+    try:
+        lay(step)
+        transcript, captured, raw = session_of(step, env, normalise=norm.output)
+    finally:
+        if lake:
+            lake.stop()
     leaks = norm.refuse(transcript + '\n'.join(captured.values()))
     flaky = [m for m in TRANSPORT if m in transcript]
     if flaky:

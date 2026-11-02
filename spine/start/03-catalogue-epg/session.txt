@@ -1,0 +1,13 @@
+$ head -3 data/catalogue/titles.csv
+title_id,title,kind,runtime_min
+T-3001,The Iron Signal,film,127
+T-3002,The Northern Harbour,film,109
+$ python sources/epg/slots.py SUN-SPORTS-1 --from 16:00 --to 22:00
+16:00-17:30  T-6001  Sun News
+17:30-19:25  T-5001  Northbridge v Eastfield
+19:25-21:25  T-5002  Saturday Football Live
+21:25-23:25  T-5002  Saturday Football Live
+$ python sources/epg/slots.py SUN-MOVIES-2 --from 16:00 --to 22:00
+16:00-18:00  T-3025  The Silent Meridian
+18:00-20:00  T-3076  The Iron Orchard
+20:00-22:00  no slot in the EPG

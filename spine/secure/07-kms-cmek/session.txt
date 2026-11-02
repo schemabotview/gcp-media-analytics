@@ -1,0 +1,5 @@
+$ cd infra
+$ terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate
+$ terraform apply -var-file=envs/dev.tfvars -auto-approve
+$ gcloud kms keys list --keyring=kr-media --location=europe-west2
+$ gcloud storage buckets describe $RAW --format="value(default_kms_key)"

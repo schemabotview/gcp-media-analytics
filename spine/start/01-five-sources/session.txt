@@ -1,0 +1,11 @@
+$ wc -l data/*/*.csv data/*/*.jsonl
+     3227 data/billing/charges.csv
+      105 data/catalogue/titles.csv
+     5001 data/crm/households.csv
+        5 data/crm/packages.csv
+     5002 data/crm/subscriptions.csv
+    17280 data/telemetry/2026-10-31.jsonl
+   400956 data/viewing/2026-10-31.jsonl
+   431576 total
+$ ls data/epg
+2026-10-31.json

@@ -1,0 +1,5 @@
+$ bash infra/bootstrap.sh
+$ cd infra
+$ terraform init -migrate-state -force-copy -backend-config=bucket=$TF_VAR_project_id-tfstate
+$ gcloud storage ls "gs://$TF_VAR_project_id-tfstate/**"
+$ terraform apply -auto-approve >/dev/null & sleep 5; terraform plan -lock-timeout=0s; wait

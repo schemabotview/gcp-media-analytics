@@ -1,3 +1,1 @@
-{"first": true, "env": true, "venv": true, "generated": ["crm", "billing", "catalogue", "epg"],
- "setup": ["psql -q -d crm -f sources/crm/schema.sql -f sources/crm/load.sql",
-           "psql -q -d billing -f sources/billing/schema.sql -f sources/billing/load.sql"]}
+{"from": "land/01-buckets", "changes": ["env.sh", "extract/raw.py", "requirements.txt"], "env": true, "venv": true}

@@ -18,24 +18,22 @@
 
 ## Status
 
-Plan v1.1 (2026-11-02), awaiting the owner's review. 2026-11-02 (cloud session): **infra built, and
-the pilot's local half authored** — Course 5 §2–§5, checked and shot at 4K. No GCP step is recorded:
-the session had no `GOOGLE_PROJECT_ID` / credentials. Next:
+Plan v1.2 (2026-11-02), awaiting the owner's review. Cloud sessions 2026-11-02: **infra built; every
+LOCAL section of Courses 3 and 5 authored** (§3.1–3.4, §5.2–5.5), checked and shot at 4K. **Every GCP
+step of Courses 3–5 is PREPARED, not recorded** (§3.5–3.8, §4.1–4.8, §5.1, §5.6–5.8): Terraform
+written, `fmt`-clean and `terraform validate`d per step, the typed commands in each `session.txt`.
+`check:spine` lists them as "not written yet" — that is their true state. Next:
 
-1. Owner review of `COURSE-PLAN.md` and of `#/land-paths-as-partitions` … `#/land-g1-fails`, and of
-   the map (`#/preview-map-land`, `#/preview-map-final`).
-2. Set the recording secrets (`GOOGLE_PROJECT_ID`, `GOOGLE_CREDENTIALS` = a service account's key
-   JSON; optional `GCS_SUFFIX` if `sun-media-dev-raw` is taken globally), then author §5.1 and
-   §5.6–5.8 (Terraform + recorded). The recorder (`spine.py --record`) has NOT run against a real
-   project yet: its first recording is its test — read every transcript, run `scripts/leaks.py`.
-3. Courses 3–4, then re-chain: §5.2 is the `first` step today; when Course 3 lands, `land/02`
-   becomes `from` its last step and every local step is written again (keys change, outputs should not).
-4. `sun_gen` has the CRM, billing, catalogue and EPG; viewing events and network telemetry come with
-   Course 6 (the derby peak and `EX-LDN-04`'s ratio are still †).
+1. Owner review of `COURSE-PLAN.md`, the eight routes (`#/start-five-sources` … `#/land-g1-fails`)
+   and the map (`#/preview-map-land`, `#/preview-map-final`).
+2. Recording, with the secrets set — see "Recording (runbook)" below.
+3. Author the GCP sections from their transcripts (scenes + narration), then Courses 1–2.
+4. Course 6: the producer plants the delivery faults (duplicates, slow clocks, poison message) on
+   top of `sun_gen.events`.
 
 **Built (infra):** the app (vite, shell `ConceptApp`, `--brand` #4285f4), `check-content`,
 `check-render`, `registry`, `shots` (also a bare scene id), `concept.json`; `sun_gen` + `verify`
-(12 planted facts); `scripts/spine.py` (local steps: PostgreSQL `crm` + `billing`, fake-gcs-server;
+(20 planted facts, derby-day viewing and telemetry included); `scripts/spine.py` (local steps: PostgreSQL `crm` + `billing`, fake-gcs-server;
 GCP steps: recorder written, untested); `leaks.py`; `src/scenes/ide.ts`, `map.ts` (`BUILT` per
 course), `level.ts`, `lab.ts`, `tree.ts`, `fold.ts`, `csv.ts`; installers `install-toolchain.sh`
 (Python 3.14.9, Java 21), `setup-postgres.sh` (PostgreSQL 18.6, OS user `priya`),
@@ -47,9 +45,9 @@ azure-trade-finance when narration starts).
 |---|---|---|---|
 | 1 | `intro` | 3 | planned |
 | 2 | `how-gcp-runs` | 7 | planned |
-| 3 | `start` | 8 | planned |
-| 4 | `secure` | 8 | planned |
-| 5 | `land` | 8 | pilot: §2–§5 authored, narrated (text), 4K-checked (L · E); §1, §6–§8 need recording |
+| 3 | `start` | 8 | §1–§4 authored, narrated (text), 4K-checked (L); §5–§8 prepared, await recording |
+| 4 | `secure` | 8 | all eight prepared (G), await recording |
+| 5 | `land` | 8 | pilot: §2–§5 authored, narrated (text), 4K-checked (L · E); §1, §6–§8 prepared, await recording |
 | 6 | `stream` | 7 | planned |
 | 7 | `dataflow` | 9 | planned |
 | 8 | `lakehouse` | 9 | planned |
@@ -67,9 +65,34 @@ azure-trade-finance when narration starts).
   it). It keeps object metadata in an xattr (`user.metadata`): `gcs.tar.gz` is GNU tar with
   `--xattrs`, or a restored object stops being listed. The spine refuses to start if :4443 is taken.
 - Off-screen events are `setup`: sun_gen's `day-2026-10-31.sql` (before §5.4) and `rerate.sql`
-  (inside the §5.5 branch). Before Course 3 exists, §5.2's setup also loads the two databases.
+  (inside the §5.5 branch). §3.2 loads the two databases on screen (`sources/load.sh`).
+- The chain: start/01 (`first`) → start/04 local → start/05…secure/08, land/01 GCP → land/02–05
+  local → land/06–08 GCP. A local step after GCP steps restores the last LOCAL step's state.
+  `data/` is not in `work.tar.gz` (the viewing events are ~100 MB): restore lays sun_gen's parts back
+  from its cache. Recording a GCP step changes the key of every step after it: write the local
+  ones again (`--write land`, ~20 s); their transcripts should come out identical.
 - `capture` takes `gs://<bucket>/<object>`, read back with `gcloud storage cat`.
 - Typed commands ≤ 78 columns (`$RAW` is `gs://sun-media-dev-raw`); code ≤ 79; the terminal holds 13 rows.
+
+## Recording (runbook)
+
+Secrets (environment, never committed): `GOOGLE_PROJECT_ID`, `GOOGLE_CREDENTIALS` (the recording
+service account's key JSON), `GOOGLE_BILLING_ACCOUNT` (§3.8's budget), optional `GCS_SUFFIX`.
+The recorder has never run against a real project: its first recordings are its test.
+
+1. The recording SA needs, on the project: Owner (or Editor + Project IAM Admin + Service Account
+   Admin + Secret Manager Admin + Cloud KMS Admin + Storage Admin + Service Usage Admin), and
+   Billing Account Costs Manager on the billing account for the budget. Enable
+   `cloudresourcemanager`, `iam`, `iamcredentials`, `storage`, `serviceusage` first if the
+   project is new (Terraform enables secretmanager, cloudkms, billingbudgets, monitoring).
+2. In order, one at a time, reading each transcript: `python scripts/spine.py --record start/05-signing-in`
+   … `start/08`, `secure/01` … `secure/08`, `land/01`, then `--write land` (local, re-keyed), then
+   `--record land/06`, `land/07`, `land/08`. Run `python scripts/leaks.py` before committing.
+3. Expect to fix: §3.7's lock demo timing (`sleep 5`), §4.4/4.6 impersonation needing a minute after
+   §4.4's grant (record §4.5 a few minutes later), §3.8's budget permissions.
+4. Teardown after Course 5: `--teardown` (terraform destroy). The raw bucket's retention (§5.7) holds
+   objects for an hour; the KMS key ring `kr-media` can never be deleted — the next recording must
+   `terraform import` it (and its key) before §4.7 applies.
 
 ## Invariants
 

@@ -1,2 +1,1 @@
-{"from": "land/04-manifest", "changes": ["extract/extract.py", "extract/g1.py"], "env": true, "venv": true, "branch": true,
- "setup": ["psql -q -d billing -f data/billing/rerate.sql"]}
+{"from": "land/04-manifest", "changes": ["extract/extract.py", "extract/g1.py"], "env": true, "venv": true, "branch": true, "setup": ["psql -q -d billing -f data/billing/rerate.sql"]}

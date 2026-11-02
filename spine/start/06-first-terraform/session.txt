@@ -1,0 +1,4 @@
+$ cd infra
+$ terraform init -input=false
+$ terraform apply -auto-approve
+$ gcloud storage buckets list --filter="labels.app=viewing-pulse" --format="value(name)"

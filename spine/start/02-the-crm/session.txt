@@ -1,0 +1,13 @@
+$ bash sources/load.sh
+$ psql crm -P footer=off -f sources/crm/mix.sql
+    package    | monthly_price | households
+---------------+---------------+------------
+ Entertainment |         34.00 |       1680
+ Essentials    |         26.00 |       1464
+ Sports        |         52.00 |       1218
+ Ultimate      |         79.00 |        638
+$ psql crm -P footer=off -v hh=HH-10042 -f sources/crm/history.sql
+ package_id | valid_from |  valid_to
+------------+------------+------------
+ P-ENT      | 2019-08-06 | 2026-10-15
+ P-SPT      | 2026-10-15 |

@@ -1,0 +1,1 @@
+{"from": "start/04-an-events-life", "changes": ["gcp.sh"], "gcp": true, "env": "gcp.sh"}

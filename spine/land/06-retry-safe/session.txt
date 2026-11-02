@@ -1,0 +1,7 @@
+$ python extract/extract.py plan billing --dt 2026-10-31
+$ python extract/extract.py copy billing --dt 2026-10-31
+$ python extract/extract.py copy billing --dt 2026-10-31
+$ python extract/g1.py billing --dt 2026-10-31
+$ python extract/g1.py billing --dt 2026-10-31
+$ python extract/extract.py copy billing --dt 2026-10-31
+$ gcloud storage ls "$RAW/source=billing/**"

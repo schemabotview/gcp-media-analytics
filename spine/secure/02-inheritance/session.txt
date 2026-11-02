@@ -1,0 +1,4 @@
+$ gcloud projects get-iam-policy $TF_VAR_project_id --format=json > policy.json
+$ jq -r '[.bindings[].role] | length' policy.json
+$ gcloud storage buckets get-iam-policy $RAW --format=json > bucket.json
+$ jq '.bindings' bucket.json

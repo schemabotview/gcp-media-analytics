@@ -1,0 +1,1 @@
+{"from": "start/06-first-terraform", "changes": ["infra/backend.tf", "infra/bootstrap.sh"], "gcp": true, "env": "gcp.sh"}

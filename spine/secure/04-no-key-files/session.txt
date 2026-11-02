@@ -1,0 +1,5 @@
+$ cd infra
+$ terraform apply -var-file=envs/dev.tfvars -auto-approve
+$ SA=sa-ingest@$TF_VAR_project_id.iam.gserviceaccount.com
+$ gcloud iam service-accounts keys list --iam-account=$SA --managed-by=user
+$ gcloud auth print-access-token --impersonate-service-account=$SA | wc -c

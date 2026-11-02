@@ -1,0 +1,4 @@
+$ cd infra
+$ terraform apply -var-file=envs/dev.tfvars -auto-approve
+$ gcloud storage buckets describe $RAW --format="yaml(retention_policy)"
+$ gcloud storage rm "$RAW/source=billing/dt=2026-10-31/charges.csv"

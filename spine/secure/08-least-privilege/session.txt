@@ -1,0 +1,5 @@
+$ cd infra
+$ terraform apply -var-file=envs/dev.tfvars -auto-approve
+$ bash roles.sh
+$ SA=sa-ingest@$TF_VAR_project_id.iam.gserviceaccount.com
+$ gcloud storage ls "$RAW/**" --impersonate-service-account=$SA && echo empty

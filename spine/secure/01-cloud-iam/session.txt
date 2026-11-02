@@ -1,0 +1,3 @@
+$ gcloud projects get-iam-policy $TF_VAR_project_id --format=json > policy.json
+$ jq -r '.bindings[].role' policy.json
+$ jq '.bindings[] | select(.role == "roles/owner")' policy.json

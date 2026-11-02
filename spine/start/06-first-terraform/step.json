@@ -1,0 +1,1 @@
+{"from": "start/05-signing-in", "changes": ["infra/.terraform.lock.hcl", "infra/main.tf", "infra/variables.tf"], "gcp": true, "env": "gcp.sh"}

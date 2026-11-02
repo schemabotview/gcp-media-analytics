@@ -12,8 +12,8 @@ Planned as one film (12 courses, 92 sections). Prerequisites:
 [`sql-bank`](https://github.com/schemabotview/sql-bank) and
 [`spark-ecommerce-analytics`](https://github.com/schemabotview/spark-ecommerce-analytics).
 
-**Status:** plan v1.1 awaiting the owner's review; infra built; the pilot (Course 5) has its four
-local sections authored. No GCP step is recorded yet.
+**Status:** plan v1.2 awaiting the owner's review; infra built; Courses 3 and 5 have their
+local sections authored; every GCP step of Courses 3–5 is prepared, awaiting recording.
 Plan: [`COURSE-PLAN.md`](COURSE-PLAN.md) · Rules and status: [`CLAUDE.md`](CLAUDE.md).
 
 ## Run

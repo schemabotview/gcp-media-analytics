@@ -13,10 +13,13 @@ Same seed → byte-identical files. Layout under --out:
   billing/rerate.sql            §5.5: three charges re-rated at 02:00:04 on 1 November, during the copy
   catalogue/titles.csv          the content catalogue, as the vendor delivers it
   epg/2026-10-31.json           the electronic programme guide for derby day, as the vendor delivers it
+  viewing/2026-10-31.jsonl      every device's viewing events on derby day, in event time (sun_gen.events)
+  telemetry/2026-10-31.jsonl    each broadband exchange, each minute of the day
 """
 from __future__ import annotations
 
 import argparse
+import functools
 import csv
 import io
 import json
@@ -26,7 +29,7 @@ from pathlib import Path
 
 from .model import BUSINESS_DATE, PACKAGES, RERATE_AT, RERATE_CREDIT, SEED_CUTOFF, build
 
-PARTS = ('crm', 'billing', 'catalogue', 'epg')
+PARTS = ('crm', 'billing', 'catalogue', 'epg', 'viewing', 'telemetry')
 
 
 def ts(t) -> str:
@@ -47,8 +50,27 @@ def lit(v) -> str:
     return str(v) if isinstance(v, (int, Decimal)) else "'" + str(v).replace("'", "''") + "'"
 
 
+@functools.cache
+def world():
+    return build()
+
+
+@functools.cache
+def happened():
+    from .events import build_events
+    return build_events(world())
+
+
+def jsonl(rows: list[dict]) -> str:
+    return ''.join(json.dumps(r, separators=(', ', ': ')) + '\n' for r in rows)
+
+
 def files(part: str) -> dict[str, str]:
-    w = build()
+    w = world()
+    if part == 'viewing':
+        return {f'{BUSINESS_DATE}.jsonl': jsonl(happened()[0])}
+    if part == 'telemetry':
+        return {f'{BUSINESS_DATE}.jsonl': jsonl(happened()[1])}
     if part == 'crm':
         def row(s, valid_to, updated_at):
             return {'subscription_id': s.subscription_id, 'household_id': s.household_id, 'package_id': s.package_id,

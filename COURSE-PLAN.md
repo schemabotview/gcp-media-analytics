@@ -1,7 +1,9 @@
 # Learn GCP by building a media & broadband analytics platform: full course, beginner to professional — plan
 
-**Plan status:** v1.1, awaiting owner review (2026-11-02). v1.1: the pilot is Course 5; §5.3–5.5
-as built (windows by night, the watermark is the last published night); the facts `sun_gen` froze. Agreed with the owner: Python
+**Plan status:** v1.2, awaiting owner review (2026-11-02). v1.1: the pilot is Course 5; §5.3–5.5
+as built (windows by night, the watermark is the last published night); the facts `sun_gen` froze.
+v1.2: Courses 3–4 as prepared (§3.5–3.8 and Course 4 await recording); derby-day viewing and
+telemetry generated, their facts exact. Agreed with the owner: Python
 throughout (Beam and PySpark), the owner's GCP project for recorded steps, the company is **Sun**
 (fictional), no ML or AI features. Shared rules (section shape, ◆ detours, packaging, build order)
 are in `../CLAUDE.md`; this plan states only what is specific to this concept.
@@ -150,7 +152,8 @@ marked † are what `sun_gen` is built to produce; they are frozen when its `ver
 | projects | `sun-media-dev`, `sun-media-prod`; numbers shown as `100000000001` / `100000000002` |
 | region | `europe-west2` (London), zones `a`, `b`, `c` |
 | labels | `app=viewing-pulse`, `env`, `owner=media-data` |
-| buckets | `sun-media-dev-raw`, `sun-media-dev-tfstate` (prefix `env/dev`, `env/prod`) |
+| buckets | `sun-media-dev-raw`, `sun-media-dev-tfstate` (prefix `env/dev`, `env/prod`): Terraform names them `<project>-raw`, `<project>-tfstate`, so the recorder's project normalisation shows these |
+| billing account | shown as `000000-000000-000001`; the recorder's host as `priya-laptop` |
 | raw paths | `source=<crm\|billing\|catalogue\|epg>/dt=2026-10-31/` + `_manifest.json`, `_SUCCESS` |
 | service accounts | `sa-ingest`, `sa-dataflow`, `sa-dataproc`, `sa-airflow`, `sa-cicd` `@sun-media-dev.iam.gserviceaccount.com` |
 | secret / key | secret `crm-db-password`; key ring `kr-media`, key `k-raw` |
@@ -162,8 +165,10 @@ marked † are what `sun_gen` is built to produce; they are frozen when its `ver
 | CRM | `packages` (`P-ESS` Essentials, `P-ENT` Entertainment, `P-SPT` Sports, `P-ULT` Ultimate), `households`, `subscriptions` (one row per version); `HH-10042` Entertainment → Sports on 2026-10-15; 37 households buy Sports on derby day |
 | billing | `charges` (`subscription`, `rental`, `upgrade`); a night's window is (dt 00:00, dt+1 00:00] on `updated_at`: dt=2026-10-30 holds 1,051, dt=2026-10-31 holds 1,068 |
 | EPG | six channels (`SUN-ONE`, `SUN-SPORTS-1/2`, `SUN-MOVIES-1/2`, `SUN-NEWS`); the gap: `SUN-MOVIES-2` 20:00–22:00 |
-| exchanges | 12: `EX-LDN-01`…`06`, `EX-BHM-01`…`03`, `EX-MAN-01`…`03`; `EX-LDN-04` buffers in the second half † |
-| the answer | derby peak 2,140 † concurrent households at 18:41; `EX-LDN-04` buffering ratio 4.1% † vs 0.6% † elsewhere |
+| exchanges | 12: `EX-LDN-01`…`06`, `EX-BHM-01`…`03`, `EX-MAN-01`…`03`; `EX-LDN-04` buffers in the second half |
+| the answer | derby peak 2,140 concurrent households at 18:41 (no other minute reaches it); `EX-LDN-04` buffering ratio 4.1% vs 0.6% on every other exchange (buffering seconds ÷ watched seconds, the derby's events) |
+| viewing | 400,956 events on 31 October (`play`, `heartbeat` a minute, `buffer`, `stop`), the derby 62% of them; §3.4 traces `STB-13795` (EX-LDN-04: 136 heartbeats, 40 stalls, all after 18:35) |
+| telemetry | 12 exchanges × 1,440 minutes; `EX-LDN-04`'s latency and loss climb 18:35–19:25 |
 | alerts | notification channel `media-data@sun.example` |
 | ids | any other id (job, operation, run) as `…000NN` in order of first appearance |
 
@@ -268,13 +273,13 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 
 | # | Section | Step | Side pane | Level |
 | --- | --- | --- | --- | --- |
-| 1 | Sun's five sources | concept + `sun_gen` | CRM, billing, catalogue + EPG, viewing events, network telemetry | L |
+| 1 | Sun's five sources | `wc -l` over sun_gen's data; the sources' README | five sources → nightly batch / live stream | L |
 | 2 | The CRM | `psql`: households, subscriptions, packages | ER: household → subscription → package | L |
 | 3 | The catalogue and the EPG | `titles.csv`, `epg/2026-10-31.json` | channel × slot → title | L |
-| 4 | An event's life | one derby session: `play` → heartbeats → `buffer` → `stop` | the event sequence on one device | L |
+| 4 | An event's life | `trace.jq` over `STB-13795`'s derby: `play` → heartbeats → `buffer` → `stop` | the event sequence on one device | L |
 | 5 | Signing in | `gcloud auth list`, `config list`; nothing labelled `app=viewing-pulse` yet | the empty map; naming and labels | G |
 | 6 | A first Terraform file | `main.tf`: the raw bucket; `init`, `plan`, `apply` | Terraform → google provider → API → bucket | G |
-| 7 | State, and where it lives | `backend "gcs"`, bootstrapped by the CLI; the lock while a second apply waits | code ↔ state ↔ GCP; the lock object | G |
+| 7 | State, and where it lives | `backend "gcs"`, bootstrapped by the CLI (`bootstrap.sh`); a plan refused while an apply holds the lock | code ↔ state ↔ GCP; the lock object | G |
 | 8 | Variables, modules, a budget | `modules/`, `fmt -check`, `validate`; a billing budget at 80% | the module tree; budget → email | G |
 
 **4. `secure` · Identity first · 8**
@@ -282,11 +287,11 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 | # | Section | Step | Side pane | Level |
 | --- | --- | --- | --- | --- |
 | 1 | Cloud IAM | `get-iam-policy`: principals, roles, bindings | an allow policy: role → members | G |
-| 2 | ◆ full scene: IAM inheritance | bindings at project and bucket | policies union down the hierarchy | G |
+| 2 | ◆ full scene: IAM inheritance | the project's policy and the bucket's (`projectOwner:` convenience members) | policies union down the hierarchy | G |
 | 3 | Service accounts | the five `sa-*` accounts in Terraform | one account per job, who wears it | G |
-| 4 | No key files | impersonation (`--impersonate-service-account`); a key-file creation refused by org policy | person → token for the SA, short-lived | G |
-| 5 | ⑂ PERMISSION_DENIED | `sa-ingest` reads `bronze`: refused; the narrow role granted | missing permission → the role that holds it | G |
-| 6 | Secret Manager | `crm-db-password`, versions; the SA reads it, a person cannot | secret → versions → accessor | G |
+| 4 | No key files | Priya may impersonate each SA (Terraform); no user-managed keys; a token minted on request. The org-policy refusal only if the project sits in an organization (Open) | person → token for the SA, short-lived | G |
+| 5 | ⑂ PERMISSION_DENIED | `sa-ingest` lists the raw zone: refused (`storage.objects.list`); §4.8 grants the narrow role | missing permission → the role that holds it | G |
+| 6 | Secret Manager | `crm-db-password` (a generated value, never printed: `wc -c`); `sa-ingest` reads it, `sa-dataflow` is refused | secret → versions → accessor | G |
 | 7 | Cloud KMS and CMEK | `kr-media` / `k-raw`; the raw bucket's default key; rotation | key ring → key → versions → bucket | G |
 | 8 | Least privilege | the platform's role matrix applied | matrix: service account × resource × role | G |
 
@@ -299,8 +304,8 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 | 3 | The nightly extracts | `extract.py`: the CRM as a snapshot, billing by window, dt=2026-10-30; each folder closed by `_SUCCESS`, unchecked | source → extract → raw; snapshot vs window | L · E |
 | 4 | The manifest | `plan` writes dt=2026-10-31's `_manifest.json` FIRST: window, expected rows, columns | plan → manifest → copy → G1 | L · E |
 | 5 | ⑂ G1 fails | the copy lands 1,065 of 1,068; G1 FAIL; only G1 writes `_SUCCESS` now | the night in order; G1's checks | L · E |
-| 6 | Retry-safe and sealed | `ifGenerationMatch=0` refuses an overwrite; `_SUCCESS` seals | a retry lands on the same path until sealed | G |
-| 7 | Immutable by policy | a retention policy; a delete refused | object → retention → refused | G |
+| 6 | Retry-safe and sealed | a retried copy rewrites the same names; G1 seals with `ifGenerationMatch=0` (a second seal refused); a sealed night refuses a copy | a retry lands on the same path until sealed | G |
+| 7 | Immutable by policy | a retention policy (dev: one hour, so a recording can be torn down the same day); a delete refused | object → retention → refused | G |
 | 8 | Hot to cold | lifecycle rules in Terraform: Standard → Nearline → Coldline → Archive | an object's age on a timeline | G |
 
 **6. `stream` · Pub/Sub: hearing every box · 7**
@@ -406,7 +411,8 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 4. Infrastructure as Terraform from Course 3 (2026-11-02).
 5. Repo `gcp-media-analytics`, public, under `schemabotview`; published at
    `graphl.in/gcp-media-analytics`.
-6. The pilot is Course 5, `land`, as azure-trade-finance (2026-11-02).
+6. The pilot is Course 5, `land`, as azure-trade-finance (2026-11-02). Courses 3–4 were authored
+   next; the chain runs start → secure → land.
 7. A night's window is fixed by its `dt` — (dt 00:00, dt+1 00:00] on `updated_at` — and the
    loaders' watermark is the newest night with a `_SUCCESS`. No mutable watermark object: the raw
    bucket gets a retention policy in §5.7, which would refuse overwriting one (2026-11-02).

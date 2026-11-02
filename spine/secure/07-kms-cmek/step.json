@@ -1,0 +1,1 @@
+{"from": "secure/06-secret-manager", "changes": ["infra/main.tf", "infra/modules/kms/main.tf", "infra/modules/kms/outputs.tf", "infra/modules/kms/variables.tf", "infra/modules/storage/main.tf", "infra/modules/storage/variables.tf"], "gcp": true, "env": "gcp.sh"}

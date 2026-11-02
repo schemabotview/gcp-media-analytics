@@ -1,0 +1,2 @@
+$ SA=sa-ingest@$TF_VAR_project_id.iam.gserviceaccount.com
+$ gcloud storage ls "$RAW/**" --impersonate-service-account=$SA

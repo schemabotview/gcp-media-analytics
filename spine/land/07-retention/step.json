@@ -1,0 +1,1 @@
+{"from": "land/06-retry-safe", "changes": ["infra/main.tf", "infra/modules/storage/main.tf", "infra/modules/storage/variables.tf", "infra/variables.tf"], "gcp": true, "env": "gcp.sh", "setup": ["cd infra && terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate >/dev/null"]}

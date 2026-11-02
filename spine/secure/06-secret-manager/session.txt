@@ -1,0 +1,9 @@
+$ cd infra
+$ terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate
+$ terraform apply -var-file=envs/dev.tfvars -auto-approve
+$ gcloud secrets versions list crm-db-password
+$ AS=--impersonate-service-account
+$ SA=sa-ingest@$TF_VAR_project_id.iam.gserviceaccount.com
+$ gcloud secrets versions access latest --secret=crm-db-password $AS=$SA | wc -c
+$ DF=sa-dataflow@$TF_VAR_project_id.iam.gserviceaccount.com
+$ gcloud secrets versions access latest --secret=crm-db-password $AS=$DF

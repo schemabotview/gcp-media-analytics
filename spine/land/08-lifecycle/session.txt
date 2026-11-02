@@ -1,0 +1,3 @@
+$ cd infra
+$ terraform apply -var-file=envs/dev.tfvars -auto-approve
+$ gcloud storage buckets describe $RAW --format="json(lifecycle_config)"

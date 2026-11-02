@@ -1,0 +1,4 @@
+$ gcloud auth list --format="value(account)"
+$ gcloud config get project
+$ gcloud services list --enabled --filter="name:storage" --format="value(name)"
+$ gcloud storage buckets list --filter="labels.app=viewing-pulse"

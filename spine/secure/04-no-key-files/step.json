@@ -1,0 +1,1 @@
+{"from": "secure/03-service-accounts", "changes": ["infra/main.tf", "infra/modules/iam/main.tf", "infra/modules/iam/variables.tf"], "setup": ["cd infra && terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate >/dev/null"], "gcp": true, "env": "gcp.sh"}

@@ -1,0 +1,1 @@
+{"from": "secure/02-inheritance", "changes": ["infra/main.tf", "infra/modules/iam/main.tf", "infra/modules/iam/outputs.tf", "infra/variables.tf"], "gcp": true, "env": "gcp.sh"}

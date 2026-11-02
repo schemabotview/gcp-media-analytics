@@ -1,0 +1,1 @@
+{"from": "secure/07-kms-cmek", "changes": ["infra/main.tf", "infra/modules/iam/main.tf", "infra/modules/iam/variables.tf", "infra/modules/storage/main.tf", "infra/modules/storage/variables.tf", "infra/roles.sh"], "setup": ["cd infra && terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate >/dev/null"], "gcp": true, "env": "gcp.sh"}

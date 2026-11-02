@@ -1,0 +1,1 @@
+{"from": "start/07-state", "changes": ["gcp.sh", "infra/budget.tf", "infra/envs/dev.tfvars", "infra/main.tf", "infra/modules/storage/main.tf", "infra/modules/storage/outputs.tf", "infra/modules/storage/variables.tf", "infra/variables.tf"], "gcp": true, "env": "gcp.sh"}

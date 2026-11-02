@@ -1,0 +1,5 @@
+$ cd infra
+$ terraform fmt -check -recursive && echo formatted
+$ terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate
+$ terraform validate
+$ terraform apply -var-file=envs/dev.tfvars -auto-approve
