@@ -1,5 +1,191 @@
 $ cd infra
 $ terraform apply -var-file=envs/dev.tfvars -auto-approve
+Acquiring state lock. This may take a few moments...
+module.secrets.random_password.crm: Refreshing state... [id=none]
+module.secrets.google_project_service.secretmanager: Refreshing state... [id=sun
+-media-dev/secretmanager.googleapis.com]
+google_project_service.budgets["monitoring.googleapis.com"]: Refreshing state...
+ [id=sun-media-dev/monitoring.googleapis.com]
+google_project_service.budgets["billingbudgets.googleapis.com"]: Refreshing stat
+e... [id=sun-media-dev/billingbudgets.googleapis.com]
+module.kms.data.google_storage_project_service_account.gcs: Reading...
+module.kms.data.google_storage_project_service_account.gcs: Read complete after 
+1s [id=service-100000000001@gs-project-accounts.iam.gserviceaccount.com]
+data.google_project.this: Reading...
+data.google_project.this: Read complete after 0s [id=projects/sun-media-dev]
+module.kms.google_project_service.kms: Refreshing state... [id=sun-media-dev/clo
+udkms.googleapis.com]
+module.iam.google_service_account.job["sa-cicd"]: Refreshing state... [id=projec
+ts/sun-media-dev/serviceAccounts/sa-cicd@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_service_account.job["sa-dataflow"]: Refreshing state... [id=pr
+ojects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.iam.gserviceaccou
+nt.com]
+module.iam.google_service_account.job["sa-dataproc"]: Refreshing state... [id=pr
+ojects/sun-media-dev/serviceAccounts/sa-dataproc@sun-media-dev.iam.gserviceaccou
+nt.com]
+module.iam.google_service_account.job["sa-ingest"]: Refreshing state... [id=proj
+ects/sun-media-dev/serviceAccounts/sa-ingest@sun-media-dev.iam.gserviceaccount.c
+om]
+module.iam.google_service_account.job["sa-airflow"]: Refreshing state... [id=pro
+jects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam.gserviceaccount
+.com]
+module.secrets.google_secret_manager_secret.crm: Refreshing state... [id=project
+s/sun-media-dev/secrets/crm-db-password]
+google_monitoring_notification_channel.email: Refreshing state... [id=projects/s
+un-media-dev/notificationChannels/10000000000000000001]
+module.kms.google_kms_key_ring.media: Refreshing state... [id=projects/sun-media
+-dev/locations/europe-west2/keyRings/kr-media]
+module.iam.google_service_account_iam_member.operator["sa-ingest"]: Refreshing s
+tate... [id=projects/sun-media-dev/serviceAccounts/sa-ingest@sun-media-dev.iam.g
+serviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@sun
+.example]
+module.iam.google_service_account_iam_member.operator["sa-airflow"]: Refreshing 
+state... [id=projects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam
+.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@s
+un.example]
+module.iam.google_service_account_iam_member.operator["sa-cicd"]: Refreshing sta
+te... [id=projects/sun-media-dev/serviceAccounts/sa-cicd@sun-media-dev.iam.gserv
+iceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@sun.exa
+mple]
+module.iam.google_service_account_iam_member.operator["sa-dataflow"]: Refreshing
+ state... [id=projects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.i
+am.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya
+@sun.example]
+module.iam.google_service_account_iam_member.operator["sa-dataproc"]: Refreshing
+ state... [id=projects/sun-media-dev/serviceAccounts/sa-dataproc@sun-media-dev.i
+am.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya
+@sun.example]
+module.secrets.google_secret_manager_secret_version.crm: Refreshing state... [id
+=projects/100000000001/secrets/crm-db-password/versions/1]
+google_billing_budget.month: Refreshing state... [id=billingAccounts/000000-0000
+00-000001/budgets/00000000-0000-0000-0000-000000001000]
+module.kms.google_kms_crypto_key.raw: Refreshing state... [id=projects/sun-media
+-dev/locations/europe-west2/keyRings/kr-media/cryptoKeys/k-raw]
+module.secrets.google_secret_manager_secret_iam_member.ingest: Refreshing state.
+.. [id=projects/sun-media-dev/secrets/crm-db-password/roles/secretmanager.secret
+Accessor/serviceAccount:sa-ingest@sun-media-dev.iam.gserviceaccount.com]
+module.kms.google_kms_crypto_key_iam_member.gcs: Refreshing state... [id=project
+s/sun-media-dev/locations/europe-west2/keyRings/kr-media/cryptoKeys/k-raw/roles/
+cloudkms.cryptoKeyEncrypterDecrypter/serviceAccount:service-100000000001@gs-proj
+ect-accounts.iam.gserviceaccount.com]
+module.storage.google_storage_bucket.raw: Refreshing state... [id=sun-media-dev-
+raw]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # module.iam.google_project_iam_member.job["sa-airflow/roles/composer.worker"]
+ will be created
+  + resource "google_project_iam_member" "job" {
+      + etag    = (known after apply)
+      + id      = (known after apply)
+      + member  = "serviceAccount:sa-airflow@sun-media-dev.iam.gserviceaccount.c
+om"
+      + project = "sun-media-dev"
+      + role    = "roles/composer.worker"
+    }
+
+  # module.iam.google_project_iam_member.job["sa-dataflow/roles/dataflow.worker"
+] will be created
+  + resource "google_project_iam_member" "job" {
+      + etag    = (known after apply)
+      + id      = (known after apply)
+      + member  = "serviceAccount:sa-dataflow@sun-media-dev.iam.gserviceaccount.
+com"
+      + project = "sun-media-dev"
+      + role    = "roles/dataflow.worker"
+    }
+
+  # module.iam.google_project_iam_member.job["sa-dataproc/roles/dataproc.worker"
+] will be created
+  + resource "google_project_iam_member" "job" {
+      + etag    = (known after apply)
+      + id      = (known after apply)
+      + member  = "serviceAccount:sa-dataproc@sun-media-dev.iam.gserviceaccount.
+com"
+      + project = "sun-media-dev"
+      + role    = "roles/dataproc.worker"
+    }
+
+  # module.storage.google_storage_bucket_iam_member.raw["dataproc-view"] will be
+ created
+  + resource "google_storage_bucket_iam_member" "raw" {
+      + bucket = "sun-media-dev-raw"
+      + etag   = (known after apply)
+      + id     = (known after apply)
+      + member = "serviceAccount:sa-dataproc@sun-media-dev.iam.gserviceaccount.c
+om"
+      + role   = "roles/storage.objectViewer"
+    }
+
+  # module.storage.google_storage_bucket_iam_member.raw["ingest-create"] will be
+ created
+  + resource "google_storage_bucket_iam_member" "raw" {
+      + bucket = "sun-media-dev-raw"
+      + etag   = (known after apply)
+      + id     = (known after apply)
+      + member = "serviceAccount:sa-ingest@sun-media-dev.iam.gserviceaccount.com
+"
+      + role   = "roles/storage.objectCreator"
+    }
+
+  # module.storage.google_storage_bucket_iam_member.raw["ingest-view"] will be c
+reated
+  + resource "google_storage_bucket_iam_member" "raw" {
+      + bucket = "sun-media-dev-raw"
+      + etag   = (known after apply)
+      + id     = (known after apply)
+      + member = "serviceAccount:sa-ingest@sun-media-dev.iam.gserviceaccount.com
+"
+      + role   = "roles/storage.objectViewer"
+    }
+
+Plan: 6 to add, 0 to change, 0 to destroy.
+module.iam.google_project_iam_member.job["sa-airflow/roles/composer.worker"]: Cr
+eating...
+module.iam.google_project_iam_member.job["sa-airflow/roles/composer.worker"]: Cr
+eation complete after 8s [id=sun-media-dev/roles/composer.worker/serviceAccount:
+sa-airflow@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_project_iam_member.job["sa-dataproc/roles/dataproc.worker"]: C
+reating...
+module.iam.google_project_iam_member.job["sa-dataproc/roles/dataproc.worker"]: C
+reation complete after 8s [id=sun-media-dev/roles/dataproc.worker/serviceAccount
+:sa-dataproc@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_project_iam_member.job["sa-dataflow/roles/dataflow.worker"]: C
+reating...
+module.iam.google_project_iam_member.job["sa-dataflow/roles/dataflow.worker"]: C
+reation complete after 7s [id=sun-media-dev/roles/dataflow.worker/serviceAccount
+:sa-dataflow@sun-media-dev.iam.gserviceaccount.com]
+module.storage.google_storage_bucket_iam_member.raw["dataproc-view"]: Creating..
+.
+module.storage.google_storage_bucket_iam_member.raw["dataproc-view"]: Creation c
+omplete after 6s [id=b/sun-media-dev-raw/roles/storage.objectViewer/serviceAccou
+nt:sa-dataproc@sun-media-dev.iam.gserviceaccount.com]
+module.storage.google_storage_bucket_iam_member.raw["ingest-view"]: Creating...
+module.storage.google_storage_bucket_iam_member.raw["ingest-view"]: Creation com
+plete after 6s [id=b/sun-media-dev-raw/roles/storage.objectViewer/serviceAccount
+:sa-ingest@sun-media-dev.iam.gserviceaccount.com]
+module.storage.google_storage_bucket_iam_member.raw["ingest-create"]: Creating..
+.
+module.storage.google_storage_bucket_iam_member.raw["ingest-create"]: Creation c
+omplete after 5s [id=b/sun-media-dev-raw/roles/storage.objectCreator/serviceAcco
+unt:sa-ingest@sun-media-dev.iam.gserviceaccount.com]
+
+Apply complete! Resources: 6 added, 0 changed, 0 destroyed.
 $ bash roles.sh
+project sun-media-dev
+  sa-airflow  roles/composer.worker
+  sa-dataflow  roles/dataflow.worker
+  sa-dataproc  roles/dataproc.worker
+bucket gs://sun-media-dev-raw
+  sa-dataproc  roles/storage.objectViewer
+  sa-ingest  roles/storage.objectCreator
+  sa-ingest  roles/storage.objectViewer
 $ SA=sa-ingest@$TF_VAR_project_id.iam.gserviceaccount.com
-$ gcloud storage ls "$RAW/**" --impersonate-service-account=$SA && echo empty
+$ gcloud storage ls $RAW --impersonate-service-account=$SA && echo allowed
+WARNING: This command is using service account impersonation. All API calls will
+ be executed as [sa-ingest@sun-media-dev.iam.gserviceaccount.com].
+allowed

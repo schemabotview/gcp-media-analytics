@@ -1,5 +1,184 @@
 $ cd infra
 $ terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate
+Initializing the backend...
+
+Initializing modules...
+- kms in modules/kms
+
+Initializing provider plugins...
+- Reusing version 3.9.1 of hashicorp/random from the dependency lock file
+- Reusing version 8.9.0 of hashicorp/google from the dependency lock file
+- Using previously-installed hashicorp/random v3.9.1
+- Using previously-installed hashicorp/google v8.9.0
+
+Terraform has been successfully initialized!
 $ terraform apply -var-file=envs/dev.tfvars -auto-approve
+Acquiring state lock. This may take a few moments...
+module.secrets.random_password.crm: Refreshing state... [id=none]
+module.kms.data.google_storage_project_service_account.gcs: Reading...
+module.kms.data.google_storage_project_service_account.gcs: Read complete after 
+1s [id=service-100000000001@gs-project-accounts.iam.gserviceaccount.com]
+module.secrets.google_project_service.secretmanager: Refreshing state... [id=sun
+-media-dev/secretmanager.googleapis.com]
+data.google_project.this: Reading...
+data.google_project.this: Read complete after 0s [id=projects/sun-media-dev]
+google_project_service.budgets["monitoring.googleapis.com"]: Refreshing state...
+ [id=sun-media-dev/monitoring.googleapis.com]
+google_project_service.budgets["billingbudgets.googleapis.com"]: Refreshing stat
+e... [id=sun-media-dev/billingbudgets.googleapis.com]
+module.iam.google_service_account.job["sa-dataflow"]: Refreshing state... [id=pr
+ojects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.iam.gserviceaccou
+nt.com]
+module.iam.google_service_account.job["sa-ingest"]: Refreshing state... [id=proj
+ects/sun-media-dev/serviceAccounts/sa-ingest@sun-media-dev.iam.gserviceaccount.c
+om]
+module.iam.google_service_account.job["sa-dataproc"]: Refreshing state... [id=pr
+ojects/sun-media-dev/serviceAccounts/sa-dataproc@sun-media-dev.iam.gserviceaccou
+nt.com]
+module.iam.google_service_account.job["sa-cicd"]: Refreshing state... [id=projec
+ts/sun-media-dev/serviceAccounts/sa-cicd@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_service_account.job["sa-airflow"]: Refreshing state... [id=pro
+jects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam.gserviceaccount
+.com]
+module.secrets.google_secret_manager_secret.crm: Refreshing state... [id=project
+s/sun-media-dev/secrets/crm-db-password]
+google_monitoring_notification_channel.email: Refreshing state... [id=projects/s
+un-media-dev/notificationChannels/10000000000000000001]
+module.iam.google_service_account_iam_member.operator["sa-ingest"]: Refreshing s
+tate... [id=projects/sun-media-dev/serviceAccounts/sa-ingest@sun-media-dev.iam.g
+serviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@sun
+.example]
+module.iam.google_service_account_iam_member.operator["sa-dataproc"]: Refreshing
+ state... [id=projects/sun-media-dev/serviceAccounts/sa-dataproc@sun-media-dev.i
+am.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya
+@sun.example]
+module.iam.google_service_account_iam_member.operator["sa-airflow"]: Refreshing 
+state... [id=projects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam
+.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@s
+un.example]
+module.iam.google_service_account_iam_member.operator["sa-dataflow"]: Refreshing
+ state... [id=projects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.i
+am.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya
+@sun.example]
+module.iam.google_service_account_iam_member.operator["sa-cicd"]: Refreshing sta
+te... [id=projects/sun-media-dev/serviceAccounts/sa-cicd@sun-media-dev.iam.gserv
+iceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@sun.exa
+mple]
+module.secrets.google_secret_manager_secret_version.crm: Refreshing state... [id
+=projects/100000000001/secrets/crm-db-password/versions/1]
+google_billing_budget.month: Refreshing state... [id=billingAccounts/000000-0000
+00-000001/budgets/00000000-0000-0000-0000-000000001000]
+module.secrets.google_secret_manager_secret_iam_member.ingest: Refreshing state.
+.. [id=projects/sun-media-dev/secrets/crm-db-password/roles/secretmanager.secret
+Accessor/serviceAccount:sa-ingest@sun-media-dev.iam.gserviceaccount.com]
+module.storage.google_storage_bucket.raw: Refreshing state... [id=sun-media-dev-
+raw]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+  ~ update in-place
+
+Terraform will perform the following actions:
+
+  # module.kms.google_kms_crypto_key.raw will be created
+  + resource "google_kms_crypto_key" "raw" {
+      + crypto_key_backend         = (known after apply)
+      + deletion_policy            = "DELETE"
+      + destroy_scheduled_duration = (known after apply)
+      + effective_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + id                         = (known after apply)
+      + import_only                = (known after apply)
+      + key_ring                   = (known after apply)
+      + name                       = "k-raw"
+      + primary                    = (known after apply)
+      + purpose                    = "ENCRYPT_DECRYPT"
+      + rotation_period            = "7776000s"
+      + terraform_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+
+      + version_template (known after apply)
+    }
+
+  # module.kms.google_kms_crypto_key_iam_member.gcs will be created
+  + resource "google_kms_crypto_key_iam_member" "gcs" {
+      + crypto_key_id = (known after apply)
+      + etag          = (known after apply)
+      + id            = (known after apply)
+      + member        = "serviceAccount:service-100000000001@gs-project-accounts
+.iam.gserviceaccount.com"
+      + role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+    }
+
+  # module.kms.google_kms_key_ring.media will be created
+  + resource "google_kms_key_ring" "media" {
+      + id       = (known after apply)
+      + location = "europe-west2"
+      + name     = "kr-media"
+      + project  = "sun-media-dev"
+    }
+
+  # module.kms.google_project_service.kms will be created
+  + resource "google_project_service" "kms" {
+      + deletion_policy    = "DELETE"
+      + disable_on_destroy = false
+      + id                 = (known after apply)
+      + project            = "sun-media-dev"
+      + service            = "cloudkms.googleapis.com"
+    }
+
+  # module.storage.google_storage_bucket.raw will be updated in-place
+  ~ resource "google_storage_bucket" "raw" {
+        id                          = "sun-media-dev-raw"
+        name                        = "sun-media-dev-raw"
+        # (18 unchanged attributes hidden)
+
+      + encryption {
+          + default_kms_key_name = (known after apply)
+        }
+
+        # (2 unchanged blocks hidden)
+    }
+
+Plan: 4 to add, 1 to change, 0 to destroy.
+module.kms.google_project_service.kms: Creating...
+module.kms.google_project_service.kms: Still creating... [00m10s elapsed]
+module.kms.google_project_service.kms: Still creating... [00m20s elapsed]
+module.kms.google_project_service.kms: Creation complete after 21s [id=sun-media
+-dev/cloudkms.googleapis.com]
+module.kms.google_kms_key_ring.media: Creating...
+module.kms.google_kms_key_ring.media: Creation complete after 2s [id=projects/su
+n-media-dev/locations/europe-west2/keyRings/kr-media]
+module.kms.google_kms_crypto_key.raw: Creating...
+module.kms.google_kms_crypto_key.raw: Creation complete after 1s [id=projects/su
+n-media-dev/locations/europe-west2/keyRings/kr-media/cryptoKeys/k-raw]
+module.kms.google_kms_crypto_key_iam_member.gcs: Creating...
+module.kms.google_kms_crypto_key_iam_member.gcs: Creation complete after 5s [id=
+projects/sun-media-dev/locations/europe-west2/keyRings/kr-media/cryptoKeys/k-raw
+/roles/cloudkms.cryptoKeyEncrypterDecrypter/serviceAccount:service-100000000001@
+gs-project-accounts.iam.gserviceaccount.com]
+module.storage.google_storage_bucket.raw: Modifying... [id=sun-media-dev-raw]
+module.storage.google_storage_bucket.raw: Modifications complete after 2s [id=su
+n-media-dev-raw]
+
+Apply complete! Resources: 4 added, 1 changed, 0 destroyed.
 $ gcloud kms keys list --keyring=kr-media --location=europe-west2
+NAME                                                                            
+    PURPOSE          ALGORITHM                    PROTECTION_LEVEL  LABELS      
+                                                                PRIMARY_ID  PRIM
+ARY_STATE
+projects/sun-media-dev/locations/europe-west2/keyRings/kr-media/cryptoKeys/k-raw
+  ENCRYPT_DECRYPT  GOOGLE_SYMMETRIC_ENCRYPTION  SOFTWARE          app=viewing-pu
+lse,env=dev,goog-terraform-provisioned=true,owner=media-data  1           ENABLE
+D
 $ gcloud storage buckets describe $RAW --format="value(default_kms_key)"
+projects/sun-media-dev/locations/europe-west2/keyRings/kr-media/cryptoKeys/k-raw
