@@ -1,4 +1,10 @@
 $ gcloud auth list --format="value(account)"
+priya@sun.example
 $ gcloud config get project
-$ gcloud services list --enabled --filter="name:storage" --format="value(name)"
+sun-media-dev
+$ gcloud services list --enabled --filter=config.name=storage.googleapis.com
+NAME                    TITLE
+storage.googleapis.com  Cloud Storage API
 $ gcloud storage buckets list --filter="labels.app=viewing-pulse"
+WARNING: The following filter keys were not present in any resource : labels.app
+Listed 0 items.

@@ -1,5 +1,34 @@
 $ bash infra/bootstrap.sh
+Creating gs://sun-media-dev-tfstate/...
+
+Updating gs://sun-media-dev-tfstate/...
+....
+state: gs://sun-media-dev-tfstate, versioned, ready
 $ cd infra
-$ terraform init -migrate-state -force-copy -backend-config=bucket=$TF_VAR_project_id-tfstate
-$ gcloud storage ls "gs://$TF_VAR_project_id-tfstate/**"
-$ terraform apply -auto-approve >/dev/null & sleep 5; terraform plan -lock-timeout=0s; wait
+$ B=$TF_VAR_project_id-tfstate
+$ terraform init -migrate-state -force-copy -backend-config=bucket=$B
+Initializing the backend...
+Acquiring state lock. This may take a few moments...
+Releasing state lock. This may take a few moments...
+
+Successfully configured the backend "gcs"! Terraform will automatically
+use this backend unless the backend configuration changes.
+
+Initializing provider plugins...
+- Reusing version 8.9.0 of hashicorp/google from the dependency lock file
+- Using previously-installed hashicorp/google v8.9.0
+
+Terraform has been successfully initialized!
+$ gcloud storage ls "gs://$B/**"
+gs://sun-media-dev-tfstate/env/dev/default.tfstate
+$ ls terraform.tfstate*
+terraform.tfstate
+terraform.tfstate.backup
+$ terraform plan
+Acquiring state lock. This may take a few moments...
+google_storage_bucket.raw: Refreshing state... [id=sun-media-dev-raw]
+
+No changes. Your infrastructure matches the configuration.
+
+Terraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.

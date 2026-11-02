@@ -45,7 +45,7 @@ azure-trade-finance when narration starts).
 |---|---|---|---|
 | 1 | `intro` | 3 | planned |
 | 2 | `how-gcp-runs` | 7 | planned |
-| 3 | `start` | 8 | §1–§4 authored, narrated (text), 4K-checked (L); §5–§8 prepared, await recording |
+| 3 | `start` | 8 | §1–§4 authored, narrated (text), 4K-checked (L); §5–§7 recorded on GCP, not yet authored; §8 awaits the billing account |
 | 4 | `secure` | 8 | all eight prepared (G), await recording |
 | 5 | `land` | 8 | pilot: §2–§5 authored, narrated (text), 4K-checked (L · E); §1, §6–§8 prepared, await recording |
 | 6 | `stream` | 7 | planned |
@@ -88,8 +88,11 @@ The recorder has never run against a real project: its first recordings are its 
 2. In order, one at a time, reading each transcript: `python scripts/spine.py --record start/05-signing-in`
    … `start/08`, `secure/01` … `secure/08`, `land/01`, then `--write land` (local, re-keyed), then
    `--record land/06`, `land/07`, `land/08`. Run `python scripts/leaks.py` before committing.
-3. Expect to fix: §3.7's lock demo timing (`sleep 5`), §4.4/4.6 impersonation needing a minute after
-   §4.4's grant (record §4.5 a few minutes later), §3.8's budget permissions.
+3. Recorded so far (2026-11-02, this project): §3.5, §3.6, §3.7 — the recorder works; the raw bucket
+   and the state bucket exist in the owner's project now. §3.8 waits for `GOOGLE_BILLING_ACCOUNT`
+   (a new session). Expect to fix: §4.4/4.6 impersonation needing a minute after §4.4's grant
+   (record §4.5 a few minutes later), §3.8's budget permissions. A typed command over 78 columns is
+   refused BEFORE anything runs — shorten it with a shell variable (`B=…`).
 4. Teardown after Course 5: `--teardown` (terraform destroy). The raw bucket's retention (§5.7) holds
    objects for an hour; the KMS key ring `kr-media` can never be deleted — the next recording must
    `terraform import` it (and its key) before §4.7 applies.

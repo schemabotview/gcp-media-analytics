@@ -1,4 +1,63 @@
 $ cd infra
 $ terraform init -input=false
+Initializing the backend...
+
+Initializing provider plugins...
+- Reusing version 8.9.0 of hashicorp/google from the dependency lock file
+- Installing hashicorp/google v8.9.0...
+- Installed hashicorp/google v8.9.0 (signed by HashiCorp)
+
+Terraform has been successfully initialized!
 $ terraform apply -auto-approve
-$ gcloud storage buckets list --filter="labels.app=viewing-pulse" --format="value(name)"
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # google_storage_bucket.raw will be created
+  + resource "google_storage_bucket" "raw" {
+      + deletion_policy             = "DELETE"
+      + effective_labels            = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + force_destroy               = false
+      + id                          = (known after apply)
+      + location                    = "EUROPE-WEST2"
+      + name                        = "sun-media-dev-raw"
+      + project                     = (known after apply)
+      + project_number              = (known after apply)
+      + public_access_prevention    = "enforced"
+      + rpo                         = (known after apply)
+      + self_link                   = (known after apply)
+      + storage_class               = "STANDARD"
+      + terraform_labels            = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + time_created                = (known after apply)
+      + uniform_bucket_level_access = true
+      + updated                     = (known after apply)
+      + url                         = (known after apply)
+
+      + soft_delete_policy (known after apply)
+
+      + versioning (known after apply)
+
+      + website (known after apply)
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+google_storage_bucket.raw: Creating...
+google_storage_bucket.raw: Creation complete after 4s [id=sun-media-dev-raw]
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+$ gcloud storage buckets describe $RAW --format="value(name,location,labels)"
+sun-media-dev-raw	EUROPE-WEST2	app=viewing-pulse;env=dev;goog-terraform-provisio
+ned=true;owner=media-data

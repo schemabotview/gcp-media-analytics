@@ -279,7 +279,7 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 | 4 | An event's life | `trace.jq` over `STB-13795`'s derby: `play` → heartbeats → `buffer` → `stop` | the event sequence on one device | L |
 | 5 | Signing in | `gcloud auth list`, `config list`; nothing labelled `app=viewing-pulse` yet | the empty map; naming and labels | G |
 | 6 | A first Terraform file | `main.tf`: the raw bucket; `init`, `plan`, `apply` | Terraform → google provider → API → bucket | G |
-| 7 | State, and where it lives | `backend "gcs"`, bootstrapped by the CLI (`bootstrap.sh`); a plan refused while an apply holds the lock | code ↔ state ↔ GCP; the lock object | G |
+| 7 | State, and where it lives | `backend "gcs"`, bootstrapped by the CLI (`bootstrap.sh`); the state moves into the bucket; every run takes the lock (a refused plan needs a waiting apply, so it is not shown) | code ↔ state ↔ GCP; the lock object | G |
 | 8 | Variables, modules, a budget | `modules/`, `fmt -check`, `validate`; a billing budget at 80% | the module tree; budget → email | G |
 
 **4. `secure` · Identity first · 8**
