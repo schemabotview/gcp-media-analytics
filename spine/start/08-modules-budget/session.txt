@@ -1,5 +1,135 @@
 $ cd infra
 $ terraform fmt -check -recursive && echo formatted
+formatted
 $ terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate
+Initializing the backend...
+
+Initializing modules...
+- storage in modules/storage
+
+Initializing provider plugins...
+- Reusing version 8.9.0 of hashicorp/google from the dependency lock file
+- Using previously-installed hashicorp/google v8.9.0
+
+Terraform has been successfully initialized!
 $ terraform validate
+Success! The configuration is valid.
 $ terraform apply -var-file=envs/dev.tfvars -auto-approve
+Acquiring state lock. This may take a few moments...
+module.storage.google_storage_bucket.raw: Refreshing state... [id=sun-media-dev-
+raw]
+data.google_project.this: Reading...
+data.google_project.this: Read complete after 1s [id=projects/sun-media-dev]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # google_billing_budget.month will be created
+  + resource "google_billing_budget" "month" {
+      + billing_account = "000000-000000-000001"
+      + deletion_policy = (known after apply)
+      + display_name    = "viewing-pulse-dev"
+      + id              = (known after apply)
+      + name            = (known after apply)
+
+      + all_updates_rule {
+          + disable_default_iam_recipients   = true
+          + enable_project_level_recipients  = false
+          + monitoring_notification_channels = (known after apply)
+          + schema_version                   = "1.0"
+        }
+
+      + amount {
+          + specified_amount {
+              + currency_code = "GBP"
+              + units         = "50"
+            }
+        }
+
+      + budget_filter {
+          + credit_types_treatment = "INCLUDE_ALL_CREDITS"
+          + labels                 = (known after apply)
+          + projects               = [
+              + "projects/100000000001",
+            ]
+          + services               = (known after apply)
+        }
+
+      + threshold_rules {
+          + spend_basis       = "CURRENT_SPEND"
+          + threshold_percent = 0.8
+        }
+      + threshold_rules {
+          + spend_basis       = "FORECASTED_SPEND"
+          + threshold_percent = 0.8
+        }
+    }
+
+  # google_monitoring_notification_channel.email will be created
+  + resource "google_monitoring_notification_channel" "email" {
+      + deletion_policy     = "DELETE"
+      + display_name        = "media-data"
+      + enabled             = true
+      + force_delete        = false
+      + id                  = (known after apply)
+      + labels              = {
+          + "email_address" = "media-data@sun.example"
+        }
+      + name                = (known after apply)
+      + project             = "sun-media-dev"
+      + type                = "email"
+      + verification_status = (known after apply)
+    }
+
+  # google_project_service.budgets["billingbudgets.googleapis.com"] will be crea
+ted
+  + resource "google_project_service" "budgets" {
+      + deletion_policy    = "DELETE"
+      + disable_on_destroy = false
+      + id                 = (known after apply)
+      + project            = "sun-media-dev"
+      + service            = "billingbudgets.googleapis.com"
+    }
+
+  # google_project_service.budgets["monitoring.googleapis.com"] will be created
+  + resource "google_project_service" "budgets" {
+      + deletion_policy    = "DELETE"
+      + disable_on_destroy = false
+      + id                 = (known after apply)
+      + project            = "sun-media-dev"
+      + service            = "monitoring.googleapis.com"
+    }
+
+  # google_storage_bucket.raw has moved to module.storage.google_storage_bucket.
+raw
+    resource "google_storage_bucket" "raw" {
+        id                          = "sun-media-dev-raw"
+        name                        = "sun-media-dev-raw"
+        # (18 unchanged attributes hidden)
+
+        # (2 unchanged blocks hidden)
+    }
+
+Plan: 4 to add, 0 to change, 0 to destroy.
+google_project_service.budgets["monitoring.googleapis.com"]: Creating...
+google_project_service.budgets["monitoring.googleapis.com"]: Creation complete a
+fter 4s [id=sun-media-dev/monitoring.googleapis.com]
+google_project_service.budgets["billingbudgets.googleapis.com"]: Creating...
+google_project_service.budgets["billingbudgets.googleapis.com"]: Still creating.
+.. [00m10s elapsed]
+google_project_service.budgets["billingbudgets.googleapis.com"]: Still creating.
+.. [00m20s elapsed]
+google_project_service.budgets["billingbudgets.googleapis.com"]: Creation comple
+te after 21s [id=sun-media-dev/billingbudgets.googleapis.com]
+google_monitoring_notification_channel.email: Creating...
+google_monitoring_notification_channel.email: Creation complete after 1s [id=pro
+jects/sun-media-dev/notificationChannels/10000000000000000001]
+google_billing_budget.month: Creating...
+google_billing_budget.month: Creation complete after 1s [id=billingAccounts/0000
+00-000000-000001/budgets/00000000-0000-0000-0000-000000001000]
+Releasing state lock. This may take a few moments...
+
+Apply complete! Resources: 4 added, 0 changed, 0 destroyed.

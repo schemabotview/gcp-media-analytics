@@ -658,18 +658,8 @@ class Normaliser:
                 if len(value) >= 6 and value.lower() != FACTS.get(kind, '').lower() and value.lower() in text]
 
 
-def record(step: Path) -> int:
-    config = config_of(step)
-    if not config.get('gcp'):
-        sys.exit(f'✗ {name_of(step)} is a local step: it is replayed, not recorded')
-    missing = [s for s in SECRETS if not os.environ.get(s)]
-    if missing:
-        sys.exit(f'✗ recording needs the environment secrets {", ".join(missing)} (CLAUDE.md, "Identity")')
-    if shutil.which('gcloud') is None or shutil.which('terraform') is None:
-        sys.exit('✗ gcloud and terraform are needed: scripts/install-gcp-tools.sh')
-    for parent in lineage_of(step)[:-1]:
-        if config_of(parent).get('gcp') and not recorded_ok(parent)[0]:
-            sys.exit(f'✗ {name_of(parent)} is not recorded and current: record the course in order')
+def recorder() -> tuple[dict, 'Normaliser']:
+    """The recording sign-in (the service account, silently) and its normaliser."""
     SPINE_ROOT.mkdir(parents=True, exist_ok=True)
     rec = SPINE_ROOT / 'gcp-record'
     rec.mkdir(exist_ok=True)
@@ -693,7 +683,34 @@ def record(step: Path) -> int:
         env['GOOGLE_BILLING_ACCOUNT'] = os.environ['GOOGLE_BILLING_ACCOUNT']
     suffix = os.environ.get('GCS_SUFFIX', '')  # bucket names are global: the owner's may carry a suffix
     names = {f'{b}{suffix}': b for b in BUCKETS + ('sun-media-dev-tfstate',)} if suffix else {}
-    norm = Normaliser(real, names)
+    return env, Normaliser(real, names)
+
+
+def undo(step: Path, command: str) -> int:
+    """--undo <step> '<command>': run one off-screen command as the recorder, in the step's own
+    working copy (`source gcp.sh` first), printing its output normalised. For putting the project
+    back as a step's PARENT left it before recording the step again: `terraform destroy -target=…`."""
+    env, norm = recorder()
+    lay(step)
+    r = as_user(f'source gcp.sh >/dev/null 2>&1; cd infra && terraform init -input=false '
+                f'-backend-config=bucket=$TF_VAR_project_id-tfstate >/dev/null 2>&1; {command} 2>&1', env)
+    print(norm.output(ANSI.sub('', r.stdout + r.stderr))[-4000:])
+    return r.returncode
+
+
+def record(step: Path) -> int:
+    config = config_of(step)
+    if not config.get('gcp'):
+        sys.exit(f'✗ {name_of(step)} is a local step: it is replayed, not recorded')
+    missing = [s for s in SECRETS if not os.environ.get(s)]
+    if missing:
+        sys.exit(f'✗ recording needs the environment secrets {", ".join(missing)} (CLAUDE.md, "Identity")')
+    if shutil.which('gcloud') is None or shutil.which('terraform') is None:
+        sys.exit('✗ gcloud and terraform are needed: scripts/install-gcp-tools.sh')
+    for parent in lineage_of(step)[:-1]:
+        if config_of(parent).get('gcp') and not recorded_ok(parent)[0]:
+            sys.exit(f'✗ {name_of(parent)} is not recorded and current: record the course in order')
+    env, norm = recorder()
     lake = None
     if config.get('local_state'):  # a GCP step that also reads the source systems (§5.6)
         parent = state_parent(step)
@@ -777,6 +794,9 @@ def preflight() -> str | None:
 def main(argv: list[str]) -> int:
     if '--record' in argv:
         return record(ROOT / argv[argv.index('--record') + 1])
+    if '--undo' in argv:
+        i = argv.index('--undo')
+        return undo(ROOT / argv[i + 1], argv[i + 2])
     if '--teardown' in argv:
         return teardown()
     write, replay = '--write' in argv, '--replay' in argv

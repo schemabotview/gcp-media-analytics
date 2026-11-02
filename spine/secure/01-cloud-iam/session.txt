@@ -1,3 +1,13 @@
-$ gcloud projects get-iam-policy $TF_VAR_project_id --format=json > policy.json
-$ jq -r '.bindings[].role' policy.json
-$ jq '.bindings[] | select(.role == "roles/owner")' policy.json
+$ gcloud projects get-iam-policy $TF_VAR_project_id --format=json > iam.json
+$ jq '.bindings | length' iam.json
+16
+$ jq '.bindings[] | select(.role == "roles/editor")' iam.json
+{
+  "members": [
+    "serviceAccount:priya@sun.example",
+    "serviceAccount:priya@sun.example"
+  ],
+  "role": "roles/editor"
+}
+$ jq '.bindings[] | select(.role == "roles/owner").members | length' iam.json
+2

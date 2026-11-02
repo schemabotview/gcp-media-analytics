@@ -1,4 +1,33 @@
-$ gcloud projects get-iam-policy $TF_VAR_project_id --format=json > policy.json
-$ jq -r '[.bindings[].role] | length' policy.json
+$ gcloud projects get-iam-policy $TF_VAR_project_id --format=json > iam.json
+$ jq -r '[.bindings[].role] | length' iam.json
+16
 $ gcloud storage buckets get-iam-policy $RAW --format=json > bucket.json
 $ jq '.bindings' bucket.json
+[
+  {
+    "members": [
+      "projectEditor:sun-media-dev",
+      "projectOwner:sun-media-dev"
+    ],
+    "role": "roles/storage.legacyBucketOwner"
+  },
+  {
+    "members": [
+      "projectViewer:sun-media-dev"
+    ],
+    "role": "roles/storage.legacyBucketReader"
+  },
+  {
+    "members": [
+      "projectEditor:sun-media-dev",
+      "projectOwner:sun-media-dev"
+    ],
+    "role": "roles/storage.legacyObjectOwner"
+  },
+  {
+    "members": [
+      "projectViewer:sun-media-dev"
+    ],
+    "role": "roles/storage.legacyObjectReader"
+  }
+]

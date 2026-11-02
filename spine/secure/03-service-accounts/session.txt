@@ -1,4 +1,153 @@
 $ cd infra
 $ terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate
+Initializing the backend...
+
+Initializing modules...
+
+Initializing provider plugins...
+- Reusing version 8.9.0 of hashicorp/google from the dependency lock file
+- Using previously-installed hashicorp/google v8.9.0
+
+Terraform has been successfully initialized!
 $ terraform apply -var-file=envs/dev.tfvars -auto-approve
-$ gcloud iam service-accounts list --filter="email~^sa-" --format="value(email)"
+Acquiring state lock. This may take a few moments...
+data.google_project.this: Reading...
+data.google_project.this: Read complete after 1s [id=projects/sun-media-dev]
+google_project_service.budgets["billingbudgets.googleapis.com"]: Refreshing stat
+e... [id=sun-media-dev/billingbudgets.googleapis.com]
+google_project_service.budgets["monitoring.googleapis.com"]: Refreshing state...
+ [id=sun-media-dev/monitoring.googleapis.com]
+module.storage.google_storage_bucket.raw: Refreshing state... [id=sun-media-dev-
+raw]
+google_monitoring_notification_channel.email: Refreshing state... [id=projects/s
+un-media-dev/notificationChannels/10000000000000000001]
+google_billing_budget.month: Refreshing state... [id=billingAccounts/000000-0000
+00-000001/budgets/00000000-0000-0000-0000-000000001000]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # module.iam.google_service_account.job["sa-airflow"] will be created
+  + resource "google_service_account" "job" {
+      + account_id      = "sa-airflow"
+      + deletion_policy = "DELETE"
+      + description     = "Runs the nightly DAG"
+      + disabled        = false
+      + display_name    = "sa-airflow"
+      + email           = "sa-airflow@sun-media-dev.iam.gserviceaccount.com"
+      + id              = (known after apply)
+      + member          = "serviceAccount:sa-airflow@sun-media-dev.iam.gservicea
+ccount.com"
+      + name            = (known after apply)
+      + project         = "sun-media-dev"
+      + unique_id       = (known after apply)
+    }
+
+  # module.iam.google_service_account.job["sa-cicd"] will be created
+  + resource "google_service_account" "job" {
+      + account_id      = "sa-cicd"
+      + deletion_policy = "DELETE"
+      + description     = "Plans and deploys from CI"
+      + disabled        = false
+      + display_name    = "sa-cicd"
+      + email           = "sa-cicd@sun-media-dev.iam.gserviceaccount.com"
+      + id              = (known after apply)
+      + member          = "serviceAccount:sa-cicd@sun-media-dev.iam.gserviceacco
+unt.com"
+      + name            = (known after apply)
+      + project         = "sun-media-dev"
+      + unique_id       = (known after apply)
+    }
+
+  # module.iam.google_service_account.job["sa-dataflow"] will be created
+  + resource "google_service_account" "job" {
+      + account_id      = "sa-dataflow"
+      + deletion_policy = "DELETE"
+      + description     = "Runs the live viewer count"
+      + disabled        = false
+      + display_name    = "sa-dataflow"
+      + email           = "sa-dataflow@sun-media-dev.iam.gserviceaccount.com"
+      + id              = (known after apply)
+      + member          = "serviceAccount:sa-dataflow@sun-media-dev.iam.gservice
+account.com"
+      + name            = (known after apply)
+      + project         = "sun-media-dev"
+      + unique_id       = (known after apply)
+    }
+
+  # module.iam.google_service_account.job["sa-dataproc"] will be created
+  + resource "google_service_account" "job" {
+      + account_id      = "sa-dataproc"
+      + deletion_policy = "DELETE"
+      + description     = "Runs the QoS join"
+      + disabled        = false
+      + display_name    = "sa-dataproc"
+      + email           = "sa-dataproc@sun-media-dev.iam.gserviceaccount.com"
+      + id              = (known after apply)
+      + member          = "serviceAccount:sa-dataproc@sun-media-dev.iam.gservice
+account.com"
+      + name            = (known after apply)
+      + project         = "sun-media-dev"
+      + unique_id       = (known after apply)
+    }
+
+  # module.iam.google_service_account.job["sa-ingest"] will be created
+  + resource "google_service_account" "job" {
+      + account_id      = "sa-ingest"
+      + deletion_policy = "DELETE"
+      + description     = "Lands the nightly extracts in the raw zone"
+      + disabled        = false
+      + display_name    = "sa-ingest"
+      + email           = "sa-ingest@sun-media-dev.iam.gserviceaccount.com"
+      + id              = (known after apply)
+      + member          = "serviceAccount:sa-ingest@sun-media-dev.iam.gserviceac
+count.com"
+      + name            = (known after apply)
+      + project         = "sun-media-dev"
+      + unique_id       = (known after apply)
+    }
+
+Plan: 5 to add, 0 to change, 0 to destroy.
+module.iam.google_service_account.job["sa-dataflow"]: Creating...
+module.iam.google_service_account.job["sa-dataflow"]: Still creating... [00m10s 
+elapsed]
+module.iam.google_service_account.job["sa-dataflow"]: Creation complete after 13
+s [id=projects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.iam.gserv
+iceaccount.com]
+module.iam.google_service_account.job["sa-dataproc"]: Creating...
+module.iam.google_service_account.job["sa-dataproc"]: Still creating... [00m10s 
+elapsed]
+module.iam.google_service_account.job["sa-dataproc"]: Creation complete after 12
+s [id=projects/sun-media-dev/serviceAccounts/sa-dataproc@sun-media-dev.iam.gserv
+iceaccount.com]
+module.iam.google_service_account.job["sa-airflow"]: Creating...
+module.iam.google_service_account.job["sa-airflow"]: Still creating... [00m10s e
+lapsed]
+module.iam.google_service_account.job["sa-airflow"]: Still creating... [00m20s e
+lapsed]
+module.iam.google_service_account.job["sa-airflow"]: Creation complete after 29s
+ [id=projects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam.gservic
+eaccount.com]
+module.iam.google_service_account.job["sa-cicd"]: Creating...
+module.iam.google_service_account.job["sa-cicd"]: Still creating... [00m10s elap
+sed]
+module.iam.google_service_account.job["sa-cicd"]: Creation complete after 12s [i
+d=projects/sun-media-dev/serviceAccounts/sa-cicd@sun-media-dev.iam.gserviceaccou
+nt.com]
+module.iam.google_service_account.job["sa-ingest"]: Creating...
+module.iam.google_service_account.job["sa-ingest"]: Still creating... [00m10s el
+apsed]
+module.iam.google_service_account.job["sa-ingest"]: Creation complete after 12s 
+[id=projects/sun-media-dev/serviceAccounts/sa-ingest@sun-media-dev.iam.gservicea
+ccount.com]
+
+Apply complete! Resources: 5 added, 0 changed, 0 destroyed.
+$ terraform state list | grep google_service_account
+module.iam.google_service_account.job["sa-airflow"]
+module.iam.google_service_account.job["sa-cicd"]
+module.iam.google_service_account.job["sa-dataflow"]
+module.iam.google_service_account.job["sa-dataproc"]
+module.iam.google_service_account.job["sa-ingest"]
