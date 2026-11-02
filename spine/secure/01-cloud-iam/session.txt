@@ -4,8 +4,8 @@ $ jq '.bindings | length' iam.json
 $ jq '.bindings[] | select(.role == "roles/editor")' iam.json
 {
   "members": [
-    "serviceAccount:priya@sun.example",
-    "serviceAccount:priya@sun.example"
+    "serviceAccount:100000000001-compute@developer.gserviceaccount.com",
+    "serviceAccount:100000000001@cloudservices.gserviceaccount.com"
   ],
   "role": "roles/editor"
 }

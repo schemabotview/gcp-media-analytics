@@ -648,8 +648,11 @@ class Normaliser:
             return shown.replace('T', ' ') if ' ' in raw[10:11] else shown + ('Z' if raw.endswith('Z') else '')
         text = self.ISO.sub(stamp, text)
         # an email that is not Sun's, a household's (mail.example) or a service account's
-        return re.sub(r'[\w.+-]+@(?!sun\.example|mail\.example|[\w-]+\.iam\.gserviceaccount\.com|'
-                      r'gcp-sa-[\w-]+\.iam\.gserviceaccount\.com)[\w-]+(\.[\w-]+)+', FACTS['account'], text)
+        # a person's email that is not Sun's or a household's. Google's own accounts (any
+        # *gserviceaccount.com: service agents, appspot, cloudservices) stay: their project part
+        # is already normalised above
+        return re.sub(r'[\w.+-]+@(?!sun\.example|mail\.example|([\w-]+\.)*gserviceaccount\.com)[\w-]+(\.[\w-]+)+',
+                      FACTS['account'], text)
 
     def refuse(self, text: str) -> list[str]:
         # Searched as written and with every line break removed (a wrapped id)

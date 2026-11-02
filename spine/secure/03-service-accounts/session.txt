@@ -13,12 +13,12 @@ $ terraform apply -var-file=envs/dev.tfvars -auto-approve
 Acquiring state lock. This may take a few moments...
 data.google_project.this: Reading...
 data.google_project.this: Read complete after 1s [id=projects/sun-media-dev]
-google_project_service.budgets["billingbudgets.googleapis.com"]: Refreshing stat
-e... [id=sun-media-dev/billingbudgets.googleapis.com]
-google_project_service.budgets["monitoring.googleapis.com"]: Refreshing state...
- [id=sun-media-dev/monitoring.googleapis.com]
 module.storage.google_storage_bucket.raw: Refreshing state... [id=sun-media-dev-
 raw]
+google_project_service.budgets["monitoring.googleapis.com"]: Refreshing state...
+ [id=sun-media-dev/monitoring.googleapis.com]
+google_project_service.budgets["billingbudgets.googleapis.com"]: Refreshing stat
+e... [id=sun-media-dev/billingbudgets.googleapis.com]
 google_monitoring_notification_channel.email: Refreshing state... [id=projects/s
 un-media-dev/notificationChannels/10000000000000000001]
 google_billing_budget.month: Refreshing state... [id=billingAccounts/000000-0000
@@ -111,12 +111,6 @@ count.com"
     }
 
 Plan: 5 to add, 0 to change, 0 to destroy.
-module.iam.google_service_account.job["sa-dataflow"]: Creating...
-module.iam.google_service_account.job["sa-dataflow"]: Still creating... [00m10s 
-elapsed]
-module.iam.google_service_account.job["sa-dataflow"]: Creation complete after 13
-s [id=projects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.iam.gserv
-iceaccount.com]
 module.iam.google_service_account.job["sa-dataproc"]: Creating...
 module.iam.google_service_account.job["sa-dataproc"]: Still creating... [00m10s 
 elapsed]
@@ -126,9 +120,7 @@ iceaccount.com]
 module.iam.google_service_account.job["sa-airflow"]: Creating...
 module.iam.google_service_account.job["sa-airflow"]: Still creating... [00m10s e
 lapsed]
-module.iam.google_service_account.job["sa-airflow"]: Still creating... [00m20s e
-lapsed]
-module.iam.google_service_account.job["sa-airflow"]: Creation complete after 29s
+module.iam.google_service_account.job["sa-airflow"]: Creation complete after 13s
  [id=projects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam.gservic
 eaccount.com]
 module.iam.google_service_account.job["sa-cicd"]: Creating...
@@ -137,6 +129,12 @@ sed]
 module.iam.google_service_account.job["sa-cicd"]: Creation complete after 12s [i
 d=projects/sun-media-dev/serviceAccounts/sa-cicd@sun-media-dev.iam.gserviceaccou
 nt.com]
+module.iam.google_service_account.job["sa-dataflow"]: Creating...
+module.iam.google_service_account.job["sa-dataflow"]: Still creating... [00m10s 
+elapsed]
+module.iam.google_service_account.job["sa-dataflow"]: Creation complete after 12
+s [id=projects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.iam.gserv
+iceaccount.com]
 module.iam.google_service_account.job["sa-ingest"]: Creating...
 module.iam.google_service_account.job["sa-ingest"]: Still creating... [00m10s el
 apsed]
