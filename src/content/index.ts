@@ -1,4 +1,5 @@
 import { start } from './start'
+import { secure } from './secure'
 import { land } from './land'
 import type { Course, Section } from './types'
 
@@ -6,6 +7,7 @@ import type { Course, Section } from './types'
 // registered here only once it is authored.
 export const COURSES: Record<string, Course> = {
   [start.id]: start,
+  [secure.id]: secure,
   [land.id]: land,
 }
 

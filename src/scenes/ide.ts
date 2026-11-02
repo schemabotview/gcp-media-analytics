@@ -46,7 +46,8 @@ export function terminal(session: string): string {
   const out: string[] = []
   let mode: 'none' | 'cli' | 'python' | 'terraform' = 'none'
   let previous = ''
-  for (const line of trim(session).split('\n')) {
+  // a tab is drawn as one space: the replay wrapped at 80 columns counting it as one
+  for (const line of trim(session).replace(/\t/g, ' ').split('\n')) {
     if (line.startsWith('$ ')) mode = 'none'
     else if (line.startsWith('ERROR: ')) mode = 'cli'
     else if (/^(│ )?Error: /.test(line)) mode = 'terraform' // Terraform's boxed error, to its closing ╵
@@ -109,6 +110,8 @@ export interface IdeFrame {
   session: string
   /** Which of the session's lines the terminal shows; the rest fold. Default: all of them. */
   keep?: Keep[]
+  /** Or the terminal's `show` ranges outright (from `pick`, for a long Terraform transcript). */
+  shown?: [number, number][]
   /** The side pane: a diagram (check-content fails a side pane with no edge, plot or table). */
   side: SceneNode[]
   /** Edges between nodes INSIDE the side pane. An edge between panes would widen a gap and move them. */
@@ -119,7 +122,7 @@ export interface IdeFrame {
 export const IDE_IDS = { explorer: 'explorer', editor: 'editor', terminal: 'terminal', side: 'side' } as const
 export const PROJECT = 'viewing-pulse'
 
-export function ideFrame({ tree, editor, session, keep, side, edges = [] }: IdeFrame): SceneModel {
+export function ideFrame({ tree, editor, session, keep, shown, side, edges = [] }: IdeFrame): SceneModel {
   const explorer: Tree = { type: 'tree', id: IDE_IDS.explorer, title: PROJECT, entries: tree, fill: true, w: EXPLORER_W }
   const code: Code = {
     type: 'code', id: IDE_IDS.editor, filename: editor.file, lang: editor.lang ?? langOf(editor.file), code: trim(editor.code),
@@ -128,7 +131,7 @@ export function ideFrame({ tree, editor, session, keep, side, edges = [] }: IdeF
   const rows = terminal(session)
   const term: Code = {
     type: 'code', id: IDE_IDS.terminal, terminal: true, filename: `terminal — ${PROJECT}`, code: rows,
-    show: keep && keepLines(rows, keep), fill: true, w: EDITOR_W, minH: TERMINAL_H,
+    show: shown ?? (keep && keepLines(rows, keep)), fill: true, w: EDITOR_W, minH: TERMINAL_H,
   }
   const pane: Group = { type: 'group', id: IDE_IDS.side, bare: true, w: SIDE_W, minH: FRAME_H, children: side }
   return {
@@ -153,3 +156,31 @@ export function linesFrom(code: string, first: string, last = first): number[] {
 
 /** The last line number of `code` (ignoring a trailing newline). */
 export const lastLine = (code: string) => trim(code).split('\n').length
+
+/** A recorded Terraform run, folded to what a viewer reads: every command, the plan's summary, each
+ *  resource as it completes, the result, and every line of a non-Terraform command's output (or
+ *  only the lines `also` accepts). Lines are the TERMINAL's (wrapped) rows; a wrapped continuation
+ *  of a kept row is kept with it. */
+export function pick(session: string, also: (line: string) => boolean = () => true): [number, number][] {
+  const rows = terminal(session).split('\n')
+  const keep: boolean[] = []
+  let tf = false, last = false
+  rows.forEach((row, i) => {
+    const line = row.replace(/^! /, '')
+    if (line.startsWith('$ ')) tf = /^\$ terraform /.test(line)
+    const k = line.startsWith('$ ')
+      || (tf && /^(Plan: |Apply complete|formatted$|Success! |  # .* (moved|will be (created|updated|destroyed))|.*: (Creation|Modifications|Destruction) complete|Successfully configured|No changes\.)/.test(line))
+      || (!tf && !line.startsWith('$ ') && also(line))
+      || (row.startsWith('! ') && !tf)
+      || (last && i > 0 && rows[i - 1].replace(/^! /, '').length === EDITOR_COLS)
+    keep.push(Boolean(k))
+    last = Boolean(k)
+  })
+  const out: [number, number][] = []
+  keep.forEach((k, i) => {
+    if (!k) return
+    if (out.length && out[out.length - 1][1] === i) out[out.length - 1][1] = i + 1
+    else out.push([i + 1, i + 1])
+  })
+  return out
+}

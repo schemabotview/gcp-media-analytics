@@ -15,3 +15,6 @@ export function level(kind: Level, sub: string): Item {
 
 /** The usual emulated label: the raw zone on Priya's laptop is fake-gcs-server, Cloud Storage's emulator. */
 export const FAKE_GCS = level('emulated', 'the raw zone is fake-gcs-server, Cloud Storage’s emulator; PostgreSQL is real')
+
+/** The recorded label: run once in the owner's project, normalised by the recorder, then torn down. */
+export const RECORDED = level('recorded on GCP', 'run once in a real project; ids normalised, then torn down')
