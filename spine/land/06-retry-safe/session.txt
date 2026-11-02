@@ -1,7 +1,24 @@
 $ python extract/extract.py plan billing --dt 2026-10-31
+billing: window (2026-10-31T00:00:00Z, 2026-11-01T00:00:00Z]
+billing: charges.csv expects 1068 rows
+manifest -> source=billing/dt=2026-10-31/_manifest.json
 $ python extract/extract.py copy billing --dt 2026-10-31
+billing: 1068 rows -> source=billing/dt=2026-10-31/charges.csv
 $ python extract/extract.py copy billing --dt 2026-10-31
+billing: 1068 rows -> source=billing/dt=2026-10-31/charges.csv
 $ python extract/g1.py billing --dt 2026-10-31
+  files                    1 of 1     PASS
+  charges.csv columns      8 of 8     PASS
+  charges.csv rows      1068 of 1068  PASS
+G1 PASS: billing dt=2026-10-31 published (_SUCCESS)
 $ python extract/g1.py billing --dt 2026-10-31
+  files                    1 of 1     PASS
+  charges.csv columns      8 of 8     PASS
+  charges.csv rows      1068 of 1068  PASS
+refused: billing dt=2026-10-31 is already sealed
 $ python extract/extract.py copy billing --dt 2026-10-31
+refused: billing dt=2026-10-31 is sealed (_SUCCESS)
 $ gcloud storage ls "$RAW/source=billing/**"
+gs://sun-media-dev-raw/source=billing/dt=2026-10-31/_SUCCESS
+gs://sun-media-dev-raw/source=billing/dt=2026-10-31/_manifest.json
+gs://sun-media-dev-raw/source=billing/dt=2026-10-31/charges.csv

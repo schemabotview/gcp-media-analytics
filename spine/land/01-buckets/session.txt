@@ -1,1 +1,23 @@
 $ gcloud storage buckets describe $RAW
+creation_time: 2026-11-01T09:30:00
+default_kms_key: projects/sun-media-dev/locations/europe-west2/keyRings/kr-media
+/cryptoKeys/k-raw
+default_storage_class: STANDARD
+generation: 1000000000000000001
+labels:
+  app: viewing-pulse
+  env: dev
+  goog-terraform-provisioned: 'true'
+  owner: media-data
+location: EUROPE-WEST2
+location_type: region
+metageneration: 11
+name: sun-media-dev-raw
+public_access_prevention: enforced
+satisfies_pzs: true
+soft_delete_policy:
+  effectiveTime: '2026-11-01T09:30:00'
+  retentionDurationSeconds: '604800'
+storage_url: gs://sun-media-dev-raw/
+uniform_bucket_level_access: true
+update_time: 2026-11-01T10:10:47

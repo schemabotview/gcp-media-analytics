@@ -1,3 +1,189 @@
 $ cd infra
 $ terraform apply -var-file=envs/dev.tfvars -auto-approve
+Acquiring state lock. This may take a few moments...
+module.secrets.random_password.crm: Refreshing state... [id=none]
+module.kms.data.google_storage_project_service_account.gcs: Reading...
+module.kms.data.google_storage_project_service_account.gcs: Read complete after 
+0s [id=service-100000000001@gs-project-accounts.iam.gserviceaccount.com]
+google_project_service.budgets["monitoring.googleapis.com"]: Refreshing state...
+ [id=sun-media-dev/monitoring.googleapis.com]
+google_project_service.budgets["billingbudgets.googleapis.com"]: Refreshing stat
+e... [id=sun-media-dev/billingbudgets.googleapis.com]
+data.google_project.this: Reading...
+data.google_project.this: Read complete after 0s [id=projects/sun-media-dev]
+module.kms.google_project_service.kms: Refreshing state... [id=sun-media-dev/clo
+udkms.googleapis.com]
+module.secrets.google_project_service.secretmanager: Refreshing state... [id=sun
+-media-dev/secretmanager.googleapis.com]
+module.iam.google_service_account.job["sa-ingest"]: Refreshing state... [id=proj
+ects/sun-media-dev/serviceAccounts/sa-ingest@sun-media-dev.iam.gserviceaccount.c
+om]
+module.iam.google_service_account.job["sa-airflow"]: Refreshing state... [id=pro
+jects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam.gserviceaccount
+.com]
+module.iam.google_service_account.job["sa-cicd"]: Refreshing state... [id=projec
+ts/sun-media-dev/serviceAccounts/sa-cicd@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_service_account.job["sa-dataflow"]: Refreshing state... [id=pr
+ojects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.iam.gserviceaccou
+nt.com]
+module.iam.google_service_account.job["sa-dataproc"]: Refreshing state... [id=pr
+ojects/sun-media-dev/serviceAccounts/sa-dataproc@sun-media-dev.iam.gserviceaccou
+nt.com]
+google_monitoring_notification_channel.email: Refreshing state... [id=projects/s
+un-media-dev/notificationChannels/10000000000000000001]
+module.kms.google_kms_key_ring.media: Refreshing state... [id=projects/sun-media
+-dev/locations/europe-west2/keyRings/kr-media]
+module.secrets.google_secret_manager_secret.crm: Refreshing state... [id=project
+s/sun-media-dev/secrets/crm-db-password]
+module.iam.google_project_iam_member.job["sa-airflow/roles/composer.worker"]: Re
+freshing state... [id=sun-media-dev/roles/composer.worker/serviceAccount:sa-airf
+low@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_project_iam_member.job["sa-dataproc/roles/dataproc.worker"]: R
+efreshing state... [id=sun-media-dev/roles/dataproc.worker/serviceAccount:sa-dat
+aproc@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_project_iam_member.job["sa-dataflow/roles/dataflow.worker"]: R
+efreshing state... [id=sun-media-dev/roles/dataflow.worker/serviceAccount:sa-dat
+aflow@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_service_account_iam_member.operator["sa-airflow"]: Refreshing 
+state... [id=projects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam
+.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@s
+un.example]
+module.iam.google_service_account_iam_member.operator["sa-cicd"]: Refreshing sta
+te... [id=projects/sun-media-dev/serviceAccounts/sa-cicd@sun-media-dev.iam.gserv
+iceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@sun.exa
+mple]
+module.iam.google_service_account_iam_member.operator["sa-ingest"]: Refreshing s
+tate... [id=projects/sun-media-dev/serviceAccounts/sa-ingest@sun-media-dev.iam.g
+serviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@sun
+.example]
+module.iam.google_service_account_iam_member.operator["sa-dataproc"]: Refreshing
+ state... [id=projects/sun-media-dev/serviceAccounts/sa-dataproc@sun-media-dev.i
+am.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya
+@sun.example]
+module.iam.google_service_account_iam_member.operator["sa-dataflow"]: Refreshing
+ state... [id=projects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.i
+am.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya
+@sun.example]
+google_billing_budget.month: Refreshing state... [id=billingAccounts/000000-0000
+00-000001/budgets/00000000-0000-0000-0000-000000001000]
+module.kms.google_kms_crypto_key.raw: Refreshing state... [id=projects/sun-media
+-dev/locations/europe-west2/keyRings/kr-media/cryptoKeys/k-raw]
+module.secrets.google_secret_manager_secret_version.crm: Refreshing state... [id
+=projects/100000000001/secrets/crm-db-password/versions/1]
+module.kms.google_kms_crypto_key_iam_member.gcs: Refreshing state... [id=project
+s/sun-media-dev/locations/europe-west2/keyRings/kr-media/cryptoKeys/k-raw/roles/
+cloudkms.cryptoKeyEncrypterDecrypter/serviceAccount:service-100000000001@gs-proj
+ect-accounts.iam.gserviceaccount.com]
+module.secrets.google_secret_manager_secret_iam_member.ingest: Refreshing state.
+.. [id=projects/sun-media-dev/secrets/crm-db-password/roles/secretmanager.secret
+Accessor/serviceAccount:sa-ingest@sun-media-dev.iam.gserviceaccount.com]
+module.storage.google_storage_bucket.raw: Refreshing state... [id=sun-media-dev-
+raw]
+module.storage.google_storage_bucket_iam_member.raw["dataproc-view"]: Refreshing
+ state... [id=b/sun-media-dev-raw/roles/storage.objectViewer/serviceAccount:sa-d
+ataproc@sun-media-dev.iam.gserviceaccount.com]
+module.storage.google_storage_bucket_iam_member.raw["ingest-create"]: Refreshing
+ state... [id=b/sun-media-dev-raw/roles/storage.objectCreator/serviceAccount:sa-
+ingest@sun-media-dev.iam.gserviceaccount.com]
+module.storage.google_storage_bucket_iam_member.raw["ingest-view"]: Refreshing s
+tate... [id=b/sun-media-dev-raw/roles/storage.objectViewer/serviceAccount:sa-ing
+est@sun-media-dev.iam.gserviceaccount.com]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  ~ update in-place
+
+Terraform will perform the following actions:
+
+  # module.storage.google_storage_bucket.raw will be updated in-place
+  ~ resource "google_storage_bucket" "raw" {
+        id                          = "sun-media-dev-raw"
+        name                        = "sun-media-dev-raw"
+        # (18 unchanged attributes hidden)
+
+      + lifecycle_rule {
+          + action {
+              + storage_class = "ARCHIVE"
+              + type          = "SetStorageClass"
+            }
+          + condition {
+              + age                    = 365
+              + matches_prefix         = []
+              + matches_storage_class  = []
+              + matches_suffix         = []
+              + with_state             = (known after apply)
+                # (3 unchanged attributes hidden)
+            }
+        }
+      + lifecycle_rule {
+          + action {
+              + storage_class = "COLDLINE"
+              + type          = "SetStorageClass"
+            }
+          + condition {
+              + age                    = 90
+              + matches_prefix         = []
+              + matches_storage_class  = []
+              + matches_suffix         = []
+              + with_state             = (known after apply)
+                # (3 unchanged attributes hidden)
+            }
+        }
+      + lifecycle_rule {
+          + action {
+              + storage_class = "NEARLINE"
+              + type          = "SetStorageClass"
+            }
+          + condition {
+              + age                    = 30
+              + matches_prefix         = []
+              + matches_storage_class  = []
+              + matches_suffix         = []
+              + with_state             = (known after apply)
+                # (3 unchanged attributes hidden)
+            }
+        }
+
+        # (4 unchanged blocks hidden)
+    }
+
+Plan: 0 to add, 1 to change, 0 to destroy.
+module.storage.google_storage_bucket.raw: Modifying... [id=sun-media-dev-raw]
+module.storage.google_storage_bucket.raw: Modifications complete after 2s [id=su
+n-media-dev-raw]
+
+Apply complete! Resources: 0 added, 1 changed, 0 destroyed.
 $ gcloud storage buckets describe $RAW --format="json(lifecycle_config)"
+{
+  "lifecycle_config": {
+    "rule": [
+      {
+        "action": {
+          "storageClass": "ARCHIVE",
+          "type": "SetStorageClass"
+        },
+        "condition": {
+          "age": 365
+        }
+      },
+      {
+        "action": {
+          "storageClass": "COLDLINE",
+          "type": "SetStorageClass"
+        },
+        "condition": {
+          "age": 90
+        }
+      },
+      {
+        "action": {
+          "storageClass": "NEARLINE",
+          "type": "SetStorageClass"
+        },
+        "condition": {
+          "age": 30
+        }
+      }
+    ]
+  }
+}

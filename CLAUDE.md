@@ -34,7 +34,7 @@ written, `fmt`-clean and `terraform validate`d per step, the typed commands in e
 **Built (infra):** the app (vite, shell `ConceptApp`, `--brand` #4285f4), `check-content`,
 `check-render`, `registry`, `shots` (also a bare scene id), `concept.json`; `sun_gen` + `verify`
 (20 planted facts, derby-day viewing and telemetry included); `scripts/spine.py` (local steps: PostgreSQL `crm` + `billing`, fake-gcs-server;
-GCP steps: recorder written, untested); `leaks.py`; `src/scenes/ide.ts`, `map.ts` (`BUILT` per
+GCP steps: recorder, used for Courses 3–5); `leaks.py`; `src/scenes/ide.ts`, `map.ts` (`BUILT` per
 course), `level.ts`, `lab.ts`, `tree.ts`, `fold.ts`, `csv.ts`; installers `install-toolchain.sh`
 (Python 3.14.9, Java 21), `setup-postgres.sh` (PostgreSQL 18.6, OS user `priya`),
 `install-gcp-tools.sh` (fake-gcs-server 1.56.1, Terraform 1.17.0). Not yet: `film.mjs`,
@@ -45,9 +45,9 @@ azure-trade-finance when narration starts).
 |---|---|---|---|
 | 1 | `intro` | 3 | planned |
 | 2 | `how-gcp-runs` | 7 | planned |
-| 3 | `start` | 8 | §1–§4 authored, narrated (text), 4K-checked (L); §5–§7 recorded on GCP, not yet authored; §8 awaits the billing account |
-| 4 | `secure` | 8 | all eight prepared (G), await recording |
-| 5 | `land` | 8 | pilot: §2–§5 authored, narrated (text), 4K-checked (L · E); §1, §6–§8 prepared, await recording |
+| 3 | `start` | 8 | §1–§4 authored, narrated (text), 4K-checked (L); §5–§8 recorded on GCP, not yet authored |
+| 4 | `secure` | 8 | all eight recorded on GCP, not yet authored |
+| 5 | `land` | 8 | pilot: §2–§5 authored, narrated (text), 4K-checked (L · E); §1, §6–§8 recorded on GCP, not yet authored |
 | 6 | `stream` | 7 | planned |
 | 7 | `dataflow` | 9 | planned |
 | 8 | `lakehouse` | 9 | planned |
@@ -88,11 +88,14 @@ The recorder has never run against a real project: its first recordings are its 
 2. In order, one at a time, reading each transcript: `python scripts/spine.py --record start/05-signing-in`
    … `start/08`, `secure/01` … `secure/08`, `land/01`, then `--write land` (local, re-keyed), then
    `--record land/06`, `land/07`, `land/08`. Run `python scripts/leaks.py` before committing.
-3. Recorded so far (2026-11-02, this project): §3.5, §3.6, §3.7 — the recorder works; the raw bucket
-   and the state bucket exist in the owner's project now. §3.8 waits for `GOOGLE_BILLING_ACCOUNT`
-   (a new session). Expect to fix: §4.4/4.6 impersonation needing a minute after §4.4's grant
-   (record §4.5 a few minutes later), §3.8's budget permissions. A typed command over 78 columns is
-   refused BEFORE anything runs — shorten it with a shell variable (`B=…`).
+3. Recorded (2026-11-02, the owner's project): EVERY GCP step of Courses 3–5. Learned:
+   - a fresh impersonation grant takes a minute: §4.4's token is minted in §4.5, recorded later;
+   - never list the project unfiltered: §4.1 shows counts and the editor binding, `roles.sh`
+     matches the five job accounts by name (`sa-` alone matched the recorder and Google's agents);
+   - to record a Terraform step again, put back its PARENT's state first:
+     `spine.py --undo <step> 'terraform plan -destroy -target=… -out=tfplan'`, read the plan, then
+     `--undo <step> 'terraform apply tfplan'` (a reviewed plan, never a blind destroy);
+   - a typed command over 78 columns is refused BEFORE anything runs.
 4. Teardown after Course 5: `--teardown` (terraform destroy). The raw bucket's retention (§5.7) holds
    objects for an hour; the KMS key ring `kr-media` can never be deleted — the next recording must
    `terraform import` it (and its key) before §4.7 applies.
