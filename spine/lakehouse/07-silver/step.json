@@ -1,1 +1,1 @@
-{"from": "lakehouse/06-g2", "changes": ["infra/modules/lakehouse/", "warehouse/silver.sql", "warehouse/silver_peak.sql"], "gcp": true, "env": "gcp.sh", "venv": true, "local_state": true}
+{"from": "lakehouse/06-g2", "changes": ["infra/modules/lakehouse/", "warehouse/silver.sql", "warehouse/silver_peak.sql"], "gcp": true, "env": "gcp.sh", "venv": true, "local_state": true, "mocked": true}

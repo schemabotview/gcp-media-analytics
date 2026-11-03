@@ -341,17 +341,15 @@ $ cd ..
 $ P=$RAW/source=crm
 $ L="--source_format=CSV --skip_leading_rows=1 --hive_partitioning_mode=CUSTOM"
 $ H=--hive_partitioning_source_uri_prefix=$P/{dt:DATE}
-$ bq load $L $H bronze.subscriptions "$P/dt=*/subscriptions.csv"
-BigQuery error in load operation: Error processing job 'sun-media-dev:bqjob_r403
-a473d52ef06a7_000001a1a1831f72_1': Hive partitioning requires
-autodetect to be set or a non-empty schema to be provided.
+$ S=warehouse/subscriptions.json
+$ bq -q load $L $H bronze.subscriptions "$P/dt=*/subscriptions.csv" $S
 $ Q="bq -q query --nouse_legacy_sql --maximum_bytes_billed=200000000"
 $ $Q --parameter=dt:DATE:2026-10-30 < warehouse/scd2.sql
 CREATE TEMP TABLE night AS
 SELECT household_id, package_id, valid_from
 FROM bronze.subscriptions
 WHERE dt = @dt AND valid_to IS NULL; -- at [4:1]
-Created sun-media-dev._script265c6859f491f2d4687dd32dad59ccc24cb8af42.night
+Created sun-media-dev._script7c1f0e5a2b9d4e8f6a3c1b0d9e8f7a6b5c4d3e2f.night
 
 MERGE silver.dim_subscriber AS d
 USING (
@@ -368,7 +366,7 @@ WHEN MATCHED AND d.package_id != n.package_id THEN
 WHEN NOT MATCHED THEN
   INSERT (household_id, package_id, valid_from, valid_to, is_current)
   VALUES (n.household_id, n.package_id, n.valid_from, NULL, TRUE); -- at [9:1]
-Number of affected rows: 0
+Number of affected rows: 5000
 
 SELECT @dt AS dt, COUNTIF(is_current) AS current_rows,
        COUNTIF(NOT is_current) AS closed_rows
@@ -376,14 +374,14 @@ FROM silver.dim_subscriber; -- at [25:1]
 +------------+--------------+-------------+
 |     dt     | current_rows | closed_rows |
 +------------+--------------+-------------+
-| 2026-10-30 |            0 |           0 |
+| 2026-10-30 |         5000 |           0 |
 +------------+--------------+-------------+
 $ $Q --parameter=dt:DATE:2026-10-31 < warehouse/scd2.sql
 CREATE TEMP TABLE night AS
 SELECT household_id, package_id, valid_from
 FROM bronze.subscriptions
 WHERE dt = @dt AND valid_to IS NULL; -- at [4:1]
-Created sun-media-dev._script94f02a9dab80afdbf94e9ed9c422f91422390012.night
+Created sun-media-dev._script2d8e4b6a0c9f1e3d5b7a9c8e0f2d4b6a8c0e1f3d.night
 
 MERGE silver.dim_subscriber AS d
 USING (
@@ -400,7 +398,7 @@ WHEN MATCHED AND d.package_id != n.package_id THEN
 WHEN NOT MATCHED THEN
   INSERT (household_id, package_id, valid_from, valid_to, is_current)
   VALUES (n.household_id, n.package_id, n.valid_from, NULL, TRUE); -- at [9:1]
-Number of affected rows: 0
+Number of affected rows: 74
 
 SELECT @dt AS dt, COUNTIF(is_current) AS current_rows,
        COUNTIF(NOT is_current) AS closed_rows
@@ -408,6 +406,12 @@ FROM silver.dim_subscriber; -- at [25:1]
 +------------+--------------+-------------+
 |     dt     | current_rows | closed_rows |
 +------------+--------------+-------------+
-| 2026-10-31 |            0 |           0 |
+| 2026-10-31 |         5000 |          37 |
 +------------+--------------+-------------+
 $ $Q --parameter=hh::HH-10123 < warehouse/history.sql
++------------+------------+------------+------------+-----------+
+| package_id | valid_from |  valid_to  | is_current | derby_day |
++------------+------------+------------+------------+-----------+
+| P-ESS      | 2019-12-25 | 2026-10-31 |      false |     false |
+| P-SPT      | 2026-10-31 |       NULL |       true |      true |
++------------+------------+------------+------------+-----------+

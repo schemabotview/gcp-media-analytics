@@ -5,6 +5,7 @@ import { secure } from './secure'
 import { land } from './land'
 import { stream } from './stream'
 import { dataflow } from './dataflow'
+import { lakehouse } from './lakehouse'
 import type { Course, Section } from './types'
 
 // Course registry, in syllabus order. One course per chapter of COURSE-PLAN.md; a course is
@@ -17,6 +18,7 @@ export const COURSES: Record<string, Course> = {
   [land.id]: land,
   [stream.id]: stream,
   [dataflow.id]: dataflow,
+  [lakehouse.id]: lakehouse,
 }
 
 export type { Course, Section }

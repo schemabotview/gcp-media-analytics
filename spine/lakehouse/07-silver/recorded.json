@@ -1,5 +1,6 @@
 {
-  "key": "025de7c212811c5aebdbb0011180d2d9876327b4978118f45f6dfd79bf5f6c94",
-  "transcript": "ca1e924bab593e10df525e51c5177a35a583211dbef67febe1385b8b591a55da",
-  "gcloud": "570.0.0"
+  "key": "45326a92ecd8a0d42c82ae45f5a0e6ace6a4d5421bc91f60170f7a6008b7daa4",
+  "transcript": "1e2bc8870a51badf13cd435bbd86b199a68829b49d5f8a212359a543b99cb011",
+  "gcloud": "570.0.0",
+  "mocked": true
 }

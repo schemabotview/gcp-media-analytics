@@ -338,15 +338,15 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 
 | # | Section | Step | Side pane | Level |
 | --- | --- | --- | --- | --- |
-| 1 | ◆ full scene: how BigQuery is built | a query's execution details | storage (Colossus) ↔ network ↔ compute (slots) | G |
-| 2 | Datasets and location | the five datasets in Terraform | project → datasets → tables | G |
-| 3 | External tables: schema on read | the raw zone queried in place | GCS files → external table | G |
-| 4 | Bronze: load jobs | append as received, `_src_file`, `_ingest_ts` | Bronze rows with provenance | G |
-| 5 | Partitioning and clustering | a dry run before and after: bytes scanned | partitions by `dt`, clustered by `title_id` | G |
-| 6 | G2 | no `event_id`, unknown `title_id` → quarantine | rows split: valid / quarantined | G |
-| 7 | Silver: dedupe and conform | `QUALIFY ROW_NUMBER()`; platforms standardised | many deliveries → one event | G |
-| 8 | SCD2 subscribers | `MERGE`: the mid-month upgrade | one household, two versions, `valid_from` / `valid_to` | G |
-| 9 | G3 | EPG coverage; the inner join that loses minutes | missing slot → missing minutes | G |
+| 1 | Datasets and location | bronze, silver, gold, audit in Terraform; `bq ls` | project → datasets | G |
+| 2 | External tables: schema on read | the platform's viewing export (4 parts) landed in the raw zone, read in place, `dt` from the path | files → external table → query | G |
+| 3 | Bronze: the night as delivered | `INSERT … SELECT` with `_src_file` (`_FILE_NAME`), `_ingest_ts` | provenance per row | G |
+| 4 | ◆ How BigQuery runs a query | a query's plan, stage by stage (`explain.py`) | storage ↔ network ↔ slots | G |
+| 5 | Partitioning and clustering | hourly partitions + clustering by channel, title: 12.2 MB → 6.4 MB | the partitions a filter opens | G |
+| 6 | G2 | no `event_id` (4), unknown title `T-9999` (3) → quarantine; passes under 1 in 1,000 | rows split: trusted / quarantined | G |
+| 7 | Silver: dedupe and conform | `QUALIFY ROW_NUMBER()`; platforms standardised; 400,949 events | many deliveries → one event | G · M |
+| 8 | SCD2 subscribers | `MERGE`: 37 derby-day upgrades; `HH-10123` | one household, two versions | M |
+| 9 | G3 | EPG coverage: `SUN-MOVIES-2` 20:00, 3,781 box-minutes an inner join drops; G3 fails | missing slot → missing minutes | G |
 
 **9. `dataproc` · Spark for the heavy join · 8**
 
@@ -413,6 +413,9 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
    `graphl.in/gcp-media-analytics`.
 6. The pilot is Course 5, `land`, as azure-trade-finance (2026-11-02). Courses 3–4 were authored
    next; the chain runs start → secure → land.
+8. From Course 9 on, nothing is recorded: every step's output is AUTHORED (mocked) to match the
+   code and the facts, and its frame is labelled `mocked`. GCP was torn down after Course 8
+   (2026-11-03, the owner's call).
 7. A night's window is fixed by its `dt` — (dt 00:00, dt+1 00:00] on `updated_at` — and the
    loaders' watermark is the newest night with a `_SUCCESS`. No mutable watermark object: the raw
    bucket gets a retention policy in §5.7, which would refuse overwriting one (2026-11-02).

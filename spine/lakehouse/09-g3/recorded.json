@@ -1,5 +1,6 @@
 {
-  "key": "341941dabea04d9943112d6f56028adaf703589fb10415e26d970c03f09f81ec",
+  "key": "a7609219e97b270af5ed42b2d54cf8509148e629910812f0d39b06ce9093c3da",
   "transcript": "03e9b4c94bf232c54491031e358223837276c769d068935d25a73a089d2e0051",
-  "gcloud": "570.0.0"
+  "gcloud": "570.0.0",
+  "resealed": "an ancestor's transcript was mocked after this step ran"
 }

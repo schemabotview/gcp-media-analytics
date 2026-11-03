@@ -14,7 +14,7 @@ QUALIFY ROW_NUMBER() OVER (PARTITION BY event_id
                            ORDER BY _ingest_ts, _src_file) = 1;
 
 SELECT
-  (SELECT COUNT(*) FROM bronze.viewing_events WHERE dt = @dt) AS bronze,
+  (SELECT COUNT(*) FROM bronze.viewing_events WHERE dt = @dt) AS bronze_rows,
   (SELECT COUNT(*) FROM bronze.viewing_quarantine WHERE dt = @dt)
-    AS quarantined,
-  (SELECT COUNT(*) FROM silver.viewing_events WHERE dt = @dt) AS silver;
+    AS quarantined_rows,
+  (SELECT COUNT(*) FROM silver.viewing_events WHERE dt = @dt) AS silver_rows;

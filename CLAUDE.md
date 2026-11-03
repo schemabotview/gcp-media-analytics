@@ -55,7 +55,7 @@ azure-trade-finance when narration starts).
 | 5 | `land` | 8 | authored, narrated (text), 4K-checked: §2–§5 L · E, §1, §6–§8 recorded on GCP |
 | 6 | `stream` | 7 | authored, narrated (text), 4K-checked: §1 doc-cited, §2 and §7 recorded on GCP, §3–§6 L · E (gcloud's Pub/Sub emulator) |
 | 7 | `dataflow` | 9 | authored, narrated (text), 4K-checked: §1–§7 L (Beam's direct runner), §8–§9 recorded on GCP (§9 a Dataflow streaming job, drained) |
-| 8 | `lakehouse` | 9 | planned |
+| 8 | `lakehouse` | 9 | authored, narrated (text), 4K-checked: all recorded on GCP; §7's count and §8's load+MERGE output MOCKED (the recording's own SQL failed; corrected by hand, labelled) |
 | 9 | `dataproc` | 8 | planned |
 | 10 | `serve` | 8 | planned |
 | 11 | `orchestrate` | 8 | planned |
@@ -106,6 +106,15 @@ The recorder has never run against a real project: its first recordings are its 
    session's safety check); the raw bucket emptied first (`gcloud storage rm`, after retention). The raw bucket's retention (§5.7) holds
    objects for an hour; the KMS key ring `kr-media` can never be deleted — the next recording must
    `terraform import` it (and its key) before §4.7 applies.
+
+## From Course 9 on: MOCKED (the owner's call, 2026-11-03)
+
+GCP was torn down after Course 8 and nothing more is recorded. Every step from §9.1 on is
+`{"mocked": true}`: its session.txt is AUTHORED to match the code and the facts (sun_gen's numbers,
+the local Spark runs made while drafting), sealed with `python scripts/spine.py --mock <step>`, and
+its frame carries the `mocked` level (`MOCKED` in `level.ts`), never `recorded on GCP`. `--reseal`
+re-keys a step that ran after a mocked ancestor changed (§8.9). Re-recording a mocked step for real
+later is `--record` after removing `mocked` from its step.json.
 
 ## Invariants
 

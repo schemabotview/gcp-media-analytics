@@ -76,6 +76,11 @@ step.json (other keys, all optional):
                           silently (restore_gcp), the KMS ring and key imported again
   {"local_state": true}   a GCP step that reads the source systems: the local parent's databases are
                           restored first (§5.6 copies billing to the real bucket)
+  {"mocked": true}        AUTHORED, not run (from Course 9, on the owner's call, 2026-11-03: no more
+                          GCP): session.txt is written by hand, as close to a real run as the code
+                          and the facts allow; `--mock <step>` seals it. Its scene says so (MOCKED).
+                          `--reseal <step>` re-seals a step that DID run, after a mocked ancestor
+                          changed its key; recorded.json notes it.
 """
 from __future__ import annotations
 
@@ -849,7 +854,8 @@ def restore_gcp(parent: Path, env: dict) -> None:
 
 def recorded_ok(step: Path) -> tuple[bool, str]:
     gcp = config_of(step).get('gcp')
-    how = f'python scripts/spine.py {"--record" if gcp else "--write"} {name_of(step)}'
+    mocked = config_of(step).get('mocked')
+    how = f'python scripts/spine.py {"--mock" if mocked else "--record" if gcp else "--write"} {name_of(step)}'
     rec = step / 'recorded.json'
     if not rec.exists():
         return False, f'not written yet ({how})'
@@ -857,10 +863,34 @@ def recorded_ok(step: Path) -> tuple[bool, str]:
     if data['key'] != key_of(step):
         return False, f'changed since it was written, or a step before it did ({how}, then every stale step after it)'
     if data['transcript'] != hashlib.sha256((step / 'session.txt').read_bytes()).hexdigest():
-        return False, 'session.txt was edited by hand: a transcript is run, never typed'
-    if not gcp and not config_of(step).get('branch') and not all((step / 'state' / f'db-{db}.sql.gz').exists() for db in DBS):
+        return False, 'session.txt was edited by hand: a transcript is run, never typed' + (' (seal it: --mock)' if mocked else '')
+    if bool(mocked) != data.get('mocked', False):
+        return False, 'step.json and recorded.json disagree about whether it was mocked'
+    if not gcp and not mocked and not config_of(step).get('branch') and not all((step / 'state' / f'db-{db}.sql.gz').exists() for db in DBS):
         return False, f'its saved state is missing ({how})'
     return True, ''
+
+
+def seal(step: Path, how: str) -> int:
+    """--mock: seal an AUTHORED transcript. --reseal: a step that ran, re-keyed after a mocked
+    ancestor changed (its own transcript untouched)."""
+    mocked = bool(config_of(step).get('mocked'))
+    rec = step / 'recorded.json'
+    if how == 'mock' and not mocked:
+        sys.exit(f'✗ {name_of(step)}: only a step with {{"mocked": true}} is sealed by hand')
+    if how == 'reseal' and (mocked or not rec.exists()):
+        sys.exit(f'✗ {name_of(step)}: --reseal is for a step that ran and was written or recorded')
+    data = json.loads(rec.read_text()) if rec.exists() else {}
+    if how == 'reseal' and data['transcript'] != hashlib.sha256((step / 'session.txt').read_bytes()).hexdigest():
+        sys.exit(f'✗ {name_of(step)}: its transcript changed; --reseal keeps a transcript that ran')
+    data.update({'key': key_of(step), 'transcript': hashlib.sha256((step / 'session.txt').read_bytes()).hexdigest()})
+    if mocked:
+        data['mocked'] = True
+    else:
+        data['resealed'] = 'an ancestor\'s transcript was mocked after this step ran'
+    rec.write_text(json.dumps(data, indent=2) + '\n')
+    print(f'✓ {name_of(step)} {"sealed (mocked)" if mocked else "re-sealed"}')
+    return 0
 
 
 def teardown() -> int:
@@ -897,6 +927,9 @@ def preflight() -> str | None:
 def main(argv: list[str]) -> int:
     if '--record' in argv:
         return record(ROOT / argv[argv.index('--record') + 1])
+    if '--mock' in argv or '--reseal' in argv:
+        how = 'mock' if '--mock' in argv else 'reseal'
+        return max(seal(ROOT / a, how) for a in argv if not a.startswith('--'))
     if '--undo' in argv:
         i = argv.index('--undo')
         return undo(ROOT / argv[i + 1], argv[i + 2])
@@ -918,7 +951,7 @@ def main(argv: list[str]) -> int:
     if not write and not replay:  # the check: runs nothing
         for step in (s for s in ordered if asked(s)):
             ok, why = recorded_ok(step)
-            kind = 'GCP' if config_of(step).get('gcp') else 'local'
+            kind = 'mocked' if config_of(step).get('mocked') else 'GCP' if config_of(step).get('gcp') else 'local'
             print(f'{"✓" if ok else "✗"} {name_of(step)} ({kind}){"" if ok else ": " + why}')
             problems += [] if ok else [f'{name_of(step)}: {why}']
         print(f"{'✗' if problems else '✓'} {sum(map(asked, ordered))} step(s) checked, {len(problems)} problem(s)")
@@ -934,8 +967,8 @@ def main(argv: list[str]) -> int:
     try:
         if write:
             for step in (s for s in ordered if asked(s)):
-                if config_of(step).get('gcp'):
-                    print(f'· {name_of(step)} is a GCP step: --record it')
+                if config_of(step).get('gcp') or config_of(step).get('mocked'):
+                    print(f'· {name_of(step)} is a GCP or mocked step: --record or --mock it')
                     continue
                 write_local(step, lake)
             return 0
@@ -947,7 +980,7 @@ def main(argv: list[str]) -> int:
             fresh(lake)
             for step in group[:group.index(wanted[-1]) + 1]:
                 config = config_of(step)
-                if config.get('gcp'):
+                if config.get('gcp') or config.get('mocked'):
                     continue
                 lay(step)
                 snap = Snapshot(lake) if config.get('branch') else None
