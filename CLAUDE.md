@@ -109,6 +109,12 @@ The recorder has never run against a real project: its first recordings are its 
 
 ## From Course 9 on: MOCKED (the owner's call, 2026-11-03)
 
+**Torn down, all of it** (2026-11-03, after Course 8's recordings): every Terraform resource of
+Courses 3–8 destroyed from reviewed plans (65, then the emptied raw bucket and the KMS key, 5), and
+the state bucket deleted. What GCP keeps by design: the key ring `kr-media` (never deletable; its
+one key version DESTROY_SCHEDULED) and the enabled APIs. No Dataflow job, bucket, dataset, topic,
+subscription, service account or network of the course remains.
+
 GCP was torn down after Course 8 and nothing more is recorded. Every step from §9.1 on is
 `{"mocked": true}`: its session.txt is AUTHORED to match the code and the facts (sun_gen's numbers,
 the local Spark runs made while drafting), sealed with `python scripts/spine.py --mock <step>`, and
