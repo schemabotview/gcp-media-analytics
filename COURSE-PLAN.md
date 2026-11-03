@@ -413,12 +413,12 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
    `graphl.in/gcp-media-analytics`.
 6. The pilot is Course 5, `land`, as azure-trade-finance (2026-11-02). Courses 3–4 were authored
    next; the chain runs start → secure → land.
-8. From Course 9 on, nothing is recorded: every step's output is AUTHORED (mocked) to match the
-   code and the facts, and its frame is labelled `mocked`. GCP was torn down after Course 8
-   (2026-11-03, the owner's call).
 7. A night's window is fixed by its `dt` — (dt 00:00, dt+1 00:00] on `updated_at` — and the
    loaders' watermark is the newest night with a `_SUCCESS`. No mutable watermark object: the raw
    bucket gets a retention policy in §5.7, which would refuse overwriting one (2026-11-02).
+8. From Course 9 on, nothing is recorded: every step's output is AUTHORED (mocked) to match the
+   code and the facts, and its frame is labelled `mocked`. GCP was torn down after Course 8
+   (2026-11-03, the owner's call).
 
 ## Open
 
