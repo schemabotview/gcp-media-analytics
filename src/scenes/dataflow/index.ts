@@ -250,9 +250,9 @@ const published = /published (\d+) messages/.exec(s9)![1]
 
 export const flowDataflow: SceneModel = ideFrame({
   tree: tree('dataflow/09-on-dataflow', 'stream/live_viewers.py', ['stream/live_viewers.py', 'stream/stream_peak.sql', 'infra/modules/dataflow']),
-  editor: { file: 'stream/live_viewers.py', code: live5, show: [[lineOf(live5, '# The job\'s watermark'), lineOf(live5, '| "count" >> beam.CombinePerKey(Once())')]], highlight: linesFrom(live5, '| "minutes" >> beam.WindowInto(', 'accumulation_mode=trigger.AccumulationMode.ACCUMULATING)') },
+  editor: { file: 'stream/live_viewers.py', code: live5, show: [[lineOf(live5, '# The job\'s watermark'), lineOf(live5, 'REPLAY_LATENESS = ')], [lineOf(live5, '| "read" >> beam.io.ReadFromPubSub('), lineOf(live5, '| "count" >> beam.CombinePerKey(Once())')]], highlight: linesFrom(live5, '| "minutes" >> beam.WindowInto(', 'accumulation_mode=trigger.AccumulationMode.ACCUMULATING)') },
   session: s9,
-  keep: ['$ python stream/live_viewers.py', '$ python produce/settop.py', '$ gcloud dataflow jobs drain', ['$ $Q', '| 18:4']],
+  keep: ['$ python stream/live_viewers.py', 'published', '$ gcloud dataflow jobs drain', 'JOB_STATE_DRAINED', '| 18:41'],
   side: [
     RECORDED,
     {
@@ -264,7 +264,7 @@ export const flowDataflow: SceneModel = ideFrame({
     },
     {
       type: 'table', id: 'fired', title: 'What the job wrote: each minute’s last firing', tone: 'store', columns: ['minute', 'households', 'firings'],
-      rows: fired.filter(([m]) => m >= '18:38' && m <= '18:44').map(([m, n, f]) => ({ id: `f-${m}`, cells: [m, n, f], tone: m === top[0] ? 'ingest' as const : undefined })),
+      rows: fired.filter(([m]) => m >= '18:39' && m <= '18:45').map(([m, n, f]) => ({ id: `f-${m}`, cells: [m, n, f], tone: m === top[0] ? 'ingest' as const : undefined })),
     },
     { type: 'note', id: 'note', tone: 'store', text: 'Drain stops reading at once, then closes every open window and stops: nothing in flight is lost. Cancel stops at once and drops it.' },
   ],

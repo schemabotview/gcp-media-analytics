@@ -331,8 +331,8 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 | 5 | ◆ full scene: watermarks and late data | allowed lateness, triggers; a late pane fires | **timeline**: the watermark line | L |
 | 6 | Dedupe in the stream | by `event_id` within the window | duplicates dropped before counting | L |
 | 7 | Sessions | session windows, 30-minute gap | **timeline**: a device's sessions | L |
-| 8 | Into BigQuery | the Storage Write API to `live.concurrent_viewers`; `EX-LDN-04` shows | stream → table, the derby curve | G |
-| 9 | On Dataflow | the same file with `--runner DataflowRunner`; workers; drain vs cancel | job graph, autoscaling | G |
+| 8 | Into BigQuery | streaming inserts into `live.concurrent_viewers` (made by Terraform, `CREATE_NEVER`) | pipeline → inserts → table; the peak read back | G |
+| 9 | On Dataflow | the same file as a streaming job fed by Pub/Sub (`timestamp_attribute`); the replay's lateness; drain vs cancel | subscription → job → table; each minute's firings | G |
 
 **8. `lakehouse` · BigQuery: Bronze and Silver · 9**
 

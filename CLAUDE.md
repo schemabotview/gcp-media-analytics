@@ -54,7 +54,7 @@ azure-trade-finance when narration starts).
 | 4 | `secure` | 8 | authored, narrated (text), 4K-checked; all recorded on GCP (§4.2 drawn in the side pane, not a ◆ full scene) |
 | 5 | `land` | 8 | authored, narrated (text), 4K-checked: §2–§5 L · E, §1, §6–§8 recorded on GCP |
 | 6 | `stream` | 7 | authored, narrated (text), 4K-checked: §1 doc-cited, §2 and §7 recorded on GCP, §3–§6 L · E (gcloud's Pub/Sub emulator) |
-| 7 | `dataflow` | 9 | planned |
+| 7 | `dataflow` | 9 | authored, narrated (text), 4K-checked: §1–§7 L (Beam's direct runner), §8–§9 recorded on GCP (§9 a Dataflow streaming job, drained) |
 | 8 | `lakehouse` | 9 | planned |
 | 9 | `dataproc` | 8 | planned |
 | 10 | `serve` | 8 | planned |
