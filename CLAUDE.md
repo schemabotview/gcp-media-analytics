@@ -18,13 +18,10 @@
 
 ## Status
 
-Plan v1.2 (2026-11-02), awaiting the owner's review. Cloud sessions 2026-11-02/03: infra built;
-**Courses 1–5 authored in full** — 34 sections, every one checked and shot at 4K. Local steps replay
-here; every GCP step (Course 2's read-only labs, §3.5–3.8, Course 4, §5.1, §5.6–5.8) was recorded
-once in the owner's project and normalised. `check:spine`: 31 steps, 0 problems. **Torn down**
-(2026-11-02): Courses 3–5's 30 resources destroyed from a reviewed plan; the project keeps the state
-bucket, the enabled APIs (Compute Engine now among them, from §2.3) and the undeletable key ring
-`kr-media` (a re-recording of §4.7 must `terraform import` it). Next:
+Plan v1.2 (2026-11-02), awaiting the owner's review. **All twelve courses authored** (2026-11-03): 92
+sections, every one checked and shot at 4K. Courses 1–8 replayed locally or recorded once on GCP
+(§8.7's count and §8.8's load corrected by hand, labelled mocked); Courses 9–12 MOCKED on the owner's
+call (see below). GCP is torn down in full. `check:spine`: 83 steps, 0 problems. Next:
 
 1. Owner review of `COURSE-PLAN.md`, the 34 routes (`#/intro-a-night-of-viewing` … `#/land-lifecycle`)
    and the map preview `#/preview-map-land` (the finished map is §1.3).
