@@ -1,0 +1,8 @@
+$ gcloud compute regions list --format="value(name)" | wc -l
+43
+$ gcloud compute regions describe europe-west2 --format="value(status)"
+UP
+$ gcloud compute zones list --filter=name~europe-west2 --format="value(name)"
+europe-west2-c
+europe-west2-b
+europe-west2-a

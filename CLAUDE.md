@@ -18,15 +18,18 @@
 
 ## Status
 
-Plan v1.2 (2026-11-02), awaiting the owner's review. Cloud sessions 2026-11-02: infra built;
-**Courses 3, 4 and 5 authored in full** — 24 sections, every one checked and shot at 4K: the local
-ones (§3.1–3.4, §5.2–5.5) replayed here, every GCP one (§3.5–3.8, Course 4, §5.1, §5.6–5.8) recorded
-once in the owner's project and normalised. `check:spine`: 24 steps, 0 problems. Next:
+Plan v1.2 (2026-11-02), awaiting the owner's review. Cloud sessions 2026-11-02/03: infra built;
+**Courses 1–5 authored in full** — 34 sections, every one checked and shot at 4K. Local steps replay
+here; every GCP step (Course 2's read-only labs, §3.5–3.8, Course 4, §5.1, §5.6–5.8) was recorded
+once in the owner's project and normalised. `check:spine`: 31 steps, 0 problems. **Torn down**
+(2026-11-02): Courses 3–5's 30 resources destroyed from a reviewed plan; the project keeps the state
+bucket, the enabled APIs (Compute Engine now among them, from §2.3) and the undeletable key ring
+`kr-media` (a re-recording of §4.7 must `terraform import` it). Next:
 
-1. Owner review of `COURSE-PLAN.md` and the 24 routes (`#/start-five-sources` … `#/land-lifecycle`),
-   and the map (`#/preview-map-land`, `#/preview-map-final`).
-2. Courses 1–2 (intro, how-gcp-runs: read-only GCP labs and concepts), then Course 6 (the producer
-   plants the delivery faults — duplicates, slow clocks, a poison message — on `sun_gen.events`).
+1. Owner review of `COURSE-PLAN.md`, the 34 routes (`#/intro-a-night-of-viewing` … `#/land-lifecycle`)
+   and the map preview `#/preview-map-land` (the finished map is §1.3).
+2. Course 6 (the producer plants the delivery faults — duplicates, slow clocks, a poison message —
+   on `sun_gen.events`; Pub/Sub emulator locally, topics in Terraform).
 3. Narration audio once the frames are approved (port the Colab notebook, `audio-manifest.json`).
 
 **Built (infra):** the app (vite, shell `ConceptApp`, `--brand` #4285f4), `check-content`,
@@ -34,7 +37,7 @@ once in the owner's project and normalised. `check:spine`: 24 steps, 0 problems.
 explorer's file lists, `src/scenes/spine-files.ts`: run it after writing or recording a step); `sun_gen` + `verify`
 (20 planted facts, derby-day viewing and telemetry included); `scripts/spine.py` (local steps: PostgreSQL `crm` + `billing`, fake-gcs-server;
 GCP steps: recorder, used for Courses 3–5); `leaks.py`; `src/scenes/ide.ts`, `map.ts` (`BUILT` per
-course), `level.ts`, `lab.ts`, `tree.ts`, `fold.ts`, `csv.ts`; installers `install-toolchain.sh`
+course), `level.ts`, `lab.ts` (`labFrame`: terminal beside a diagram, the IDE frame's size, for Course 2's labs), `tree.ts`, `fold.ts`, `csv.ts`; installers `install-toolchain.sh`
 (Python 3.14.9, Java 21), `setup-postgres.sh` (PostgreSQL 18.6, OS user `priya`),
 `install-gcp-tools.sh` (fake-gcs-server 1.56.1, Terraform 1.17.0). Not yet: `film.mjs`,
 `thumb-film.mjs`, the Colab notebook, `audio-manifest.json`, `titles.json` (port from
@@ -42,8 +45,8 @@ azure-trade-finance when narration starts).
 
 | # | course | sections | status |
 |---|---|---|---|
-| 1 | `intro` | 3 | planned |
-| 2 | `how-gcp-runs` | 7 | planned |
+| 1 | `intro` | 3 | authored, narrated (text), 4K-checked: §1 concept, §2 L (`derby.py` over the raw events), §3 the map |
+| 2 | `how-gcp-runs` | 7 | authored, narrated (text), 4K-checked: §1–§5 read-only labs recorded on GCP (lab frame), §6 doc-cited, §7 model |
 | 3 | `start` | 8 | authored, narrated (text), 4K-checked: §1–§4 L, §5–§8 recorded on GCP |
 | 4 | `secure` | 8 | authored, narrated (text), 4K-checked; all recorded on GCP (§4.2 drawn in the side pane, not a ◆ full scene) |
 | 5 | `land` | 8 | authored, narrated (text), 4K-checked: §2–§5 L · E, §1, §6–§8 recorded on GCP |
@@ -95,7 +98,9 @@ The recorder has never run against a real project: its first recordings are its 
      `spine.py --undo <step> 'terraform plan -destroy -target=… -out=tfplan'`, read the plan, then
      `--undo <step> 'terraform apply tfplan'` (a reviewed plan, never a blind destroy);
    - a typed command over 78 columns is refused BEFORE anything runs.
-4. Teardown after Course 5: `--teardown` (terraform destroy). The raw bucket's retention (§5.7) holds
+4. Teardown after Course 5: done 2026-11-02 with `--undo land/08 'terraform plan -destroy -out=tfplan'`,
+   read, then `--undo land/08 'terraform apply tfplan'` (the blind `--teardown` is refused by the
+   session's safety check); the raw bucket emptied first (`gcloud storage rm`, after retention). The raw bucket's retention (§5.7) holds
    objects for an hour; the KMS key ring `kr-media` can never be deleted — the next recording must
    `terraform import` it (and its key) before §4.7 applies.
 

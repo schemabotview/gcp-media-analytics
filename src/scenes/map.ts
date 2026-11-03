@@ -76,7 +76,7 @@ export function platformMap(built: string[]): SceneNode {
     type: 'group', id: 'nightly', icon: 'clock', title: 'Nightly', sub: 'correct, next morning', dir: 'row', tone: 'store',
     muted: later('nightly'),
     // Gold is built twice over: BigQuery SQL from Silver, and Dataproc's QoS join above it
-    children: [...NIGHTLY.slice(0, 3).map(it), { type: 'group', id: 'gold-stack', bare: true, children: [it(DATAPROC), it(NIGHTLY[3])] }],
+    children: [{ ...it(NIGHTLY[0]), minH: 150 }, ...NIGHTLY.slice(1, 3).map(it), { type: 'group', id: 'gold-stack', bare: true, children: [it(DATAPROC), it(NIGHTLY[3])] }],
   }
   const lanes: Group = { type: 'group', id: 'lanes', bare: true, children: [nightly, live] }
   const platform: Group = { type: 'group', id: 'platform', bare: true, dir: 'grid', cols: 5, span: 'all', children: PLATFORM.map(it) }

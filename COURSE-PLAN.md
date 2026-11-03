@@ -254,8 +254,8 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 | # | Section | Step | Side pane | Level |
 | --- | --- | --- | --- | --- |
 | 1 | A night of viewing, in one picture | concept | household → box / app → events → Sun; broadband underneath | D |
-| 2 | Two questions, two clocks | lab: the finished `live` curve and Gold row | live (seconds) vs next morning (correct); the answer card | G |
-| 3 | What we'll build | concept | **the map**, both lanes lit | G |
+| 2 | Two questions, two clocks | lab: `derby.py` computes both answers from the raw events (the platform recomputes them in 7 and 10) | the derby curve; ratio per exchange | L |
+| 3 | What we'll build | concept | **the map**, both lanes lit (full frame) | D |
 
 **2. `how-gcp-runs` · How Google Cloud is built · 7**
 
@@ -263,11 +263,11 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 | --- | --- | --- | --- | --- |
 | 1 | ◆ full scene: regions and zones | `gcloud compute regions describe europe-west2` | region → zones → the global network | G |
 | 2 | The resource hierarchy | `gcloud projects describe`, `get-ancestors` | organization → folders → projects → resources | G |
-| 3 | APIs are switched on per project | `gcloud services list --enabled`; a call to a disabled API refused | project → enabled services → endpoints | G |
-| 4 | Control plane vs data plane | a bucket's metadata vs its objects | `storage.googleapis.com` JSON API: bucket vs object resources | G |
+| 3 | APIs are switched on per project | `gcloud services list --enabled`; a Compute Engine call refused (SERVICE_DISABLED), the API enabled — the one switch the CLI makes; recorded before §2.1, which needs it | project → enabled services → endpoints | G |
+| 4 | Control plane vs data plane | Google's public `gs://cloud-samples-data`: the bucket's settings vs its objects, both URIs from `--log-http` | `storage.googleapis.com` JSON API: bucket vs object resources | G |
 | 5 | Console, gcloud, Terraform: three clients | one read three ways, `--log-http` | three clients, one REST API | G |
 | 6 | Serverless and managed clusters | concept | BigQuery, Pub/Sub, Dataflow vs Dataproc clusters on the responsibility line | D |
-| 7 | How GCP charges | lab: a month of the platform, modelled | meters: GB stored, bytes scanned, messages, vCPU-hours | M |
+| 7 | How GCP charges | lab: `meters.py`, a month in billed units from sun_gen's sizes and three stated assumptions; no prices | meters: GB stored, bytes scanned, messages, vCPU-hours | M · L |
 
 **3. `start` · The sources, and a first deployment · 8**
 

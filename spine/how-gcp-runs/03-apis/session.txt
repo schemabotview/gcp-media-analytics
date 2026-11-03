@@ -1,0 +1,36 @@
+$ gcloud services list --enabled --format="value(config.name)" | wc -l
+52
+$ gcloud compute zones list --filter=region:europe-west2
+ERROR: (gcloud.compute.zones.list) [priya@sun.example] does not have permission 
+to access projects instance [sun-media-dev] (or it may not exist): Compute Engin
+e API has not been used in project sun-media-dev before or it is disabled. Enabl
+e it by visiting https://console.developers.google.com/apis/api/compute.googleap
+is.com/overview?project=sun-media-dev then retry. If you enabled this API recent
+ly, wait a few minutes for the action to propagate to our systems and retry. Thi
+s command is authenticated as priya@sun.example which is the active account spec
+ified by the [core/account] property.
+Compute Engine API has not been used in project sun-media-dev before or it is di
+sabled. Enable it by visiting https://console.developers.google.com/apis/api/com
+pute.googleapis.com/overview?project=sun-media-dev then retry. If you enabled th
+is API recently, wait a few minutes for the action to propagate to our systems a
+nd retry.
+Google developers console API activation
+https://console.developers.google.com/apis/api/compute.googleapis.com/overview?p
+roject=sun-media-dev
+- '@type': type.googleapis.com/google.rpc.ErrorInfo
+  domain: googleapis.com
+  metadata:
+    activationUrl: https://console.developers.google.com/apis/api/compute.google
+apis.com/overview?project=sun-media-dev
+    consumer: projects/sun-media-dev
+    containerInfo: sun-media-dev
+    service: compute.googleapis.com
+    serviceTitle: Compute Engine API
+  reason: SERVICE_DISABLED
+$ gcloud services enable compute.googleapis.com
+Operation "operations/acf.p2-100000000001-00000000-0000-0000-0000-000000001000" 
+finished successfully.
+$ gcloud compute zones list --filter=name~europe-west2 --format="value(name)"
+europe-west2-c
+europe-west2-b
+europe-west2-a

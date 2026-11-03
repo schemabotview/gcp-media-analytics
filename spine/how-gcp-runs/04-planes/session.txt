@@ -1,0 +1,14 @@
+$ B=gs://cloud-samples-data
+$ F='yaml(location,default_storage_class)'
+$ gcloud storage buckets describe $B --format=$F
+default_storage_class: MULTI_REGIONAL
+location: US
+$ gcloud storage buckets describe $B --log-http 2>&1 | grep "^uri:"
+uri: https://storage.googleapis.com/storage/v1/b/cloud-samples-data?alt=json&pro
+jection=full
+$ gcloud storage ls $B --log-http 2>&1 | grep "^uri:"
+uri: https://storage.googleapis.com/storage/v1/b/cloud-samples-data/o?alt=json&f
+ields=prefixes%2Citems%2Fname%2Citems%2Fsize%2Citems%2Fgeneration%2CnextPageToke
+n&delimiter=%2F&includeFoldersAsPrefixes=True&maxResults=1000&projection=noAcl
+$ gcloud storage ls $B | wc -l
+46

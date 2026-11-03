@@ -1,0 +1,7 @@
+$ P=$(gcloud config get project)
+$ gcloud projects describe $P --format="yaml(projectId,projectNumber,parent)"
+projectId: sun-media-dev
+projectNumber: '100000000001'
+$ gcloud projects get-ancestors $P
+ID               TYPE
+sun-media-dev  project

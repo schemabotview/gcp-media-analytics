@@ -1,0 +1,6 @@
+$ python model/meters.py
+Cloud Storage  MB stored               43.3
+Pub/Sub        messages          12,028,680
+Pub/Sub        GB published             3.0
+BigQuery       GB scanned             602.9
+Dataflow       vCPU-hours             720.0

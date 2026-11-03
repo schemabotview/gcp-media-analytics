@@ -1,4 +1,6 @@
-import { trim } from './ide'
+import type { Edge, SceneModel, SceneNode } from '@graphlearning/graphl-flow'
+import { EDITOR_W, FRAME_H, FRAME_W, keepLines, terminal, trim, type Keep } from './ide'
+
 
 // A lab's session.txt holds several commands; a concept scene shows each command's real output in
 // its own node. `outputOf` cuts one command's output out of the replay, so a full-scene detour
@@ -8,4 +10,22 @@ export function outputOf(session: string, command: string): string {
   const block = blocks.find((b) => b.split('\n')[0] === command)
   if (block === undefined) throw new Error(`lab.ts: no command ${JSON.stringify(command)} in the session`)
   return block.split('\n').slice(1).map((line) => line.trimEnd()).join('\n')
+}
+
+// ── the lab frame ─────────────────────────────────────────────────────────────────────────────────
+// A lab that changes no project file (Course 2's read-only GCP labs): the terminal, 80 columns, beside
+// its diagram. Same natural width and height as the IDE frame, so the zoom never jumps between them.
+
+export function labFrame({ session, keep, side, edges = [] }: { session: string; keep?: Keep[]; side: SceneNode[]; edges?: Edge[] }): SceneModel {
+  const rows = terminal(session)
+  return {
+    dir: 'row',
+    nodes: [
+      { type: 'group', id: 'lab-term', bare: true, w: EDITOR_W, children: [
+        { type: 'code', id: 'terminal', terminal: true, filename: 'terminal — viewing-pulse', code: rows, show: keep && keepLines(rows, keep), fill: true, w: EDITOR_W, minH: FRAME_H },
+      ] },
+      { type: 'group', id: 'lab-side', bare: true, w: FRAME_W - EDITOR_W - 10, minH: FRAME_H, children: side },
+    ],
+    edges,
+  }
 }

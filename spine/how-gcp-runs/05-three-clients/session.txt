@@ -1,0 +1,31 @@
+$ P=$(gcloud config get project)
+$ gcloud projects describe $P --log-http 2>&1 | grep -E "^(uri|method):"
+uri: https://cloudresourcemanager.googleapis.com/v1/projects/sun-media-dev?alt=j
+son
+method: GET
+$ T=$(gcloud auth print-access-token)
+$ U=https://cloudresourcemanager.googleapis.com/v1/projects/$P
+$ curl -s -H "Authorization: Bearer $T" $U | jq -c '{projectId,projectNumber}'
+{"projectId":"sun-media-dev","projectNumber":"100000000001"}
+$ cd lab
+$ terraform init -input=false >/dev/null && terraform apply -auto-approve
+data.google_project.this: Reading...
+data.google_project.this: Read complete after 2s [id=projects/sun-media-dev]
+
+Changes to Outputs:
+  + project = {
+      + id     = "sun-media-dev"
+      + number = "100000000001"
+    }
+
+You can apply this plan to save these new output values to the Terraform
+state, without changing any real infrastructure.
+
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+project = {
+  "id" = "sun-media-dev"
+  "number" = "100000000001"
+}

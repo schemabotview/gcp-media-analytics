@@ -1,0 +1,8 @@
+$ python answer/derby.py
+live: peak 2140 households at 18:41 UTC
+next morning: buffering / watched, the derby
+  EX-LDN-04  4.1%
+  EX-BHM-03  0.6%
+  EX-BHM-01  0.6%
+  EX-LDN-03  0.6%
+  the other 11  0.6%
