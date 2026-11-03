@@ -1,0 +1,391 @@
+$ cd infra
+$ terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate
+Initializing the backend...
+
+Successfully configured the backend "gcs"! Terraform will automatically
+use this backend unless the backend configuration changes.
+
+Initializing modules...
+- kms in modules/kms
+- secrets in modules/secrets
+- live in modules/live
+- pubsub in modules/pubsub
+- iam in modules/iam
+- storage in modules/storage
+
+Initializing provider plugins...
+- Reusing version 8.9.0 of hashicorp/google from the dependency lock file
+- Reusing version 3.9.1 of hashicorp/random from the dependency lock file
+- Installing hashicorp/google v8.9.0...
+- Installed hashicorp/google v8.9.0 (signed by HashiCorp)
+- Installing hashicorp/random v3.9.1...
+- Installed hashicorp/random v3.9.1 (signed by HashiCorp)
+
+Terraform has been successfully initialized!
+$ terraform apply -var-file=envs/dev.tfvars -auto-approve
+Acquiring state lock. This may take a few moments...
+module.secrets.random_password.crm: Refreshing state... [id=none]
+module.kms.data.google_storage_project_service_account.gcs: Reading...
+module.kms.data.google_storage_project_service_account.gcs: Read complete after 
+0s [id=service-100000000001@gs-project-accounts.iam.gserviceaccount.com]
+module.pubsub.google_project_service.pubsub: Refreshing state... [id=sun-media-d
+ev/pubsub.googleapis.com]
+module.secrets.google_project_service.secretmanager: Refreshing state... [id=sun
+-media-dev/secretmanager.googleapis.com]
+data.google_project.this: Reading...
+data.google_project.this: Read complete after 1s [id=projects/sun-media-dev]
+google_project_service.budgets["billingbudgets.googleapis.com"]: Refreshing stat
+e... [id=sun-media-dev/billingbudgets.googleapis.com]
+google_project_service.budgets["monitoring.googleapis.com"]: Refreshing state...
+ [id=sun-media-dev/monitoring.googleapis.com]
+module.kms.google_project_service.kms: Refreshing state... [id=sun-media-dev/clo
+udkms.googleapis.com]
+module.iam.google_service_account.job["sa-airflow"]: Refreshing state... [id=pro
+jects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam.gserviceaccount
+.com]
+module.iam.google_service_account.job["sa-dataproc"]: Refreshing state... [id=pr
+ojects/sun-media-dev/serviceAccounts/sa-dataproc@sun-media-dev.iam.gserviceaccou
+nt.com]
+module.iam.google_service_account.job["sa-ingest"]: Refreshing state... [id=proj
+ects/sun-media-dev/serviceAccounts/sa-ingest@sun-media-dev.iam.gserviceaccount.c
+om]
+module.iam.google_service_account.job["sa-cicd"]: Refreshing state... [id=projec
+ts/sun-media-dev/serviceAccounts/sa-cicd@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_service_account.job["sa-dataflow"]: Refreshing state... [id=pr
+ojects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.iam.gserviceaccou
+nt.com]
+module.pubsub.google_pubsub_topic.dead_letter: Refreshing state... [id=projects/
+sun-media-dev/topics/dead-letter]
+module.pubsub.google_pubsub_topic.events["viewing-events"]: Refreshing state... 
+[id=projects/sun-media-dev/topics/viewing-events]
+module.pubsub.google_pubsub_topic.events["device-events"]: Refreshing state... [
+id=projects/sun-media-dev/topics/device-events]
+module.pubsub.google_pubsub_topic.events["network-telemetry"]: Refreshing state.
+.. [id=projects/sun-media-dev/topics/network-telemetry]
+module.secrets.google_secret_manager_secret.crm: Refreshing state... [id=project
+s/sun-media-dev/secrets/crm-db-password]
+google_monitoring_notification_channel.email: Refreshing state... [id=projects/s
+un-media-dev/notificationChannels/10000000000000000001]
+module.kms.google_kms_key_ring.media: Refreshing state... [id=projects/sun-media
+-dev/locations/europe-west2/keyRings/kr-media]
+module.iam.google_service_account_iam_member.operator["sa-ingest"]: Refreshing s
+tate... [id=projects/sun-media-dev/serviceAccounts/sa-ingest@sun-media-dev.iam.g
+serviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@sun
+.example]
+module.iam.google_service_account_iam_member.operator["sa-dataproc"]: Refreshing
+ state... [id=projects/sun-media-dev/serviceAccounts/sa-dataproc@sun-media-dev.i
+am.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya
+@sun.example]
+module.iam.google_service_account_iam_member.operator["sa-airflow"]: Refreshing 
+state... [id=projects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam
+.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@s
+un.example]
+module.iam.google_service_account_iam_member.operator["sa-cicd"]: Refreshing sta
+te... [id=projects/sun-media-dev/serviceAccounts/sa-cicd@sun-media-dev.iam.gserv
+iceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@sun.exa
+mple]
+module.iam.google_service_account_iam_member.operator["sa-dataflow"]: Refreshing
+ state... [id=projects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.i
+am.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya
+@sun.example]
+module.iam.google_project_iam_member.job["sa-airflow/roles/composer.worker"]: Re
+freshing state... [id=sun-media-dev/roles/composer.worker/serviceAccount:sa-airf
+low@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_project_iam_member.job["sa-dataproc/roles/dataproc.worker"]: R
+efreshing state... [id=sun-media-dev/roles/dataproc.worker/serviceAccount:sa-dat
+aproc@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_project_iam_member.job["sa-dataflow/roles/dataflow.worker"]: R
+efreshing state... [id=sun-media-dev/roles/dataflow.worker/serviceAccount:sa-dat
+aflow@sun-media-dev.iam.gserviceaccount.com]
+module.pubsub.google_pubsub_subscription.audit: Refreshing state... [id=projects
+/sun-media-dev/subscriptions/dead-letter-audit]
+module.pubsub.google_pubsub_subscription.dataflow["viewing-events"]: Refreshing 
+state... [id=projects/sun-media-dev/subscriptions/viewing-events-dataflow]
+module.pubsub.google_pubsub_subscription.dataflow["network-telemetry"]: Refreshi
+ng state... [id=projects/sun-media-dev/subscriptions/network-telemetry-dataflow]
+module.pubsub.google_pubsub_subscription.dataflow["device-events"]: Refreshing s
+tate... [id=projects/sun-media-dev/subscriptions/device-events-dataflow]
+module.secrets.google_secret_manager_secret_version.crm: Refreshing state... [id
+=projects/100000000001/secrets/crm-db-password/versions/1]
+module.pubsub.google_pubsub_topic_iam_member.dead_letter: Refreshing state... [i
+d=projects/sun-media-dev/topics/dead-letter/roles/pubsub.publisher/serviceAccoun
+t:service-100000000001@gcp-sa-pubsub.iam.gserviceaccount.com]
+google_billing_budget.month: Refreshing state... [id=billingAccounts/000000-0000
+00-000001/budgets/00000000-0000-0000-0000-000000001000]
+module.kms.google_kms_crypto_key.raw: Refreshing state... [id=projects/sun-media
+-dev/locations/europe-west2/keyRings/kr-media/cryptoKeys/k-raw]
+module.pubsub.google_pubsub_subscription_iam_member.dead_letter["viewing-events"
+]: Refreshing state... [id=projects/sun-media-dev/subscriptions/viewing-events-d
+ataflow/roles/pubsub.subscriber/serviceAccount:service-100000000001@gcp-sa-pubsu
+b.iam.gserviceaccount.com]
+module.pubsub.google_pubsub_subscription_iam_member.dead_letter["network-telemet
+ry"]: Refreshing state... [id=projects/sun-media-dev/subscriptions/network-telem
+etry-dataflow/roles/pubsub.subscriber/serviceAccount:service-100000000001@gcp-sa
+-pubsub.iam.gserviceaccount.com]
+module.pubsub.google_pubsub_subscription_iam_member.dead_letter["device-events"]
+: Refreshing state... [id=projects/sun-media-dev/subscriptions/device-events-dat
+aflow/roles/pubsub.subscriber/serviceAccount:service-100000000001@gcp-sa-pubsub.
+iam.gserviceaccount.com]
+module.kms.google_kms_crypto_key_iam_member.gcs: Refreshing state... [id=project
+s/sun-media-dev/locations/europe-west2/keyRings/kr-media/cryptoKeys/k-raw/roles/
+cloudkms.cryptoKeyEncrypterDecrypter/serviceAccount:service-100000000001@gs-proj
+ect-accounts.iam.gserviceaccount.com]
+module.secrets.google_secret_manager_secret_iam_member.ingest: Refreshing state.
+.. [id=projects/sun-media-dev/secrets/crm-db-password/roles/secretmanager.secret
+Accessor/serviceAccount:sa-ingest@sun-media-dev.iam.gserviceaccount.com]
+module.storage.google_storage_bucket.raw: Refreshing state... [id=sun-media-dev-
+raw]
+module.storage.google_storage_bucket_iam_member.raw["ingest-create"]: Refreshing
+ state... [id=b/sun-media-dev-raw/roles/storage.objectCreator/serviceAccount:sa-
+ingest@sun-media-dev.iam.gserviceaccount.com]
+module.storage.google_storage_bucket_iam_member.raw["ingest-view"]: Refreshing s
+tate... [id=b/sun-media-dev-raw/roles/storage.objectViewer/serviceAccount:sa-ing
+est@sun-media-dev.iam.gserviceaccount.com]
+module.storage.google_storage_bucket_iam_member.raw["dataproc-view"]: Refreshing
+ state... [id=b/sun-media-dev-raw/roles/storage.objectViewer/serviceAccount:sa-d
+ataproc@sun-media-dev.iam.gserviceaccount.com]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # module.live.google_bigquery_dataset.live will be created
+  + resource "google_bigquery_dataset" "live" {
+      + creation_time              = (known after apply)
+      + dataset_id                 = "live"
+      + delete_contents_on_destroy = true
+      + deletion_policy            = "DELETE"
+      + effective_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + etag                       = (known after apply)
+      + id                         = (known after apply)
+      + is_case_insensitive        = (known after apply)
+      + last_modified_time         = (known after apply)
+      + location                   = "europe-west2"
+      + max_time_travel_hours      = (known after apply)
+      + project                    = "sun-media-dev"
+      + self_link                  = (known after apply)
+      + storage_billing_model      = (known after apply)
+      + terraform_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+
+      + access (known after apply)
+    }
+
+  # module.live.google_bigquery_table.concurrent_viewers will be created
+  + resource "google_bigquery_table" "concurrent_viewers" {
+      + creation_time                = (known after apply)
+      + dataset_id                   = "live"
+      + deletion_policy              = "DELETE"
+      + deletion_protection          = false
+      + effective_labels             = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + etag                         = (known after apply)
+      + expiration_time              = (known after apply)
+      + generated_schema_columns     = (known after apply)
+      + id                           = (known after apply)
+      + ignore_auto_generated_schema = false
+      + last_modified_time           = (known after apply)
+      + location                     = (known after apply)
+      + max_staleness                = (known after apply)
+      + num_bytes                    = (known after apply)
+      + num_long_term_bytes          = (known after apply)
+      + num_rows                     = (known after apply)
+      + project                      = "sun-media-dev"
+      + schema                       = jsonencode(
+            [
+              + {
+                  + mode = "REQUIRED"
+                  + name = "minute"
+                  + type = "TIMESTAMP"
+                },
+              + {
+                  + mode = "REQUIRED"
+                  + name = "channel"
+                  + type = "STRING"
+                },
+              + {
+                  + mode = "REQUIRED"
+                  + name = "households"
+                  + type = "INT64"
+                },
+              + {
+                  + mode = "REQUIRED"
+                  + name = "watched_s"
+                  + type = "INT64"
+                },
+            ]
+        )
+      + self_link                    = (known after apply)
+      + table_id                     = "concurrent_viewers"
+      + terraform_labels             = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + type                         = (known after apply)
+
+      + time_partitioning {
+          + expiration_ms = (known after apply)
+          + field         = "minute"
+          + type          = "DAY"
+        }
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+module.live.google_bigquery_dataset.live: Creating...
+module.live.google_bigquery_dataset.live: Creation complete after 2s [id=project
+s/sun-media-dev/datasets/live]
+module.live.google_bigquery_table.concurrent_viewers: Creating...
+module.live.google_bigquery_table.concurrent_viewers: Creation complete after 0s
+ [id=projects/sun-media-dev/datasets/live/tables/concurrent_viewers]
+
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+$ cd ..
+$ T=live.concurrent_viewers
+$ python stream/live_viewers.py --from 17:30 --minutes 120 --table $T
+minute  households  watched s (delivered)  watched s (deduped)
+17:30        1786               100,620              100,440
+17:31        1849               107,400              107,160
+17:32        1900               111,240              110,940
+17:33        1949               114,300              114,000
+17:34        1981               117,300              116,940
+17:35        2018               119,160              118,860
+17:36        2031               121,380              121,080
+17:37        2055               122,220              121,860
+17:38        2073               123,600              123,300
+17:39        2085               124,740              124,380
+17:40        2093               125,400              125,100
+17:41        2105               125,940              125,580
+17:42        2112               126,600              126,300
+17:43        2119               127,020              126,720
+17:44        2125               127,500              127,140
+17:45        2129               127,740              127,500
+17:46        2132               128,100              127,740
+17:47        2133               128,280              127,920
+17:48        2135               128,280              127,980
+17:49        2137               128,460              128,100
+17:50        2137               128,580              128,220
+17:51        2139               128,460              128,220
+17:52        2139               128,640              128,340
+17:53        2139               128,700              128,340
+17:54        2139               128,640              128,340
+17:55        2139               128,700              128,340
+17:56        2139               128,700              128,340
+17:57        2139               128,640              128,340
+17:58        2139               128,700              128,340
+17:59        2139               128,700              128,340
+18:00        2139               128,640              128,340
+18:01        2139               128,640              128,340
+18:02        2139               128,700              128,340
+18:03        2139               128,640              128,340
+18:04        2139               128,700              128,340
+18:05        2139               128,640              128,340
+18:06        2139               128,640              128,340
+18:07        2139               128,640              128,340
+18:08        2139               128,700              128,340
+18:09        2139               128,640              128,340
+18:10        2139               128,700              128,340
+18:11        2139               128,640              128,340
+18:12        2139               128,640              128,340
+18:13        2139               128,580              128,340
+18:14        2139               128,700              128,340
+18:15        2139               128,580              128,340
+18:16        2139               128,640              128,340
+18:17        2139               128,152              127,852
+18:18        1998               119,929              119,749
+18:19        1861               112,029              111,789
+18:20        1728               104,190              103,950
+18:21        1584                95,280               95,040
+18:22        1584                95,280               95,040
+18:23        1584                95,280               95,040
+18:24        1584                95,280               95,040
+18:25        1584                95,280               95,040
+18:26        1584                95,280               95,040
+18:27        1584                95,280               95,040
+18:28        1584                95,280               95,040
+18:29        1584                95,280               95,040
+18:30        1584                95,280               95,040
+18:31        1584                95,280               95,040
+18:32        1584                95,220               95,040
+18:33        1678                95,340               95,040
+18:34        1757               100,920              100,680
+18:35        1824               105,600              105,420
+18:36        1916               109,740              109,440
+18:37        1998               115,260              114,960
+18:38        2061               120,180              119,880
+18:39        2139               123,840              123,660
+18:40        2139               128,700              128,340
+18:41        2140               128,715              128,355
+18:42        2139               128,640              128,340
+18:43        2139               128,700              128,340
+18:44        2139               128,700              128,340
+18:45        2139               128,700              128,340
+18:46        2139               128,577              128,277
+18:47        2131               128,172              127,872
+18:48        2128               128,089              127,729
+18:49        2123               127,661              127,301
+18:50        2112               127,118              126,758
+18:51        2104               126,483              126,183
+18:52        2094               125,979              125,619
+18:53        2081               125,327              124,967
+18:54        2067               124,098              123,918
+18:55        2057               123,659              123,419
+18:56        2054               123,460              123,160
+18:57        2043               122,762              122,462
+18:58        2039               122,477              122,177
+18:59        2028               122,065              121,705
+19:00        2022               121,612              121,312
+19:01        2016               121,357              120,997
+19:02        2011               120,864              120,684
+19:03        2003               120,497              120,317
+19:04        1994               120,017              119,717
+19:05        1984               119,492              119,252
+19:06        1974               118,701              118,401
+19:07        1968               118,408              118,168
+19:08        1954               117,523              117,223
+19:09        1948               117,133              116,833
+19:10        1943               116,906              116,546
+19:11        1932               116,046              115,746
+19:12        1921               115,528              115,288
+19:13        1910               114,861              114,501
+19:14        1895               114,004              113,764
+19:15        1877               113,066              112,706
+19:16        1846               111,081              110,781
+19:17        1820               109,397              109,099
+19:18        1788               107,645              107,345
+19:19        1749               105,092              104,852
+19:20        1692               101,914              101,674
+19:21        1629                98,505               98,265
+19:22        1548                92,767               92,501
+19:23        1451                87,395               87,250
+19:24        1350                81,620               81,380
+19:25        1231                74,325               74,145
+19:26        1008                60,738               60,558
+19:27         885                53,108               52,988
+19:28         758                45,374               45,273
+19:29         652                39,261               39,141
+$ Q="bq query --nouse_legacy_sql --maximum_bytes_billed=10000000"
+$ $Q --project_id=$TF_VAR_project_id < stream/peak.sql
++--------+------------+-----------+
+| minute | households | watched_s |
++--------+------------+-----------+
+| 18:41  |       2140 |    128355 |
+| 17:51  |       2139 |    128220 |
+| 17:52  |       2139 |    128340 |
++--------+------------+-----------+

@@ -1,0 +1,7 @@
+$ python stream/live_viewers.py --from 18:38 --minutes 6
+18:38  SUN-SPORTS-1   2061 households
+18:39  SUN-SPORTS-1   2139 households
+18:40  SUN-SPORTS-1   2139 households
+18:41  SUN-SPORTS-1   2140 households
+18:42  SUN-SPORTS-1   2139 households
+18:43  SUN-SPORTS-1   2139 households

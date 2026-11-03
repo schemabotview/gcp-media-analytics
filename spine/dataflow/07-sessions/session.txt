@@ -1,0 +1,7 @@
+$ python stream/sessions.py STB-10002 --gap 30
+session 17:09-19:37   109 events
+$ python stream/sessions.py STB-10002 --gap 10
+session 17:09-18:27    76 events
+session 18:39-19:17    33 events
+$ python stream/sessions.py STB-13795 --gap 10
+session 17:10-19:36   178 events

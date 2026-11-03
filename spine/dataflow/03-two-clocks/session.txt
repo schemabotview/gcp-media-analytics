@@ -1,0 +1,9 @@
+$ python stream/arrivals.py --from 18:38 --minutes 6
+14277 deliveries, 46 slow boxes
+event time  heard at    late by   device
+18:38:01    18:42:16      255 s   STB-14837
+18:38:14    18:42:26      252 s   STB-10101
+18:38:02    18:42:28      266 s   APP-12691
+18:38:00    18:38:01        1 s   STB-11023
+18:38:00    18:38:01        1 s   STB-11241
+18:38:00    18:38:01        1 s   STB-11398

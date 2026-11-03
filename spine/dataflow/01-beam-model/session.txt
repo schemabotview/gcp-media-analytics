@@ -1,0 +1,2 @@
+$ python stream/hello.py
+[('buffer', 1), ('heartbeat', 3), ('play', 1), ('stop', 1)]

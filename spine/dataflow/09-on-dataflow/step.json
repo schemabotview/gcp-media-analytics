@@ -1,0 +1,1 @@
+{"from": "dataflow/08-into-bigquery", "changes": ["gcp.sh", "infra/main.tf", "infra/modules/dataflow/main.tf", "infra/modules/dataflow/variables.tf", "infra/modules/live/main.tf", "infra/modules/pubsub/outputs.tf", "produce/settop.py", "stream/live_viewers.py", "stream/stream_peak.sql"], "gcp": true, "env": "gcp.sh", "venv": true, "local_state": true}

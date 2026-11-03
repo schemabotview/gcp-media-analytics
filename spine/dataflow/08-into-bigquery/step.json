@@ -1,0 +1,1 @@
+{"from": "dataflow/07-sessions", "changes": ["infra/main.tf", "infra/modules/live/main.tf", "infra/modules/live/outputs.tf", "infra/modules/live/variables.tf", "stream/live_viewers.py", "stream/peak.sql"], "gcp": true, "env": "gcp.sh", "venv": true, "local_state": true}

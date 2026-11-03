@@ -1,0 +1,1 @@
+{"from": "dataflow/04-fixed-windows", "changes": ["stream/late.py"], "env": true, "venv": true}

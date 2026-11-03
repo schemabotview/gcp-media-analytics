@@ -678,7 +678,9 @@ class Normaliser:
             text = text.replace(real, shown)
         for kind in ('account', 'billing', 'host', 'project', 'number'):  # the account's email holds the project id
             if self.real.get(kind):
-                text = re.sub(re.escape(self.real[kind]), FACTS[kind], text, flags=re.I)
+                # a tool that wraps its own message (bq's errors) can break an id across two lines
+                wrapped = '\n?'.join(re.escape(c) for c in self.real[kind])
+                text = re.sub(wrapped, FACTS[kind], text, flags=re.I)
 
         def long_id(m: re.Match) -> str:
             v = m.group(0)

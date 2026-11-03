@@ -1,0 +1,20 @@
+$ cd infra
+$ terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate
+$ terraform apply -var-file=envs/dev.tfvars -auto-approve
+$ cd ..
+$ S=viewing-events-dataflow
+$ T=live.concurrent_viewers
+$ gcloud pubsub subscriptions seek $S --time=$(date -u +%FT%TZ)
+$ python stream/live_viewers.py --subscription $S --table $T
+$ R=--region=europe-west2
+$ J=$(gcloud dataflow jobs list $R --status=active --format="value(id)")
+$ D="gcloud dataflow jobs describe $J $R --format=value(currentState)"
+$ sleep 240
+$ $D
+$ python produce/settop.py --from 18:35 --minutes 12
+$ sleep 300
+$ gcloud dataflow jobs drain $J $R
+$ until $D | grep -q DRAINED; do sleep 30; done
+$ $D
+$ Q="bq query --nouse_legacy_sql --maximum_bytes_billed=100000000"
+$ $Q --project_id=$TF_VAR_project_id < stream/stream_peak.sql

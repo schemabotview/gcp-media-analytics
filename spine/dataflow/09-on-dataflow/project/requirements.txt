@@ -1,0 +1,4 @@
+apache-beam[gcp]==2.77.0
+google-cloud-pubsub==2.43.0
+google-cloud-storage==3.17.1
+psycopg[binary]==3.3.6
