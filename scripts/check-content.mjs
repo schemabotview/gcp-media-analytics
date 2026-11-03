@@ -36,6 +36,11 @@ for (const course of Object.values(COURSES))
   }
 
 for (const [id, scene] of Object.entries(SCENES)) {
+  // A value parsed from a transcript that did not match prints as 'undefined' or 'NaN' (§10.8's card
+  // once showed 'undefined%' with every other check green): no frame may carry either word.
+  const shown = JSON.stringify(scene, (k, v) => (k === 'code' ? undefined : v))
+  const bad = /\b(undefined|NaN)\b/.exec(shown)
+  if (bad) problems.push(`scene ${id}  shows '${bad[1]}' — a value parsed from a transcript did not match`)
   const all = nodesOf(scene)
   // --- 2. unique ids ----------------------------------------------------------------------------
   const seen = new Set()

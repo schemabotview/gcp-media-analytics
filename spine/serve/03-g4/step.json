@@ -1,0 +1,1 @@
+{"from": "serve/02-unique-households", "changes": ["infra/modules/lakehouse/", "warehouse/g4.sql", "warehouse/gold_content.sql"], "mocked": true, "gcp": true, "env": "gcp.sh", "venv": true}

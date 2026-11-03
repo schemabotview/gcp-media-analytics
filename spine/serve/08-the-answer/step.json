@@ -1,0 +1,1 @@
+{"from": "serve/06-mv-bi-engine", "changes": ["warehouse/derby_card.sql"], "mocked": true, "gcp": true, "env": "gcp.sh", "venv": true}

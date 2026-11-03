@@ -1,0 +1,137 @@
+$ cd infra
+$ terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate
+Initializing the backend...
+
+Successfully configured the backend "gcs"! Terraform will automatically
+use this backend unless the backend configuration changes.
+
+Initializing modules...
+- pubsub in modules/pubsub
+- iam in modules/iam
+- dataflow in modules/dataflow
+- lakehouse in modules/lakehouse
+- storage in modules/storage
+- live in modules/live
+- secrets in modules/secrets
+- kms in modules/kms
+
+Initializing provider plugins...
+- Reusing version 3.9.1 of hashicorp/random from the dependency lock file
+- Reusing version 8.9.0 of hashicorp/google from the dependency lock file
+- Installing hashicorp/random v3.9.1...
+- Installed hashicorp/random v3.9.1 (signed by HashiCorp)
+- Installing hashicorp/google v8.9.0...
+- Installed hashicorp/google v8.9.0 (signed by HashiCorp)
+
+Terraform has been successfully initialized!
+$ terraform apply -var-file=envs/dev.tfvars -auto-approve
+module.secrets.random_password.crm: Refreshing state... [id=none]
+data.google_project.this: Reading...
+data.google_project.this: Read complete after 1s [id=projects/sun-media-dev]
+module.dataflow.google_storage_bucket.staging: Refreshing state... [id=sun-media
+module.kms.google_project_service.kms: Refreshing state... [id=sun-media-dev/clo
+module.kms.data.google_storage_project_service_account.gcs: Reading...
+module.kms.data.google_storage_project_service_account.gcs: Read complete after 
+module.iam.google_service_account.job["sa-dataproc"]: Refreshing state... [id=pr
+module.pubsub.google_project_service.pubsub: Refreshing state... [id=sun-media-d
+module.iam.google_service_account.job["sa-cicd"]: Refreshing state... [id=projec
+module.iam.google_service_account.job["sa-dataflow"]: Refreshing state... [id=pr
+module.iam.google_service_account.job["sa-airflow"]: Refreshing state... [id=pro
+module.iam.google_service_account.job["sa-ingest"]: Refreshing state... [id=proj
+module.dataflow.google_project_service.dataflow: Refreshing state... [id=sun-med
+module.secrets.google_project_service.secretmanager: Refreshing state... [id=sun
+google_project_service.budgets["monitoring.googleapis.com"]: Refreshing state...
+module.lakehouse.google_bigquery_dataset.layer["bronze"]: Refreshing state... [i
+module.lakehouse.google_bigquery_dataset.layer["silver"]: Refreshing state... [i
+module.lakehouse.google_bigquery_dataset.layer["gold"]: Refreshing state... [id=
+module.lakehouse.google_bigquery_dataset.layer["audit"]: Refreshing state... [id
+module.live.google_bigquery_dataset.live: Refreshing state... [id=projects/sun-m
+module.kms.google_kms_key_ring.media: Refreshing state... [id=projects/sun-media
+module.pubsub.google_pubsub_topic.dead_letter: Refreshing state... [id=projects/
+module.pubsub.google_pubsub_topic.events["device-events"]: Refreshing state... [
+module.pubsub.google_pubsub_topic.events["network-telemetry"]: Refreshing state.
+module.pubsub.google_pubsub_topic.events["viewing-events"]: Refreshing state... 
+module.secrets.google_secret_manager_secret.crm: Refreshing state... [id=project
+google_monitoring_notification_channel.email: Refreshing state... [id=projects/s
+module.lakehouse.google_bigquery_table.gate_results: Refreshing state... [id=pro
+module.lakehouse.google_bigquery_table.silver_viewing: Refreshing state... [id=p
+module.lakehouse.google_bigquery_table.viewing_quarantine: Refreshing state... [
+module.lakehouse.google_bigquery_table.subscriptions: Refreshing state... [id=pr
+module.lakehouse.google_bigquery_table.dim_subscriber: Refreshing state... [id=p
+module.lakehouse.google_bigquery_table.viewing_events: Refreshing state... [id=p
+module.live.google_bigquery_table.concurrent_viewers: Refreshing state... [id=pr
+module.kms.google_kms_crypto_key.raw: Refreshing state... [id=projects/sun-media
+module.pubsub.google_pubsub_topic_iam_member.dead_letter: Refreshing state... [i
+module.pubsub.google_pubsub_subscription.audit: Refreshing state... [id=projects
+module.secrets.google_secret_manager_secret_version.crm: Refreshing state... [id
+google_billing_budget.month: Refreshing state... [id=billingAccounts/000000-0000
+module.kms.google_kms_crypto_key_iam_member.gcs: Refreshing state... [id=project
+module.secrets.google_secret_manager_secret_iam_member.ingest: Refreshing state.
+]: Refreshing state... [id=projects/sun-media-dev/subscriptions/viewing-events-d
+: Refreshing state... [id=projects/sun-media-dev/subscriptions/device-events-dat
+ry"]: Refreshing state... [id=projects/sun-media-dev/subscriptions/network-telem
+module.dataflow.google_project_iam_member.track: Refreshing state... [id=sun-med
+module.dataflow.google_storage_bucket_iam_member.staging: Refreshing state... [i
+module.dataflow.google_bigquery_dataset_iam_member.write: Refreshing state... [i
+]: Refreshing state... [id=projects/sun-media-dev/subscriptions/viewing-events-d
+ber"]: Refreshing state... [id=projects/sun-media-dev/subscriptions/viewing-even
+module.storage.google_storage_bucket.raw: Refreshing state... [id=sun-media-dev-
+module.lakehouse.google_bigquery_table.viewing_raw: Refreshing state... [id=proj
+module.lakehouse.google_bigquery_table.titles_raw: Refreshing state... [id=proje
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # module.lakehouse.google_bigquery_table.households_raw will be created
+  + resource "google_bigquery_table" "households_raw" {
+      ...
+    }
+
+  # module.lakehouse.google_bigquery_table.content_performance_daily will be cre
+ated
+  + resource "google_bigquery_table" "content_performance_daily" {
+      ...
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+module.lakehouse.google_bigquery_table.households_raw: Creating...
+module.lakehouse.google_bigquery_table.content_performance_daily: Creating...
+module.lakehouse.google_bigquery_table.households_raw: Creation complete after 1
+s [id=projects/sun-media-dev/datasets/bronze/tables/households_raw]
+module.lakehouse.google_bigquery_table.content_performance_daily: Creation compl
+ete after 2s [id=projects/sun-media-dev/datasets/gold/tables/content_performance
+_daily]
+
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+$ cd ..
+$ Q="bq -q query --nouse_legacy_sql --maximum_bytes_billed=200000000"
+$ $Q --parameter=dt:DATE:2026-10-31 < warehouse/gold_content.sql
+DELETE FROM gold.content_performance_daily WHERE dt = @dt; -- at [4:1]
+Number of affected rows: 0
+
+INSERT INTO gold.content_performance_daily
+SELECT @dt, v.title_id, t.title, t.kind, v.platform, h.region,
+       COUNTIF(v.channel IS NOT NULL) AS live_minutes,
+       COUNTIF(v.channel IS NULL) AS catchup_minutes,
+       COUNT(DISTINCT v.household_id) AS households,
+       HLL_COUNT.INIT(v.household_id) AS households_sketch
+FROM silver.viewing_events AS v
+JOIN bronze.titles_raw AS t ON t.title_id = v.title_id AND t.dt = @dt
+JOIN bronze.households_raw AS h
+  ON h.household_id = v.household_id AND h.dt = @dt
+WHERE v.dt = @dt AND v.type = 'heartbeat'
+GROUP BY v.title_id, t.title, t.kind, v.platform, h.region; -- at [6:1]
+Number of affected rows: 601
+$ $Q --parameter=dt:DATE:2026-10-31 < warehouse/top_titles.sql
++-------------------------+--------+---------+
+|          title          |  live  | catchup |
++-------------------------+--------+---------+
+| Northbridge v Eastfield | 225315 |       0 |
+| Sun News                |  34255 |       0 |
+| Saturday Football Live  |  16139 |       0 |
+| The Paper Quarry        |   5528 |     390 |
+| Riverside               |   5543 |     330 |
++-------------------------+--------+---------+

@@ -1,0 +1,1 @@
+{"from": "serve/05-authorized-view", "changes": ["infra/modules/lakehouse/", "warehouse/bytes.py", "warehouse/derby_curve_mv.sql"], "mocked": true, "gcp": true, "env": "gcp.sh", "venv": true}

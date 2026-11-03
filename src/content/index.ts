@@ -7,6 +7,7 @@ import { stream } from './stream'
 import { dataflow } from './dataflow'
 import { lakehouse } from './lakehouse'
 import { dataproc } from './dataproc'
+import { serve } from './serve'
 import type { Course, Section } from './types'
 
 // Course registry, in syllabus order. One course per chapter of COURSE-PLAN.md; a course is
@@ -21,6 +22,7 @@ export const COURSES: Record<string, Course> = {
   [dataflow.id]: dataflow,
   [lakehouse.id]: lakehouse,
   [dataproc.id]: dataproc,
+  [serve.id]: serve,
 }
 
 export type { Course, Section }

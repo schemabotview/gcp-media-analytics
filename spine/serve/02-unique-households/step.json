@@ -1,0 +1,1 @@
+{"from": "serve/01-content-performance", "changes": ["warehouse/households.sql"], "mocked": true, "gcp": true, "env": "gcp.sh", "venv": true}

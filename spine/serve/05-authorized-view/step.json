@@ -1,0 +1,1 @@
+{"from": "serve/04-query-cost", "changes": ["infra/modules/lakehouse/", "warehouse/marketing.sql"], "mocked": true, "gcp": true, "env": "gcp.sh", "venv": true}

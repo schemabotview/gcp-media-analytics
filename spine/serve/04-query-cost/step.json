@@ -1,0 +1,1 @@
+{"from": "serve/03-g4", "changes": ["infra/modules/lakehouse/", "warehouse/curve_unfiltered.sql", "warehouse/derby_curve.sql", "warehouse/gold_content.sql"], "mocked": true, "gcp": true, "env": "gcp.sh", "venv": true}

@@ -1,0 +1,7 @@
+$ Q="bq -q query --nouse_legacy_sql --maximum_bytes_billed=200000000"
+$ $Q --parameter=dt:DATE:2026-10-31 < warehouse/households.sql
++--------+-------+--------+----------+
+| summed | exact | approx | sketches |
++--------+-------+--------+----------+
+|   8256 |  3578 |   3578 |     3578 |
++--------+-------+--------+----------+

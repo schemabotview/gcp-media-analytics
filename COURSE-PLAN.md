@@ -365,14 +365,14 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 
 | # | Section | Step | Side pane | Level |
 | --- | --- | --- | --- | --- |
-| 1 | `content_performance_daily` | live vs catch-up minutes per title, platform, region | the Gold row shape | G |
-| 2 | Counting unique households | `COUNT(DISTINCT)` vs `APPROX_COUNT_DISTINCT` | exact vs sketch, the error | G |
-| 3 | G4 | Gold minutes = Silver minutes; a planted bug caught | the totals that must match | G |
-| 4 | What a query costs | `--dry_run`, `require_partition_filter`, `maximum_bytes_billed` refusing | bytes scanned per query shape | G |
-| 5 | Sharing without exposing | an authorized view: marketing sees titles, not households | dataset → view → reader | G |
-| 6 | Materialized views and BI Engine | a dashboard query, before and after | base table → MV → cache | G |
-| 7 | ◆ full scene: Looker's semantic model | a LookML view and explore | tables → views → explore → dashboard | D |
-| 8 | The answer | the derby card, live and Gold side by side | peak, the exchange, the ratio | G |
+| 1 | `content_performance_daily` | live vs catch-up minutes per title, platform, region; a count AND an HLL++ sketch | the Gold row shape | M |
+| 2 | Counting unique households | summed counts (8,256) vs `COUNT(DISTINCT)` vs `APPROX_COUNT_DISTINCT` vs `HLL_COUNT.MERGE` (3,578) | sketches merge, counts don't | M |
+| 3 | ⑂ G4 | Gold minutes = Silver minutes; the package joined by household alone: +2,423 (37 upgraders) | one household, two dimension rows | M |
+| 4 | What a query costs | the as-of join (G4 green); `--dry_run`, `require_partition_filter`, `maximum_bytes_billed` refusing | three guards | M |
+| 5 | Sharing without exposing | an authorized view: marketing sees titles and regions, not households | dataset → view → reader | M |
+| 6 | Materialized views and BI Engine | the dashboard's curve: Silver vs the view in memory | base table → MV → cache | M |
+| 7 | ◆ Looker's semantic model | a LookML view and explore (no instance) | tables → views → explore → dashboard | D |
+| 8 | The answer | the derby card: live 2,140 at 18:41 = Gold 2,140; EX-LDN-04 4.1% vs 0.6% | peak, the exchange, the ratio | M |
 
 **11. `orchestrate` · Every night, and the night it fails · 8**
 

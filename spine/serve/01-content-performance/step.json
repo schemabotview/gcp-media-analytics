@@ -1,0 +1,1 @@
+{"from": "dataproc/08-writing-back", "changes": ["infra/modules/lakehouse/", "warehouse/gold_content.sql", "warehouse/top_titles.sql"], "mocked": true, "gcp": true, "env": "gcp.sh", "venv": true}
