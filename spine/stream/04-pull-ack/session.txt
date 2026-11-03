@@ -1,0 +1,15 @@
+$ python produce/settop.py --device STB-13795 --from 18:30 --minutes 3
+3 events, 3 minutes of the night, replayed at 60x
+  heartbeat 3
+published 3 messages (0 re-sent by a retry)
+$ python consume/pull.py viewing-events-dataflow --max 2
+message 1  heartbeat STB-13795  18:30:18
+message 2  heartbeat STB-13795  18:31:18
+2 pulled, 2 acknowledged
+$ python consume/pull.py viewing-events-dataflow --max 1 --no-ack
+message 3  heartbeat STB-13795  18:32:18
+1 pulled, 0 acknowledged
+$ sleep 12
+$ python consume/pull.py viewing-events-dataflow --max 5
+message 3  heartbeat STB-13795  18:32:18
+1 pulled, 1 acknowledged

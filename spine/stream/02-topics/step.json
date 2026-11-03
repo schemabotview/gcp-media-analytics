@@ -1,0 +1,1 @@
+{"from": "land/08-lifecycle", "changes": ["infra/main.tf", "infra/modules/pubsub/main.tf", "infra/modules/pubsub/outputs.tf", "infra/modules/pubsub/variables.tf"], "gcp": true, "env": "gcp.sh", "restore": true}

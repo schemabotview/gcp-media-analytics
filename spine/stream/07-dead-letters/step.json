@@ -1,0 +1,1 @@
+{"from": "stream/06-ordering", "changes": ["consume/strict.py"], "gcp": true, "env": "gcp.sh", "venv": true}

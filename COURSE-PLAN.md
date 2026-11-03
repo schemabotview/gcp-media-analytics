@@ -312,12 +312,12 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 
 | # | Section | Step | Side pane | Level |
 | --- | --- | --- | --- | --- |
-| 1 | Why a stream | concept | tomorrow's batch vs the match now | D |
+| 1 | Why a stream | concept, the §1.2 curve | tomorrow's batch vs the match now | D |
 | 2 | Topics and subscriptions | the three topics in Terraform | publisher → topic → subscriptions → subscribers | G |
-| 3 | Publishing | `settop.py` replays the derby into the emulator | box → message (data + attributes) → topic | L · E |
+| 3 | Publishing | `settop.py` replays the derby into the emulator at 60×; a retry re-sends one message in 400 | box → message (data + attributes) → topic | L · E |
 | 4 | Pull and ack | a subscriber; the ack deadline; an unacked message redelivered | message → lease → ack / redeliver | L · E |
 | 5 | At-least-once | the same `event_id` twice | why duplicates are normal; who dedupes | L · E |
-| 6 | Ordering keys | per-device order with `device_id` as key | one key, one ordered lane | L · E |
+| 6 | Ordering keys | per-device order with `device_id` as key (STB-13795) | one key, one ordered lane | L · E |
 | 7 | Dead letters | a poison message → `dead-letter` after 5 attempts | subscription → attempts → dead-letter topic | G |
 
 **7. `dataflow` · Counting viewers while the match plays · 9**

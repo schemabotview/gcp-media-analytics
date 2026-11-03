@@ -1,0 +1,457 @@
+$ cd infra
+$ terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate
+Initializing the backend...
+
+Initializing modules...
+
+Initializing provider plugins...
+- Reusing version 3.9.1 of hashicorp/random from the dependency lock file
+- Reusing version 8.9.0 of hashicorp/google from the dependency lock file
+- Using previously-installed hashicorp/random v3.9.1
+- Using previously-installed hashicorp/google v8.9.0
+
+Terraform has been successfully initialized!
+$ terraform apply -var-file=envs/dev.tfvars -auto-approve
+Acquiring state lock. This may take a few moments...
+module.secrets.random_password.crm: Refreshing state... [id=none]
+module.kms.data.google_storage_project_service_account.gcs: Reading...
+module.kms.data.google_storage_project_service_account.gcs: Read complete after 
+1s [id=service-100000000001@gs-project-accounts.iam.gserviceaccount.com]
+data.google_project.this: Reading...
+data.google_project.this: Read complete after 1s [id=projects/sun-media-dev]
+module.kms.google_project_service.kms: Refreshing state... [id=sun-media-dev/clo
+udkms.googleapis.com]
+module.secrets.google_project_service.secretmanager: Refreshing state... [id=sun
+-media-dev/secretmanager.googleapis.com]
+google_project_service.budgets["monitoring.googleapis.com"]: Refreshing state...
+ [id=sun-media-dev/monitoring.googleapis.com]
+google_project_service.budgets["billingbudgets.googleapis.com"]: Refreshing stat
+e... [id=sun-media-dev/billingbudgets.googleapis.com]
+module.iam.google_service_account.job["sa-dataflow"]: Refreshing state... [id=pr
+ojects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.iam.gserviceaccou
+nt.com]
+module.iam.google_service_account.job["sa-airflow"]: Refreshing state... [id=pro
+jects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam.gserviceaccount
+.com]
+module.iam.google_service_account.job["sa-cicd"]: Refreshing state... [id=projec
+ts/sun-media-dev/serviceAccounts/sa-cicd@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_service_account.job["sa-ingest"]: Refreshing state... [id=proj
+ects/sun-media-dev/serviceAccounts/sa-ingest@sun-media-dev.iam.gserviceaccount.c
+om]
+module.iam.google_service_account.job["sa-dataproc"]: Refreshing state... [id=pr
+ojects/sun-media-dev/serviceAccounts/sa-dataproc@sun-media-dev.iam.gserviceaccou
+nt.com]
+module.kms.google_kms_key_ring.media: Refreshing state... [id=projects/sun-media
+-dev/locations/europe-west2/keyRings/kr-media]
+module.secrets.google_secret_manager_secret.crm: Refreshing state... [id=project
+s/sun-media-dev/secrets/crm-db-password]
+google_monitoring_notification_channel.email: Refreshing state... [id=projects/s
+un-media-dev/notificationChannels/10000000000000000001]
+module.iam.google_project_iam_member.job["sa-dataflow/roles/dataflow.worker"]: R
+efreshing state... [id=sun-media-dev/roles/dataflow.worker/serviceAccount:sa-dat
+aflow@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_service_account_iam_member.operator["sa-cicd"]: Refreshing sta
+te... [id=projects/sun-media-dev/serviceAccounts/sa-cicd@sun-media-dev.iam.gserv
+iceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@sun.exa
+mple]
+module.iam.google_service_account_iam_member.operator["sa-airflow"]: Refreshing 
+state... [id=projects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam
+.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@s
+un.example]
+module.iam.google_project_iam_member.job["sa-dataproc/roles/dataproc.worker"]: R
+efreshing state... [id=sun-media-dev/roles/dataproc.worker/serviceAccount:sa-dat
+aproc@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_service_account_iam_member.operator["sa-ingest"]: Refreshing s
+tate... [id=projects/sun-media-dev/serviceAccounts/sa-ingest@sun-media-dev.iam.g
+serviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@sun
+.example]
+module.iam.google_service_account_iam_member.operator["sa-dataproc"]: Refreshing
+ state... [id=projects/sun-media-dev/serviceAccounts/sa-dataproc@sun-media-dev.i
+am.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya
+@sun.example]
+module.iam.google_project_iam_member.job["sa-airflow/roles/composer.worker"]: Re
+freshing state... [id=sun-media-dev/roles/composer.worker/serviceAccount:sa-airf
+low@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_service_account_iam_member.operator["sa-dataflow"]: Refreshing
+ state... [id=projects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.i
+am.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya
+@sun.example]
+module.kms.google_kms_crypto_key.raw: Refreshing state... [id=projects/sun-media
+-dev/locations/europe-west2/keyRings/kr-media/cryptoKeys/k-raw]
+module.secrets.google_secret_manager_secret_version.crm: Refreshing state... [id
+=projects/100000000001/secrets/crm-db-password/versions/1]
+google_billing_budget.month: Refreshing state... [id=billingAccounts/000000-0000
+00-000001/budgets/00000000-0000-0000-0000-000000001000]
+module.kms.google_kms_crypto_key_iam_member.gcs: Refreshing state... [id=project
+s/sun-media-dev/locations/europe-west2/keyRings/kr-media/cryptoKeys/k-raw/roles/
+cloudkms.cryptoKeyEncrypterDecrypter/serviceAccount:service-100000000001@gs-proj
+ect-accounts.iam.gserviceaccount.com]
+module.secrets.google_secret_manager_secret_iam_member.ingest: Refreshing state.
+.. [id=projects/sun-media-dev/secrets/crm-db-password/roles/secretmanager.secret
+Accessor/serviceAccount:sa-ingest@sun-media-dev.iam.gserviceaccount.com]
+module.storage.google_storage_bucket.raw: Refreshing state... [id=sun-media-dev-
+raw]
+module.storage.google_storage_bucket_iam_member.raw["ingest-create"]: Refreshing
+ state... [id=b/sun-media-dev-raw/roles/storage.objectCreator/serviceAccount:sa-
+ingest@sun-media-dev.iam.gserviceaccount.com]
+module.storage.google_storage_bucket_iam_member.raw["ingest-view"]: Refreshing s
+tate... [id=b/sun-media-dev-raw/roles/storage.objectViewer/serviceAccount:sa-ing
+est@sun-media-dev.iam.gserviceaccount.com]
+module.storage.google_storage_bucket_iam_member.raw["dataproc-view"]: Refreshing
+ state... [id=b/sun-media-dev-raw/roles/storage.objectViewer/serviceAccount:sa-d
+ataproc@sun-media-dev.iam.gserviceaccount.com]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # module.pubsub.google_project_service.pubsub will be created
+  + resource "google_project_service" "pubsub" {
+      + deletion_policy    = "DELETE"
+      + disable_on_destroy = false
+      + id                 = (known after apply)
+      + project            = "sun-media-dev"
+      + service            = "pubsub.googleapis.com"
+    }
+
+  # module.pubsub.google_pubsub_subscription.audit will be created
+  + resource "google_pubsub_subscription" "audit" {
+      + ack_deadline_seconds       = 60
+      + deletion_policy            = "DELETE"
+      + effective_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + id                         = (known after apply)
+      + message_retention_duration = "604800s"
+      + name                       = "dead-letter-audit"
+      + project                    = "sun-media-dev"
+      + terraform_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + topic                      = (known after apply)
+
+      + expiration_policy (known after apply)
+    }
+
+  # module.pubsub.google_pubsub_subscription.dataflow["device-events"] will be c
+reated
+  + resource "google_pubsub_subscription" "dataflow" {
+      + ack_deadline_seconds       = 20
+      + deletion_policy            = "DELETE"
+      + effective_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + id                         = (known after apply)
+      + message_retention_duration = "604800s"
+      + name                       = "device-events-dataflow"
+      + project                    = "sun-media-dev"
+      + terraform_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + topic                      = (known after apply)
+
+      + dead_letter_policy {
+          + dead_letter_topic     = (known after apply)
+          + max_delivery_attempts = 5
+        }
+
+      + expiration_policy (known after apply)
+
+      + retry_policy {
+          + maximum_backoff = "10s"
+          + minimum_backoff = "10s"
+        }
+    }
+
+  # module.pubsub.google_pubsub_subscription.dataflow["network-telemetry"] will 
+be created
+  + resource "google_pubsub_subscription" "dataflow" {
+      + ack_deadline_seconds       = 20
+      + deletion_policy            = "DELETE"
+      + effective_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + id                         = (known after apply)
+      + message_retention_duration = "604800s"
+      + name                       = "network-telemetry-dataflow"
+      + project                    = "sun-media-dev"
+      + terraform_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + topic                      = (known after apply)
+
+      + dead_letter_policy {
+          + dead_letter_topic     = (known after apply)
+          + max_delivery_attempts = 5
+        }
+
+      + expiration_policy (known after apply)
+
+      + retry_policy {
+          + maximum_backoff = "10s"
+          + minimum_backoff = "10s"
+        }
+    }
+
+  # module.pubsub.google_pubsub_subscription.dataflow["viewing-events"] will be 
+created
+  + resource "google_pubsub_subscription" "dataflow" {
+      + ack_deadline_seconds       = 20
+      + deletion_policy            = "DELETE"
+      + effective_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + id                         = (known after apply)
+      + message_retention_duration = "604800s"
+      + name                       = "viewing-events-dataflow"
+      + project                    = "sun-media-dev"
+      + terraform_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + topic                      = (known after apply)
+
+      + dead_letter_policy {
+          + dead_letter_topic     = (known after apply)
+          + max_delivery_attempts = 5
+        }
+
+      + expiration_policy (known after apply)
+
+      + retry_policy {
+          + maximum_backoff = "10s"
+          + minimum_backoff = "10s"
+        }
+    }
+
+  # module.pubsub.google_pubsub_subscription_iam_member.dead_letter["device-even
+ts"] will be created
+  + resource "google_pubsub_subscription_iam_member" "dead_letter" {
+      + etag         = (known after apply)
+      + id           = (known after apply)
+      + member       = "serviceAccount:service-100000000001@gcp-sa-pubsub.iam.gs
+erviceaccount.com"
+      + project      = (known after apply)
+      + role         = "roles/pubsub.subscriber"
+      + subscription = (known after apply)
+    }
+
+  # module.pubsub.google_pubsub_subscription_iam_member.dead_letter["network-tel
+emetry"] will be created
+  + resource "google_pubsub_subscription_iam_member" "dead_letter" {
+      + etag         = (known after apply)
+      + id           = (known after apply)
+      + member       = "serviceAccount:service-100000000001@gcp-sa-pubsub.iam.gs
+erviceaccount.com"
+      + project      = (known after apply)
+      + role         = "roles/pubsub.subscriber"
+      + subscription = (known after apply)
+    }
+
+  # module.pubsub.google_pubsub_subscription_iam_member.dead_letter["viewing-eve
+nts"] will be created
+  + resource "google_pubsub_subscription_iam_member" "dead_letter" {
+      + etag         = (known after apply)
+      + id           = (known after apply)
+      + member       = "serviceAccount:service-100000000001@gcp-sa-pubsub.iam.gs
+erviceaccount.com"
+      + project      = (known after apply)
+      + role         = "roles/pubsub.subscriber"
+      + subscription = (known after apply)
+    }
+
+  # module.pubsub.google_pubsub_topic.dead_letter will be created
+  + resource "google_pubsub_topic" "dead_letter" {
+      + deletion_policy  = "DELETE"
+      + effective_labels = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + id               = (known after apply)
+      + name             = "dead-letter"
+      + project          = "sun-media-dev"
+      + terraform_labels = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+
+      + message_storage_policy (known after apply)
+    }
+
+  # module.pubsub.google_pubsub_topic.events["device-events"] will be created
+  + resource "google_pubsub_topic" "events" {
+      + deletion_policy            = "DELETE"
+      + effective_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + id                         = (known after apply)
+      + message_retention_duration = "86400s"
+      + name                       = "device-events"
+      + project                    = "sun-media-dev"
+      + terraform_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+
+      + message_storage_policy (known after apply)
+    }
+
+  # module.pubsub.google_pubsub_topic.events["network-telemetry"] will be create
+d
+  + resource "google_pubsub_topic" "events" {
+      + deletion_policy            = "DELETE"
+      + effective_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + id                         = (known after apply)
+      + message_retention_duration = "86400s"
+      + name                       = "network-telemetry"
+      + project                    = "sun-media-dev"
+      + terraform_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+
+      + message_storage_policy (known after apply)
+    }
+
+  # module.pubsub.google_pubsub_topic.events["viewing-events"] will be created
+  + resource "google_pubsub_topic" "events" {
+      + deletion_policy            = "DELETE"
+      + effective_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + id                         = (known after apply)
+      + message_retention_duration = "86400s"
+      + name                       = "viewing-events"
+      + project                    = "sun-media-dev"
+      + terraform_labels           = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+
+      + message_storage_policy (known after apply)
+    }
+
+  # module.pubsub.google_pubsub_topic_iam_member.dead_letter will be created
+  + resource "google_pubsub_topic_iam_member" "dead_letter" {
+      + etag    = (known after apply)
+      + id      = (known after apply)
+      + member  = "serviceAccount:service-100000000001@gcp-sa-pubsub.iam.gservic
+eaccount.com"
+      + project = (known after apply)
+      + role    = "roles/pubsub.publisher"
+      + topic   = (known after apply)
+    }
+
+Plan: 13 to add, 0 to change, 0 to destroy.
+module.pubsub.google_project_service.pubsub: Creating...
+module.pubsub.google_project_service.pubsub: Creation complete after 4s [id=sun-
+media-dev/pubsub.googleapis.com]
+module.pubsub.google_pubsub_topic.dead_letter: Creating...
+module.pubsub.google_pubsub_topic.dead_letter: Creation complete after 2s [id=pr
+ojects/sun-media-dev/topics/dead-letter]
+module.pubsub.google_pubsub_topic.events["viewing-events"]: Creating...
+module.pubsub.google_pubsub_topic.events["viewing-events"]: Creation complete af
+ter 4s [id=projects/sun-media-dev/topics/viewing-events]
+module.pubsub.google_pubsub_topic.events["network-telemetry"]: Creating...
+module.pubsub.google_pubsub_topic.events["network-telemetry"]: Creation complete
+ after 3s [id=projects/sun-media-dev/topics/network-telemetry]
+module.pubsub.google_pubsub_topic.events["device-events"]: Creating...
+module.pubsub.google_pubsub_topic.events["device-events"]: Creation complete aft
+er 3s [id=projects/sun-media-dev/topics/device-events]
+module.pubsub.google_pubsub_subscription.audit: Creating...
+module.pubsub.google_pubsub_subscription.audit: Creation complete after 4s [id=p
+rojects/sun-media-dev/subscriptions/dead-letter-audit]
+module.pubsub.google_pubsub_topic_iam_member.dead_letter: Creating...
+module.pubsub.google_pubsub_topic_iam_member.dead_letter: Creation complete afte
+r 4s [id=projects/sun-media-dev/topics/dead-letter/roles/pubsub.publisher/servic
+eAccount:service-100000000001@gcp-sa-pubsub.iam.gserviceaccount.com]
+module.pubsub.google_pubsub_subscription.dataflow["device-events"]: Creating...
+module.pubsub.google_pubsub_subscription.dataflow["device-events"]: Creation com
+plete after 2s [id=projects/sun-media-dev/subscriptions/device-events-dataflow]
+module.pubsub.google_pubsub_subscription.dataflow["network-telemetry"]: Creating
+...
+module.pubsub.google_pubsub_subscription.dataflow["network-telemetry"]: Creation
+ complete after 2s [id=projects/sun-media-dev/subscriptions/network-telemetry-da
+taflow]
+module.pubsub.google_pubsub_subscription.dataflow["viewing-events"]: Creating...
+module.pubsub.google_pubsub_subscription.dataflow["viewing-events"]: Creation co
+mplete after 3s [id=projects/sun-media-dev/subscriptions/viewing-events-dataflow
+]
+module.pubsub.google_pubsub_subscription_iam_member.dead_letter["network-telemet
+ry"]: Creating...
+module.pubsub.google_pubsub_subscription_iam_member.dead_letter["network-telemet
+ry"]: Creation complete after 5s [id=projects/sun-media-dev/subscriptions/networ
+k-telemetry-dataflow/roles/pubsub.subscriber/serviceAccount:service-100000000001
+@gcp-sa-pubsub.iam.gserviceaccount.com]
+module.pubsub.google_pubsub_subscription_iam_member.dead_letter["viewing-events"
+]: Creating...
+module.pubsub.google_pubsub_subscription_iam_member.dead_letter["viewing-events"
+]: Creation complete after 5s [id=projects/sun-media-dev/subscriptions/viewing-e
+vents-dataflow/roles/pubsub.subscriber/serviceAccount:service-100000000001@gcp-s
+a-pubsub.iam.gserviceaccount.com]
+module.pubsub.google_pubsub_subscription_iam_member.dead_letter["device-events"]
+: Creating...
+module.pubsub.google_pubsub_subscription_iam_member.dead_letter["device-events"]
+: Creation complete after 5s [id=projects/sun-media-dev/subscriptions/device-eve
+nts-dataflow/roles/pubsub.subscriber/serviceAccount:service-100000000001@gcp-sa-
+pubsub.iam.gserviceaccount.com]
+
+Apply complete! Resources: 13 added, 0 changed, 0 destroyed.
+$ L=labels.app=viewing-pulse
+$ F="value(name.basename())"
+$ gcloud pubsub topics list --filter=$L --format="$F"
+network-telemetry
+dead-letter
+viewing-events
+device-events
+$ gcloud pubsub subscriptions list --filter=$L --format="$F"
+dead-letter-audit
+viewing-events-dataflow
+network-telemetry-dataflow
+device-events-dataflow

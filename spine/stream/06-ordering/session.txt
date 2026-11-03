@@ -1,0 +1,22 @@
+$ D=STB-13795
+$ python produce/settop.py --device $D --from 18:40 --minutes 8 --ordering
+15 events, 8 minutes of the night, replayed at 60x
+  buffer 7, heartbeat 8
+published 15 messages (0 re-sent by a retry)
+$ python consume/pull.py viewing-events-ordered --max 20
+message 1  buffer    STB-13795  18:40:12
+message 2  heartbeat STB-13795  18:40:18
+message 3  buffer    STB-13795  18:41:01
+message 4  heartbeat STB-13795  18:41:18
+message 5  buffer    STB-13795  18:42:09
+message 6  heartbeat STB-13795  18:42:18
+message 7  buffer    STB-13795  18:43:13
+message 8  heartbeat STB-13795  18:43:18
+message 9  buffer    STB-13795  18:44:05
+message 10  heartbeat STB-13795  18:44:18
+message 11  buffer    STB-13795  18:45:11
+message 12  heartbeat STB-13795  18:45:18
+message 13  buffer    STB-13795  18:46:11
+message 14  heartbeat STB-13795  18:46:18
+message 15  heartbeat STB-13795  18:47:18
+15 pulled, 15 acknowledged

@@ -1,0 +1,7 @@
+$ python produce/settop.py --from 18:30 --minutes 5
+9232 events, 5 minutes of the night, replayed at 60x
+  buffer 510, heartbeat 8532, play 182, stop 8
+published 9255 messages (23 re-sent by a retry)
+$ python consume/count.py viewing-events-dataflow
+9255 messages, 9232 distinct event_ids
+23 events arrived twice, e.g. event_id 071da27ec482561c

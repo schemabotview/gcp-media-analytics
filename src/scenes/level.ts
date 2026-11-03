@@ -18,3 +18,6 @@ export const FAKE_GCS = level('emulated', 'the raw zone is fake-gcs-server, Clou
 
 /** The recorded label: run once in the owner's project, normalised by the recorder, then torn down. */
 export const RECORDED = level('recorded on GCP', 'run once in a real project; ids normalised, then torn down')
+
+/** The stream on Priya's laptop: gcloud's Pub/Sub emulator, its topics made by the step's setup. */
+export const PUBSUB_EMU = level('emulated', 'Pub/Sub is gcloud’s emulator; its topics are what §6.2 made on GCP')

@@ -36,6 +36,10 @@ if ! terraform version 2>/dev/null | grep -qx "Terraform v${TF_VERSION}"; then
   rm -rf "$work"
 fi
 
+# The Pub/Sub emulator (Course 6): a gcloud component, run by scripts/spine.py with java
+gcloud components list --filter="id:pubsub-emulator" --format="value(state.name)" 2>/dev/null | grep -q Installed \
+  || gcloud components install pubsub-emulator beta --quiet >/dev/null 2>&1 || echo "pubsub-emulator: install it with gcloud components"
+
 echo "fake-gcs-server $(cat /usr/local/share/fake-gcs-server.version)"
 terraform version | head -1
 gcloud version 2>/dev/null | head -1 || echo "gcloud: not installed (needed only to record)"

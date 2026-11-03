@@ -1,0 +1,1 @@
+{"from": "stream/02-topics", "changes": ["consume/pull.py", "env.sh", "produce/settop.py", "produce/topics.py", "requirements.txt"], "env": true, "venv": true, "pubsub": true, "setup": ["python produce/topics.py"]}

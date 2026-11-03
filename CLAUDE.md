@@ -28,8 +28,11 @@ bucket, the enabled APIs (Compute Engine now among them, from §2.3) and the und
 
 1. Owner review of `COURSE-PLAN.md`, the 34 routes (`#/intro-a-night-of-viewing` … `#/land-lifecycle`)
    and the map preview `#/preview-map-land` (the finished map is §1.3).
-2. Course 6 (the producer plants the delivery faults — duplicates, slow clocks, a poison message —
-   on `sun_gen.events`; Pub/Sub emulator locally, topics in Terraform).
+2. Courses 7–12. **The platform is UP** (2026-11-03): restored for §6.2 (`{"restore": true}`:
+   the parent's infra/ applied, `kr-media` imported) and left up across courses; tear down after
+   the last GCP recording of the batch (reviewed plan; empty the raw bucket after its retention).
+   Pub/Sub's service agent appears a little after the API is first enabled: §6.2's first apply
+   failed on its grant and was recorded again.
 3. Narration audio once the frames are approved (port the Colab notebook, `audio-manifest.json`).
 
 **Built (infra):** the app (vite, shell `ConceptApp`, `--brand` #4285f4), `check-content`,
@@ -50,7 +53,7 @@ azure-trade-finance when narration starts).
 | 3 | `start` | 8 | authored, narrated (text), 4K-checked: §1–§4 L, §5–§8 recorded on GCP |
 | 4 | `secure` | 8 | authored, narrated (text), 4K-checked; all recorded on GCP (§4.2 drawn in the side pane, not a ◆ full scene) |
 | 5 | `land` | 8 | authored, narrated (text), 4K-checked: §2–§5 L · E, §1, §6–§8 recorded on GCP |
-| 6 | `stream` | 7 | planned |
+| 6 | `stream` | 7 | authored, narrated (text), 4K-checked: §1 doc-cited, §2 and §7 recorded on GCP, §3–§6 L · E (gcloud's Pub/Sub emulator) |
 | 7 | `dataflow` | 9 | planned |
 | 8 | `lakehouse` | 9 | planned |
 | 9 | `dataproc` | 8 | planned |

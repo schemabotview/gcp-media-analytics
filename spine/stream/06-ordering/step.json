@@ -1,0 +1,1 @@
+{"from": "stream/05-at-least-once", "changes": [], "env": true, "venv": true, "pubsub": true, "setup": ["python produce/topics.py"]}

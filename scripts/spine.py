@@ -71,6 +71,9 @@ step.json (other keys, all optional):
                           `gs://<bucket>/<object>` is an object, read back after the session
   {"volatile": true}      compared with digits, hex and UUIDs masked; or a list: ["uuid"], ["digits"]
   {"columns": 80}         the pane's width (default 80): output wider than it wraps, as a terminal does
+  {"pubsub": true}        a local step gets a fresh Pub/Sub emulator on :8085 (Course 6 on)
+  {"restore": true}       a GCP step recorded after a teardown: the parent's infra/ is applied first,
+                          silently (restore_gcp), the KMS ring and key imported again
   {"local_state": true}   a GCP step that reads the source systems: the local parent's databases are
                           restored first (§5.6 copies billing to the real bucket)
 """
@@ -304,6 +307,51 @@ class Lake:
         self.stop()
         shutil.rmtree(self.dir, ignore_errors=True)
         self.start()
+
+
+class PubSub:
+    """The Pub/Sub emulator (gcloud's pubsub-emulator component): fresh for every step that asks
+    for it ({"pubsub": true}) and stopped after it. It keeps nothing between steps, so a step's
+    setup makes the topics §6.2's Terraform makes on GCP."""
+    PORT = 8085
+
+    def __init__(self) -> None:
+        self.proc: subprocess.Popen | None = None
+
+    def start(self) -> None:
+        import glob
+        import socket
+        sdk = Path(os.path.realpath(shutil.which('gcloud') or '/usr/bin/gcloud')).parent.parent
+        jars = glob.glob(str(sdk / 'platform' / 'pubsub-emulator' / 'lib' / 'cloud-pubsub-emulator-*-all.jar'))
+        if not jars:
+            sys.exit('✗ the Pub/Sub emulator is not installed: scripts/install-gcp-tools.sh')
+        try:  # an emulator already on the port would hand this step another step's topics
+            socket.create_connection(('127.0.0.1', self.PORT), timeout=0.2).close()
+            sys.exit(f'✗ something is already listening on :{self.PORT} — stop it first')
+        except OSError:
+            pass
+        self.proc = subprocess.Popen(['java', '-jar', jars[0], '--host=127.0.0.1', f'--port={self.PORT}'],
+                                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        for _ in range(300):
+            try:
+                socket.create_connection(('127.0.0.1', self.PORT), timeout=0.2).close()
+                return
+            except OSError:
+                time.sleep(0.1)
+        sys.exit('✗ the Pub/Sub emulator did not start')
+
+    def stop(self) -> None:
+        import socket
+        if self.proc:
+            self.proc.terminate()
+            self.proc.wait()
+            self.proc = None
+        for _ in range(300):  # the port must be free before the next step's emulator starts
+            try:
+                socket.create_connection(('127.0.0.1', self.PORT), timeout=0.2).close()
+                time.sleep(0.1)
+            except OSError:
+                return
 
 
 def generated(part: str) -> Path:
@@ -559,7 +607,14 @@ def write_local(step: Path, lake: Lake) -> None:
         sys.exit(f'✗ {name_of(step)} starts from {name_of(parent)}, which is {recorded_ok(parent)[1]}')
     restore_state(parent, lake)
     lay(step)
-    transcript, captured, _ = session_of(step, environment())
+    ps = PubSub() if config_of(step).get('pubsub') else None
+    if ps:
+        ps.start()
+    try:
+        transcript, captured, _ = session_of(step, environment())
+    finally:
+        if ps:
+            ps.stop()
     (step / 'session.txt').write_text(transcript)
     for file, text in captured.items():
         (step / 'captured' / file).parent.mkdir(parents=True, exist_ok=True)
@@ -714,6 +769,8 @@ def record(step: Path) -> int:
         if config_of(parent).get('gcp') and not recorded_ok(parent)[0]:
             sys.exit(f'✗ {name_of(parent)} is not recorded and current: record the course in order')
     env, norm = recorder()
+    if config.get('restore'):
+        restore_gcp(lineage_of(step)[-2], env)
     lake = None
     if config.get('local_state'):  # a GCP step that also reads the source systems (§5.6)
         parent = state_parent(step)
@@ -745,6 +802,47 @@ def record(step: Path) -> int:
                                                     'gcloud': sdk}, indent=2) + '\n')
     print(f'✓ recorded {name_of(step)}')
     return 0
+
+
+# What a teardown cannot delete, and a restore must adopt again: KMS key rings and keys are permanent.
+ADOPT = [('module.kms.google_kms_key_ring.media', 'projects/{p}/locations/europe-west2/keyRings/kr-media'),
+         ('module.kms.google_kms_crypto_key.raw', 'projects/{p}/locations/europe-west2/keyRings/kr-media/cryptoKeys/k-raw')]
+
+
+def restore_gcp(parent: Path, env: dict) -> None:
+    """{"restore": true}: before recording a course after a teardown, put the project back as the
+    PARENT step left it, silently: its own infra/ applied (every resource is Terraform, so its code IS
+    its state). The KMS ring and key survive a teardown: they are imported, and the key's versions,
+    scheduled for destruction, restored and enabled, so the bucket's default key works again."""
+    lay(parent)
+    run(['chown', '-R', f'{USER}:{USER}', str(SPINE_ROOT)])
+    sh = lambda cmd: as_user(f'source gcp.sh >/dev/null 2>&1; {cmd}', env)
+    if sh('bash infra/bootstrap.sh >/dev/null 2>&1').returncode:
+        sys.exit(f'✗ restoring {name_of(parent)}: the state backend could not be made')
+    init = 'cd infra && terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate >/dev/null 2>&1'
+    sh(init)
+    project = os.environ['GOOGLE_PROJECT_ID']
+    state = sh('cd infra && terraform state list 2>/dev/null').stdout.split()
+    if (WORK / 'infra' / 'modules' / 'kms').exists():
+        for address, rid in ADOPT:
+            if address not in state:
+                r = sh(f'cd infra && terraform import -var-file=envs/dev.tfvars -input=false -no-color {address} {rid.format(p=project)} 2>&1')
+                if r.returncode:  # normalised: an import error names the real project
+                    print(f'· import of {address} failed (exit {r.returncode}); the plan below will say why')
+        versions = sh('gcloud kms keys versions list --key=k-raw --keyring=kr-media --location=europe-west2 '
+                      '--filter=state=DESTROY_SCHEDULED --format="value(name.basename())" 2>/dev/null').stdout.split()
+        for v in versions:
+            sh(f'gcloud kms keys versions restore {v} --key=k-raw --keyring=kr-media --location=europe-west2 -q >/dev/null 2>&1')
+            sh(f'gcloud kms keys versions enable {v} --key=k-raw --keyring=kr-media --location=europe-west2 -q >/dev/null 2>&1')
+    for attempt in range(4):
+        sh('cd infra && terraform plan -var-file=envs/dev.tfvars -input=false -out=tfplan >/dev/null 2>&1 && '
+           'terraform apply -input=false tfplan >/dev/null 2>&1; rm -f tfplan')
+        if sh('cd infra && terraform plan -var-file=envs/dev.tfvars -input=false -detailed-exitcode >/dev/null 2>&1').returncode == 0:
+            print(f'· restored {name_of(parent)}\'s GCP state')
+            time.sleep(90)  # let new grants reach the data plane before the step runs
+            return
+        time.sleep(60)
+    sys.exit(f'✗ could not restore {name_of(parent)}\'s GCP state (plan never settled)')
 
 
 def recorded_ok(step: Path) -> tuple[bool, str]:
@@ -851,7 +949,14 @@ def main(argv: list[str]) -> int:
                     continue
                 lay(step)
                 snap = Snapshot(lake) if config.get('branch') else None
-                transcript, captured, _ = session_of(step, environment())
+                ps = PubSub() if config.get('pubsub') else None
+                if ps:
+                    ps.start()
+                try:
+                    transcript, captured, _ = session_of(step, environment())
+                finally:
+                    if ps:
+                        ps.stop()
                 if snap:
                     snap.restore()
                 if not asked(step):

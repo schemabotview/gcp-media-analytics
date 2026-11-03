@@ -1,0 +1,16 @@
+$ gcloud pubsub topics publish viewing-events --message='{"event_id": "4'
+messageIds:
+- '10000000000000001'
+$ python consume/strict.py viewing-events-dataflow
+attempt 1: not JSON, nack
+attempt 2: not JSON, nack
+attempt 3: not JSON, nack
+attempt 4: not JSON, nack
+attempt 5: not JSON, nack
+no more deliveries: the subscription has let it go
+$ F="value(message.data.decode(base64),message.attributes)"
+$ gcloud pubsub subscriptions pull dead-letter-audit --auto-ack --format="$F"
+{"event_id": "4	CloudPubSubDeadLetterSourceDeliveryCount=5
+CloudPubSubDeadLetterSourceSubscription=viewing-events-dataflow
+CloudPubSubDeadLetterSourceSubscriptionProject=sun-media-dev
+CloudPubSubDeadLetterSourceTopicPublishTime=2026-11-01T09:30:00

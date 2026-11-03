@@ -1,0 +1,1 @@
+{"from": "stream/03-publishing", "changes": [], "env": true, "venv": true, "pubsub": true, "setup": ["python produce/topics.py"]}

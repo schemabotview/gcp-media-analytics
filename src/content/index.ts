@@ -3,6 +3,7 @@ import { howGcpRuns } from './how-gcp-runs'
 import { start } from './start'
 import { secure } from './secure'
 import { land } from './land'
+import { stream } from './stream'
 import type { Course, Section } from './types'
 
 // Course registry, in syllabus order. One course per chapter of COURSE-PLAN.md; a course is
@@ -13,6 +14,7 @@ export const COURSES: Record<string, Course> = {
   [start.id]: start,
   [secure.id]: secure,
   [land.id]: land,
+  [stream.id]: stream,
 }
 
 export type { Course, Section }

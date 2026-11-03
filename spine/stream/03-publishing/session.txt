@@ -1,0 +1,9 @@
+$ python produce/settop.py --from 17:30 --minutes 5
+10382 events, 5 minutes of the night, replayed at 60x
+  buffer 562, heartbeat 9495, play 313, stop 12
+published 10407 messages (25 re-sent by a retry)
+$ python consume/pull.py viewing-events-dataflow --max 3
+message 1  heartbeat STB-12177  17:30:01
+message 5  heartbeat STB-14862  17:30:01
+message 7  heartbeat STB-12988  17:30:01
+3 pulled, 3 acknowledged

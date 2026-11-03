@@ -1,0 +1,1 @@
+{"from": "stream/04-pull-ack", "changes": ["consume/count.py"], "env": true, "venv": true, "pubsub": true, "setup": ["python produce/topics.py"]}
