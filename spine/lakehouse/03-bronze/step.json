@@ -1,0 +1,1 @@
+{"from": "lakehouse/02-external-tables", "changes": ["infra/modules/lakehouse/", "warehouse/bronze.sql"], "gcp": true, "env": "gcp.sh", "venv": true, "local_state": true}

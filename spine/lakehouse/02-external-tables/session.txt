@@ -1,0 +1,9 @@
+$ E=data/export/dt=2026-10-31
+$ ls $E
+$ gcloud storage cp $E/* $RAW/source=viewing/dt=2026-10-31/
+$ cd infra
+$ terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate
+$ terraform apply -var-file=envs/dev.tfvars -auto-approve
+$ cd ..
+$ Q="bq -q query --nouse_legacy_sql --maximum_bytes_billed=200000000"
+$ $Q < warehouse/delivered.sql

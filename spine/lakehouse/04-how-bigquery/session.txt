@@ -1,0 +1,1 @@
+$ python warehouse/explain.py warehouse/peaks.sql

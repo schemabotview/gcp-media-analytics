@@ -1,0 +1,1 @@
+{"from": "lakehouse/08-scd2", "changes": ["infra/modules/lakehouse/", "warehouse/epg.py", "warehouse/g3.sql", "warehouse/gates.sql"], "gcp": true, "env": "gcp.sh", "venv": true, "local_state": true, "setup": ["python extract/raw.py land epg data/epg/2026-10-31.json --dt 2026-10-31"]}

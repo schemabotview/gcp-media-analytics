@@ -1,0 +1,1 @@
+{"from": "lakehouse/05-partitioning", "changes": ["infra/modules/lakehouse/", "warehouse/g2.sql"], "gcp": true, "env": "gcp.sh", "venv": true, "local_state": true, "setup": ["python extract/raw.py land catalogue data/catalogue/titles.csv --dt 2026-10-31"]}

@@ -1,0 +1,1 @@
+{"from": "lakehouse/04-how-bigquery", "changes": ["infra/modules/lakehouse/", "warehouse/bytes.py", "warehouse/derby_minutes.sql"], "gcp": true, "env": "gcp.sh", "venv": true, "local_state": true}

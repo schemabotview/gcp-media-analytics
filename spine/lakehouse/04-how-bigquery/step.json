@@ -1,0 +1,1 @@
+{"from": "lakehouse/03-bronze", "changes": ["requirements.txt", "warehouse/explain.py", "warehouse/peaks.sql"], "gcp": true, "env": "gcp.sh", "venv": true, "local_state": true}

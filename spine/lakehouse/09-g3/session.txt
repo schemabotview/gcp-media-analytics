@@ -1,0 +1,8 @@
+$ cd infra
+$ terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate
+$ terraform apply -var-file=envs/dev.tfvars -auto-approve
+$ cd ..
+$ Q="bq -q query --nouse_legacy_sql --maximum_bytes_billed=200000000"
+$ python warehouse/epg.py --dt 2026-10-31
+$ $Q --parameter=dt:DATE:2026-10-31 < warehouse/g3.sql
+$ $Q --parameter=dt:DATE:2026-10-31 < warehouse/gates.sql

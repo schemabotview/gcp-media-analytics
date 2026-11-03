@@ -1,0 +1,1 @@
+{"from": "dataflow/09-on-dataflow", "changes": ["infra/main.tf", "infra/modules/lakehouse/"], "gcp": true, "env": "gcp.sh", "venv": true, "local_state": true}

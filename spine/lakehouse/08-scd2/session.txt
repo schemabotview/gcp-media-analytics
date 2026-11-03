@@ -1,0 +1,12 @@
+$ cd infra
+$ terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate
+$ terraform apply -var-file=envs/dev.tfvars -auto-approve
+$ cd ..
+$ P=$RAW/source=crm
+$ L="--source_format=CSV --skip_leading_rows=1 --hive_partitioning_mode=CUSTOM"
+$ H=--hive_partitioning_source_uri_prefix=$P/{dt:DATE}
+$ bq load $L $H bronze.subscriptions "$P/dt=*/subscriptions.csv"
+$ Q="bq -q query --nouse_legacy_sql --maximum_bytes_billed=200000000"
+$ $Q --parameter=dt:DATE:2026-10-30 < warehouse/scd2.sql
+$ $Q --parameter=dt:DATE:2026-10-31 < warehouse/scd2.sql
+$ $Q --parameter=hh::HH-10123 < warehouse/history.sql
