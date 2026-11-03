@@ -134,26 +134,33 @@ const THEMES = {
 }
 
 /**
- * The cover's mark: public/favicon.svg, the GraphL concept tile — the repo's own mark, naming GCP
- * only in TEXT (nominative use). No Google Cloud logo is vendored, and this script never draws one.
- * To add one, vendor the real file unaltered with a NOTICE beside it (as azure-trade-finance does)
- * and give it an entry here.
+ * The cover's mark. See output/thumbnails/README.md and public/vendor/NOTICE-googlecloud-logo.txt.
+ *
+ *   tile — public/favicon.svg, the GraphL concept tile: the repo's own mark, naming GCP only in
+ *          TEXT (nominative use). Needs no one's permission.
+ *   gcp  — Simple Icons' Google Cloud mark, vendored at public/vendor/googlecloud-logo.svg: the
+ *          same mark graphl-flow draws for its `gcp` key. Placed AS SUPPLIED — never re-traced or
+ *          re-proportioned. The file has no fill, so it is painted in Simple Icons' brand colour,
+ *          as the engine paints it.
  */
 const MARKS = {
   tile: { file: join(repoDir, 'public', 'favicon.svg'), label: 'viewing-pulse' },
+  gcp: { file: join(repoDir, 'public', 'vendor', 'googlecloud-logo.svg'), label: 'Google Cloud',
+         fill: '#4285f4' },
 }
 
 function markSvg(mark) {
-  const { file, label } = MARKS[mark]
+  const { file, label, fill } = MARKS[mark]
   if (!existsSync(file)) {
     throw new Error(`--mark ${mark} needs ${file}, which is not there. This script will not draw a\n`
       + `  mark itself — vendor the real file, unaltered, with a NOTICE beside it.`)
   }
   const raw = readFileSync(file, 'utf8')
   const body = raw.slice(raw.indexOf('>', raw.indexOf('<svg')) + 1, raw.lastIndexOf('</svg>'))
+    .replace(/<title>[^<]*<\/title>/, '')
   const vb = raw.match(/viewBox="([^"]+)"/)?.[1]
   if (!vb) throw new Error(`${file} has no viewBox — cannot place it without distorting it`)
-  return `<svg class="logo" viewBox="${vb}" role="img" aria-label="${label}"
+  return `<svg class="logo" viewBox="${vb}" role="img" aria-label="${label}"${fill ? ` fill="${fill}"` : ''}
     xmlns="http://www.w3.org/2000/svg">${body}</svg>`
 }
 

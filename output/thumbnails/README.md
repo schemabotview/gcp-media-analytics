@@ -5,23 +5,30 @@ card on the **dark** theme. Rebuild it, or a variant, with:
 
 ```sh
 npm run thumb:film                                                   # film.png
-npm run thumb:film -- --source map --out output/thumbnails/film-map.png
+npm run thumb:film -- --source map --mark gcp --out output/thumbnails/film-map.png
 npm run thumb:film -- --theme navy --out output/thumbnails/film-navy.png
 ```
 
-`--source` is `answer` | `map`; `--mark` is `tile`; `--theme` is `dark` | `navy` | `light`.
+`--source` is `answer` | `map`; `--mark` is `tile` | `gcp`; `--theme` is `dark` | `navy` | `light`.
 
-Kept beside it: `film-map.png`, the finished map from §1.3 taken live from the app. At the ~168px
+Kept beside it: `film-map.png`, the finished map from §1.3 taken live from the app, with the
+Google Cloud mark. At the ~168px
 the feed renders, its labels are gone and it reads as coloured confetti, while the answer card
 keeps "2,140 at 18:41" and the red EX-LDN-04 row readable.
 
-## The mark: the repo's tile only
+## The mark: the repo's tile, or the Google Cloud mark
 
-`--mark tile` is `public/favicon.svg`, the GraphL concept tile. It names GCP only in **text**,
-which is nominative use and needs no one's permission. No Google Cloud logo is vendored, and the
-script never draws one. To add one, vendor the real file unaltered with a NOTICE beside it, as
-azure-trade-finance does for the Azure icon, and give it an entry in `MARKS`. Read Google's brand
-guidelines first. This file is a design note, not legal advice.
+`--mark tile` (default) is `public/favicon.svg`, the GraphL concept tile. It names GCP only in
+**text**, which is nominative use and needs no one's permission.
+
+`--mark gcp` places Simple Icons' Google Cloud mark, vendored byte for byte at
+`public/vendor/googlecloud-logo.svg`. It is the same mark graphl-flow draws for its `gcp` icon key.
+It is a single-colour silhouette, not Google's four-colour logo. The file has no fill, so the script
+paints it in Simple Icons' brand colour `#4285f4`. The script never draws or re-traces it, and fails
+if the file is missing. `public/vendor/NOTICE-googlecloud-logo.txt` records where it came from:
+Simple Icons gives no licence for this icon, and the mark is Google's trademark. Read Google's brand
+guidelines and fill in the NOTICE before shipping a cover that wears it. This file is a design note,
+not legal advice.
 
 ## The card is real, and states its level
 

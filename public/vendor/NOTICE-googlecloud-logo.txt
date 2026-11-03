@@ -1,0 +1,33 @@
+public/vendor/googlecloud-logo.svg — the Google Cloud mark used on the film thumbnail (`--mark gcp`)
+==================================================================================================
+
+WHAT IT IS
+  The Google Cloud mark as Simple Icons draws it: a single-colour silhouette of Google's cloud
+  logo, not Google's own four-colour artwork. Used by scripts/thumb-film.mjs for `--mark gcp`,
+  embedded AS SUPPLIED: never re-traced, re-proportioned or otherwise altered. The file carries no
+  fill, so the script paints it in the colour Simple Icons publishes for the brand, #4285F4. That
+  is the same mark and colour graphl-flow draws for its `gcp` icon key in the scenes.
+
+WHERE IT CAME FROM
+  Copied byte for byte on 2026-11-03 from simple-icons 16.36.0 (icons/googlecloud.svg), a
+  dependency of graphl-flow. Simple Icons lists its source as https://cloud.google.com and gives
+  no licence for this icon.
+
+  Simple Icons releases its project under CC0, but its DISCLAIMER says that does not mean every
+  icon is CC0. The mark is Google's trademark whatever the file's licence.
+
+THE TERMS THAT APPLY
+  Google's brand guidelines govern its logos. Read their current text before publishing: they
+  are the authority, and this note is not. The cover must not suggest that Google produced,
+  sponsored or endorsed the course. GraphL's FULL COURSE badge and the "data engineering" line
+  are the course's own identity, and nothing on it says otherwise.
+
+  If Google's terms call for its official logo instead of a silhouette, vendor that file here,
+  unaltered, and point `MARKS.gcp` at it.
+
+  TO BE COMPLETED BY THE OWNER before this is published:
+    terms read on (date) : ................................................................
+    permission (if any)  : ................................................................
+
+  `--mark tile` (public/favicon.svg, this repo's own mark) needs none of this.
+  See output/thumbnails/README.md. This file is a design note, not legal advice.
