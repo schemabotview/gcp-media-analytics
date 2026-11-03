@@ -1,0 +1,60 @@
+$ cd infra
+$ terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate
+Initializing the backend...
+
+Successfully configured the backend "gcs"! Terraform will automatically
+use this backend unless the backend configuration changes.
+
+Initializing modules...
+- composer in modules/composer
+- dataproc in modules/dataproc
+- pubsub in modules/pubsub
+- iam in modules/iam
+- dataflow in modules/dataflow
+- lakehouse in modules/lakehouse
+- storage in modules/storage
+- live in modules/live
+- secrets in modules/secrets
+- kms in modules/kms
+
+Initializing provider plugins...
+- Reusing version 3.9.1 of hashicorp/random from the dependency lock file
+- Reusing version 8.9.0 of hashicorp/google from the dependency lock file
+- Installing hashicorp/random v3.9.1...
+- Installed hashicorp/random v3.9.1 (signed by HashiCorp)
+- Installing hashicorp/google v8.9.0...
+- Installed hashicorp/google v8.9.0 (signed by HashiCorp)
+
+Terraform has been successfully initialized!
+$ terraform plan -var-file=envs/dev.tfvars -target=module.composer
+data.google_project.this: Reading...
+data.google_project.this: Read complete after 1s [id=projects/sun-media-dev]
+module.iam.google_service_account.job["sa-airflow"]: Refreshing state... [id=pro
+jects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam.gserviceaccount
+.com]
+
+Terraform will perform the following actions:
+
+  # module.composer.google_composer_environment.media will be created
+  + resource "google_composer_environment" "media" {
+      + name   = "viewing-pulse"
+      + region = "europe-west2"
+      + config {
+          + environment_size = "ENVIRONMENT_SIZE_SMALL"
+          + software_config {
+              + image_version = "composer-3-airflow-2.10.5"
+            }
+        }
+    }
+
+  # module.composer.google_project_iam_member.agent will be created
+  + resource "google_project_iam_member" "agent" {
+      + role = "roles/composer.ServiceAgentV2Ext"
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+| Warning: Resource targeting is in effect
+|
+| The -target option is not for routine use.
+$ cd ..

@@ -1,0 +1,19 @@
+$ source airflow/env.sh
+$ airflow variables import airflow/variables.json
+Successfully updated 3 out of 3 variables
+$ airflow dags list-import-errors
+No data found
+$ airflow tasks list viewing_daily --tree
+<Task(GCSObjectExistenceSensor): viewing_landed>
+    <Task(BigQueryInsertJobOperator): bronze>
+        <Task(BigQueryInsertJobOperator): g2>
+            <Task(BigQueryCheckOperator): gate_g2>
+                <Task(BigQueryInsertJobOperator): silver>
+                    <Task(BashOperator): epg>
+                        <Task(BigQueryInsertJobOperator): g3>
+                            <Task(BigQueryCheckOperator): gate_g3>
+                                <Task(BigQueryInsertJobOperator): gold_content>
+                                    <Task(BigQueryInsertJobOperator): g4>
+                                        <Task(BigQueryCheckOperator): gate_g4>
+                                <Task(DataprocCreateBatchOperator): qos_by_excha
+nge>

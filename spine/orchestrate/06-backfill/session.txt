@@ -1,0 +1,26 @@
+$ source airflow/env.sh
+$ Q="bq -q query --nouse_legacy_sql --maximum_bytes_billed=200000000"
+$ airflow dags backfill viewing_daily -s 2026-10-31 --reset-dagruns -y
+[2026-11-01T09:36:25] INFO - [backfill progress] | finished run 1 of 1 | tasks w
+aiting: 0 | succeeded: 13 | running: 0 | failed: 0 | skipped: 0 | deadlocked: 0 
+| not ready: 0
+[2026-11-01T09:36:32] INFO - Backfill done for DAG <DAG: viewing_daily>. Exiting
+.
+$ $Q --parameter=dt:DATE:2026-10-31 < warehouse/night.sql
++--------+-------------+--------+--------------+-----------+
+| bronze | quarantined | silver | gold_minutes | exchanges |
++--------+-------------+--------+--------------+-----------+
+| 401958 |           7 | 400949 |       370041 |        12 |
++--------+-------------+--------+--------------+-----------+
+$ airflow dags backfill viewing_daily -s 2026-10-31 --reset-dagruns -y
+[2026-11-01T09:36:25] INFO - [backfill progress] | finished run 1 of 1 | tasks w
+aiting: 0 | succeeded: 13 | running: 0 | failed: 0 | skipped: 0 | deadlocked: 0 
+| not ready: 0
+[2026-11-01T09:36:32] INFO - Backfill done for DAG <DAG: viewing_daily>. Exiting
+.
+$ $Q --parameter=dt:DATE:2026-10-31 < warehouse/night.sql
++--------+-------------+--------+--------------+-----------+
+| bronze | quarantined | silver | gold_minutes | exchanges |
++--------+-------------+--------+--------------+-----------+
+| 401958 |           7 | 400949 |       370041 |        12 |
++--------+-------------+--------+--------------+-----------+

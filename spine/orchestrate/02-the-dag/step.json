@@ -1,0 +1,1 @@
+{"from": "serve/08-the-answer", "changes": ["airflow/", "dags/", "warehouse/bronze.sql", "warehouse/g2.sql", "warehouse/silver.sql"], "mocked": true, "gcp": true, "env": "gcp.sh", "venv": true}

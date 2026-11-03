@@ -1,0 +1,64 @@
+$ source airflow/env.sh
+$ airflow dags test viewing_daily 2026-10-31
+[2026-11-01T09:30:42] INFO - created dagrun <DagRun viewing_daily @ 2026-10-31T0
+0:00:00+00:00: manual__2026-10-31T00:00:00+00:00, state:running>
+[2026-11-01T09:30:49] INFO - [DAG TEST] starting task_id=viewing_landed
+[2026-11-01T09:30:56] INFO - Marking task as SUCCESS. task_id=viewing_landed
+[2026-11-01T09:31:03] INFO - [DAG TEST] starting task_id=bronze
+[2026-11-01T09:31:10] ERROR - Task failed with exception
+google.api_core.exceptions.ServiceUnavailable: 503 POST https://bigquery.googlea
+pis.com/bigquery/v2/projects/sun-media-dev/jobs?prettyPrint=false: Error encount
+ered during execution. Retrying may solve the problem.
+[2026-11-01T09:31:17] INFO - Marking task as UP_FOR_RETRY. task_id=bronze, try 1
+ of 3
+[2026-11-01T09:31:24] INFO - [DAG TEST] starting task_id=bronze
+[2026-11-01T09:31:31] INFO - Marking task as SUCCESS. task_id=bronze
+[2026-11-01T09:31:38] INFO - [DAG TEST] starting task_id=g2
+[2026-11-01T09:31:45] INFO - Marking task as SUCCESS. task_id=g2
+[2026-11-01T09:31:52] INFO - [DAG TEST] starting task_id=gate_g2
+[2026-11-01T09:31:59] INFO - Marking task as SUCCESS. task_id=gate_g2
+[2026-11-01T09:32:06] INFO - [DAG TEST] starting task_id=silver
+[2026-11-01T09:32:13] INFO - Marking task as SUCCESS. task_id=silver
+[2026-11-01T09:32:20] INFO - [DAG TEST] starting task_id=epg
+[2026-11-01T09:32:27] INFO - Marking task as SUCCESS. task_id=epg
+[2026-11-01T09:32:34] INFO - [DAG TEST] starting task_id=g3
+[2026-11-01T09:32:41] INFO - Marking task as SUCCESS. task_id=g3
+[2026-11-01T09:32:48] INFO - [DAG TEST] starting task_id=gate_g3
+[2026-11-01T09:32:55] ERROR - Task failed with exception
+airflow.exceptions.AirflowException: Test failed.
+Query:
+SELECT passed FROM audit.gate_results WHERE gate = 'G3' AND dt = '2026-10-31' OR
+DER BY checked_at DESC LIMIT 1
+Results:
+(False,)
+[2026-11-01T09:33:02] INFO - Marking task as UP_FOR_RETRY. task_id=gate_g3, try 
+1 of 3
+[2026-11-01T09:33:09] INFO - [DAG TEST] starting task_id=gate_g3
+[2026-11-01T09:33:16] ERROR - Task failed with exception
+airflow.exceptions.AirflowException: Test failed.
+Query:
+SELECT passed FROM audit.gate_results WHERE gate = 'G3' AND dt = '2026-10-31' OR
+DER BY checked_at DESC LIMIT 1
+Results:
+(False,)
+[2026-11-01T09:33:23] INFO - Marking task as UP_FOR_RETRY. task_id=gate_g3, try 
+2 of 3
+[2026-11-01T09:33:30] INFO - [DAG TEST] starting task_id=gate_g3
+[2026-11-01T09:33:37] ERROR - Task failed with exception
+airflow.exceptions.AirflowException: Test failed.
+Query:
+SELECT passed FROM audit.gate_results WHERE gate = 'G3' AND dt = '2026-10-31' OR
+DER BY checked_at DESC LIMIT 1
+Results:
+(False,)
+[2026-11-01T09:33:44] ERROR - Marking task as FAILED. task_id=gate_g3, try 3 of 
+3
+[2026-11-01T09:33:51] INFO - Marking task as UPSTREAM_FAILED. task_id=gold_conte
+nt
+[2026-11-01T09:33:58] INFO - Marking task as UPSTREAM_FAILED. task_id=qos_by_exc
+hange
+[2026-11-01T09:34:05] INFO - Marking task as UPSTREAM_FAILED. task_id=g4
+[2026-11-01T09:34:12] INFO - Marking task as UPSTREAM_FAILED. task_id=gate_g4
+[2026-11-01T09:34:19] INFO - Sending email to media-data@sun.example: [Airflow] 
+viewing_daily.gate_g3 failed
+[2026-11-01T09:34:26] INFO - dagrun id: viewing_daily, state: failed

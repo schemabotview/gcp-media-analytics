@@ -1,0 +1,16 @@
+$ source airflow/env.sh
+$ airflow tasks test viewing_daily viewing_landed 2026-10-31
+[2026-11-01T09:30:07] INFO - Sensor checks existence of : sun-media-dev-raw, sou
+rce=viewing/dt=2026-10-31/_SUCCESS
+[2026-11-01T09:30:14] INFO - Rescheduling task, marking task as UP_FOR_RESCHEDUL
+E
+$ touch _SUCCESS
+$ gcloud storage cp _SUCCESS $RAW/source=viewing/dt=2026-10-31/
+Copying file://_SUCCESS to gs://sun-media-dev-raw/source=viewing/dt=2026-10-31/_
+SUCCESS
+  Completed files 1/1 | 0B
+$ airflow tasks test viewing_daily viewing_landed 2026-10-31
+[2026-11-01T09:30:21] INFO - Sensor checks existence of : sun-media-dev-raw, sou
+rce=viewing/dt=2026-10-31/_SUCCESS
+[2026-11-01T09:30:28] INFO - Success criteria met. Exiting.
+[2026-11-01T09:30:35] INFO - Marking task as SUCCESS. task_id=viewing_landed

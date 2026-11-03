@@ -75,7 +75,7 @@ step is recorded, then frozen.
 | PySpark | **4.2.0** on Java **21** | the QoS job, run locally; the same file runs on Dataproc Serverless |
 | Dataproc Serverless runtime | *first use* | the recorded Spark batch |
 | spark-bigquery-connector | *first use* (matching the runtime) | Spark ↔ BigQuery |
-| Apache Airflow + `apache-airflow-providers-google` | *first use* (matching a Composer 3 image) | the nightly DAG, run with `airflow dags test` |
+| Apache Airflow + `apache-airflow-providers-google` | **2.10.5** + **14.0.0**, in their own Python 3.12 venv (Composer 3's image; Airflow 2.10 stops at 3.12) | the nightly DAG, run with `airflow dags test` |
 | Google Cloud CLI (`gcloud`, `bq`, `gcloud storage`) | **570.0.0** (the image's) | reads, the data plane, the state bootstrap |
 | Pub/Sub emulator | (from the CLI's components) | local publish / pull |
 | fake-gcs-server | **1.56.1** | GCS, emulated, for local landing |
@@ -379,13 +379,13 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 | # | Section | Step | Side pane | Level |
 | --- | --- | --- | --- | --- |
 | 1 | ◆ full scene: Airflow's model | concept | DAG → task → operator; scheduler, workers | D |
-| 2 | The DAG | `viewing_daily.py`, `airflow dags test` against the project | sensor → load → G2 → Silver → G3 → Dataproc → Gold → G4 | G |
-| 3 | Waiting for the batch | a GCS sensor on `_SUCCESS` | sensor → poke → go | G |
-| 4 | Retries and SLAs | a transient failure retried; an SLA miss email | task states | G |
-| 5 | Backfill, idempotently | `dt` as the logical date; partition overwrite | three nights, same result twice | G |
-| 6 | ⑂ A failed night | G3 fails; the EPG fixed; the task cleared; green | the run, red then green | G |
-| 7 | Composer | the Composer 3 environment in Terraform, planned not applied | managed Airflow: what Google runs | C |
-| 8 | ◆ full scene: three kinds of progress | lab: restart at each point | ack (Pub/Sub) / watermark (Dataflow) / partition (batch) | L |
+| 2 | The DAG | `viewing_daily.py` (13 tasks, 3 gates); every SQL file made rerunnable (delete the night, then insert) | the tasks in order | M |
+| 3 | Waiting for the batch | a GCS sensor on `_SUCCESS`, reschedule mode | sensor → poke → go | M |
+| 4 | Retries and SLAs | a 503 retried; `gate_g3` fails three times, emails, downstream upstream_failed | task states | M |
+| 5 | ⑂ A failed night | the EPG re-delivered (`.r2.json`, the raw zone keeps the first); `tasks clear` downstream; green | the run, red then green; every verdict kept | M |
+| 6 | Backfill, idempotently | `dags backfill` twice: every layer's count the same | delete the night, insert it again | M |
+| 7 | Composer | the Composer 3 environment in Terraform, planned not applied | managed Airflow: what Google runs | M |
+| 8 | ◆ full scene: three kinds of progress | concept, citing §6.4, §7.5, §7.9, §11.6 | ack (Pub/Sub) / watermark (Dataflow) / partition (batch) | model |
 
 **12. `operate` · Protect it, watch it, ship it · 9**
 

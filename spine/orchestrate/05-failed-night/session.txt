@@ -1,0 +1,50 @@
+$ E=data/epg/2026-10-31.r2.json
+$ gcloud storage cp $E $RAW/source=epg/dt=2026-10-31/
+Copying file://data/epg/2026-10-31.r2.json to gs://sun-media-dev-raw/source=epg/
+dt=2026-10-31/2026-10-31.r2.json
+  Completed files 1/1 | 6.1kiB
+$ source airflow/env.sh
+$ airflow tasks clear viewing_daily -s 2026-10-31 -t '^epg$' -d -y
+<TaskInstance: viewing_daily.epg manual__2026-10-31T00:00:00+00:00 [success]>
+<TaskInstance: viewing_daily.g3 manual__2026-10-31T00:00:00+00:00 [success]>
+<TaskInstance: viewing_daily.gate_g3 manual__2026-10-31T00:00:00+00:00 [failed]>
+<TaskInstance: viewing_daily.gold_content manual__2026-10-31T00:00:00+00:00 [ups
+tream_failed]>
+<TaskInstance: viewing_daily.qos_by_exchange manual__2026-10-31T00:00:00+00:00 [
+upstream_failed]>
+<TaskInstance: viewing_daily.g4 manual__2026-10-31T00:00:00+00:00 [upstream_fail
+ed]>
+<TaskInstance: viewing_daily.gate_g4 manual__2026-10-31T00:00:00+00:00 [upstream
+_failed]>
+$ airflow dags test viewing_daily 2026-10-31
+[2026-11-01T09:34:33] INFO - dagrun id: viewing_daily, manual__2026-10-31T00:00:
+00+00:00, state: running
+[2026-11-01T09:34:40] INFO - [DAG TEST] starting task_id=epg
+[2026-11-01T09:34:47] INFO - Marking task as SUCCESS. task_id=epg
+[2026-11-01T09:34:54] INFO - [DAG TEST] starting task_id=g3
+[2026-11-01T09:35:01] INFO - Marking task as SUCCESS. task_id=g3
+[2026-11-01T09:35:08] INFO - [DAG TEST] starting task_id=gate_g3
+[2026-11-01T09:35:15] INFO - Marking task as SUCCESS. task_id=gate_g3
+[2026-11-01T09:35:22] INFO - [DAG TEST] starting task_id=gold_content
+[2026-11-01T09:35:29] INFO - Marking task as SUCCESS. task_id=gold_content
+[2026-11-01T09:35:36] INFO - [DAG TEST] starting task_id=qos_by_exchange
+[2026-11-01T09:35:43] INFO - Marking task as SUCCESS. task_id=qos_by_exchange
+[2026-11-01T09:35:50] INFO - [DAG TEST] starting task_id=g4
+[2026-11-01T09:35:57] INFO - Marking task as SUCCESS. task_id=g4
+[2026-11-01T09:36:04] INFO - [DAG TEST] starting task_id=gate_g4
+[2026-11-01T09:36:11] INFO - Marking task as SUCCESS. task_id=gate_g4
+[2026-11-01T09:36:18] INFO - dagrun id: viewing_daily, state: success
+$ Q="bq -q query --nouse_legacy_sql --maximum_bytes_billed=200000000"
+$ $Q --parameter=dt:DATE:2026-10-31 < warehouse/gates.sql
++------+--------+----------------------------------------------+
+| gate | passed |                    detail                    |
++------+--------+----------------------------------------------+
+| G2   | true   | 7 of 401958 rows quarantined                 |
+| G2   | true   | 7 of 401958 rows quarantined                 |
+| G3   | false  | 120 of 6189 channel minutes have no EPG slot |
+| G3   | false  | 120 of 6189 channel minutes have no EPG slot |
+| G3   | true   | 0 of 6189 channel minutes have no EPG slot   |
+| G4   | false  | gold 372464, silver 370041                   |
+| G4   | true   | gold 370041, silver 370041                   |
+| G4   | true   | gold 370041, silver 370041                   |
++------+--------+----------------------------------------------+

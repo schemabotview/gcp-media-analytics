@@ -58,7 +58,7 @@ azure-trade-finance when narration starts).
 | 8 | `lakehouse` | 9 | authored, narrated (text), 4K-checked: all recorded on GCP; §7's count and §8's load+MERGE output MOCKED (the recording's own SQL failed; corrected by hand, labelled) |
 | 9 | `dataproc` | 8 | authored, narrated (text), 4K-checked, MOCKED: §1 doc-cited; §2, §4–§6 local Spark outputs from real runs of the same code made while drafting; §3, §7, §8 authored |
 | 10 | `serve` | 8 | authored, narrated (text), 4K-checked, MOCKED: numbers computed from the night's data as the SQL would; §7 doc-cited (Looker) |
-| 11 | `orchestrate` | 8 | planned |
+| 11 | `orchestrate` | 8 | authored, narrated (text), 4K-checked, MOCKED: Airflow 2.10.5 in its own Python 3.12 venv (Composer 3's image); §1 doc-cited, §8 model; Composer planned, never applied |
 | 12 | `operate` | 9 | planned |
 
 ## Spine (as built)
