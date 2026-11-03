@@ -1,0 +1,4 @@
+# Airflow's own venv (Python 3.12), installed with Airflow's constraints:
+# pip install -r airflow/requirements.txt -c https://raw.githubusercontent.com/apache/airflow/constraints-2.10.5/constraints-3.12.txt
+apache-airflow==2.10.5
+apache-airflow-providers-google==14.0.0

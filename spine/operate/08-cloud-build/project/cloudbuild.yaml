@@ -1,0 +1,31 @@
+# Every push to main: format, validate, the local checks, then a plan of
+# dev, written to the build's log. Nothing is applied by CI: a person reads
+# the plan and applies it.
+steps:
+  - id: fmt
+    name: hashicorp/terraform:1.17.0
+    dir: infra
+    args: [fmt, -check, -recursive]
+  - id: validate
+    name: hashicorp/terraform:1.17.0
+    dir: infra
+    entrypoint: sh
+    args: [-c, "terraform init -backend=false && terraform validate"]
+  - id: gates
+    name: python:3.14.9-slim
+    entrypoint: sh
+    args: [-c, "pip install -q sqlfluff==3.4.2 && sqlfluff lint warehouse --dialect bigquery"]
+  - id: plan
+    name: hashicorp/terraform:1.17.0
+    dir: infra
+    entrypoint: sh
+    args:
+      - -c
+      - >-
+        terraform init -backend-config=bucket=$PROJECT_ID-tfstate &&
+        terraform plan -var-file=envs/dev.tfvars -var=project_id=$PROJECT_ID
+        -var=operator=serviceAccount:sa-cicd@$PROJECT_ID.iam.gserviceaccount.com
+        -var=billing_account=$_BILLING -lock=false
+serviceAccount: projects/$PROJECT_ID/serviceAccounts/sa-cicd@$PROJECT_ID.iam.gserviceaccount.com
+options:
+  logging: CLOUD_LOGGING_ONLY

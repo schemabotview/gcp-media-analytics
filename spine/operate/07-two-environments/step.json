@@ -1,0 +1,1 @@
+{"from": "operate/06-alerts", "changes": ["infra/envs/prod.tfvars"], "mocked": true, "gcp": true, "env": "gcp.sh", "venv": true}

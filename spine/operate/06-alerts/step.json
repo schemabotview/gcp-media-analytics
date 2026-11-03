@@ -1,0 +1,1 @@
+{"from": "operate/05-logging", "changes": ["infra/main.tf", "infra/modules/alerts/"], "mocked": true, "gcp": true, "env": "gcp.sh", "venv": true}

@@ -391,15 +391,15 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 
 | # | Section | Step | Side pane | Level |
 | --- | --- | --- | --- | --- |
-| 1 | Policy tags | column-level security on `email`, `phone`; a read refused | taxonomy → tag → column → reader | G |
-| 2 | Sensitive Data Protection | inspect a CRM extract; de-identify | finding → transform → masked file | G |
-| 3 | Dataplex: catalog and lineage | lineage of `gold.content_performance_daily` | sources → tables → Gold, drawn from the API | G |
-| 4 | Dataplex data quality | a scan on Silver vs our gates | where a rule lives | G |
-| 5 | Cloud Logging | the night's job logs, a log query | sources → log router → sinks | G |
-| 6 | Alerts | oldest-unacked-message age on `viewing-events` → email | metric → policy → channel | G |
-| 7 | Two environments | dev and prod from one root module, two state prefixes | one module, two projects | C |
-| 8 | CI with Cloud Build | `cloudbuild.yaml`: fmt, validate, tests, plan; a trigger from GitHub | GitHub → trigger → build → plan | G |
-| 9 | Where next | concept | churn, recommendations, Vertex AI, real-time personalisation — each on the map, unbuilt | D |
+| 1 | Policy tags | `silver.dim_household`: `email`, `phone` tagged `sun-pii : contact`; a read refused, even to the owner | taxonomy → tag → column → reader | M |
+| 2 | Sensitive Data Protection | inspect the CRM extract (email, phone, names: 5,000 each); de-identify by infoType | finding → transform → masked file | M |
+| 3 | Dataplex: catalog and lineage | lineage of `gold.content_performance_daily`, walked by the lineage API back to the raw zone | the longest path, raw → Gold | M |
+| 4 | Dataplex data quality | a scan on Silver (4 rules, passed) vs our gates | where a rule lives | M |
+| 5 | Cloud Logging | the night's BigQuery jobs from audit logs, by Airflow's labels | sources → log router → a query | M |
+| 6 | Alerts | oldest-unacked-message age on `viewing-events-dataflow` > 300 s → email | metric → policy → channel | M |
+| 7 | Two environments | dev and prod from one root module, two projects, two state buckets | one module, two projects | M |
+| 8 | CI with Cloud Build | `cloudbuild.yaml`: fmt, validate, SQL lint, plan; no apply | GitHub → trigger → build → plan | M |
+| 9 | Where next | concept | churn, recommendations, real-time personalisation — each on the map, unbuilt | model |
 
 ## Decisions
 

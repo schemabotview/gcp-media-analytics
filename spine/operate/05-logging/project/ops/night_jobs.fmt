@@ -1,0 +1,1 @@
+table(timestamp.date(%H:%M:%S),protoPayload.metadata.jobChange.job.jobConfig.labels.airflow-task:label=TASK,protoPayload.metadata.jobChange.job.jobStats.queryStats.totalBilledBytes:label=BILLED)

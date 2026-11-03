@@ -1,0 +1,14 @@
+$ C=$RAW/source=crm/dt=2026-10-31/households.csv
+$ python governance/dlp.py inspect $C
+EMAIL_ADDRESS   email         5,000 findings
+PERSON_NAME     first_name    5,000 findings
+PERSON_NAME     last_name     5,000 findings
+PHONE_NUMBER    phone         5,000 findings
+$ python governance/dlp.py redact $C --out households.redacted.csv
+5,000 rows -> households.redacted.csv
+$ head -3 households.redacted.csv | cut -d, -f1-7
+household_id,first_name,last_name,email,phone,postcode,region
+HH-10001,[PERSON_NAME],[PERSON_NAME],[EMAIL_ADDRESS],[PHONE_NUMBER],M14 4UJ,Nort
+h West
+HH-10002,[PERSON_NAME],[PERSON_NAME],[EMAIL_ADDRESS],[PHONE_NUMBER],N1 7QX,Londo
+n

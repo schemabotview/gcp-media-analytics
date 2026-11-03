@@ -1,0 +1,17 @@
+$ cd infra
+$ export TF_VAR_project_id=sun-media-prod
+$ terraform init -reconfigure -backend-config=bucket=sun-media-prod-tfstate
+Initializing the backend...
+
+Successfully configured the backend "gcs"! Terraform will automatically
+use this backend unless the backend configuration changes.
+
+Terraform has been successfully initialized!
+$ terraform plan -var-file=envs/prod.tfvars | tail -3
+Plan: 74 to add, 0 to change, 0 to destroy.
+
+Note: You didn't use the -out option to save this plan, so Terraform can't guara
+ntee to take exactly these actions if you run "terraform apply" now.
+$ terraform workspace show
+default
+$ cd ..

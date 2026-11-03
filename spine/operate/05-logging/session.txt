@@ -1,0 +1,10 @@
+$ L="$(cat ops/night_jobs.logq)"
+$ T="$(cat ops/night_jobs.fmt)"
+$ gcloud logging read "$L" --order=asc --format="$T"
+TIMESTAMP  TASK          BILLED
+09:30:10   bronze        100663296
+09:31:17   g2            12582912
+09:32:24   silver        34603008
+09:33:31   g3            10485760
+09:34:38   gold_content  22020096
+09:35:45   g4            10485760

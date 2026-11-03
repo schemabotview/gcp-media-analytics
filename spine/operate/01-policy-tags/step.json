@@ -1,0 +1,1 @@
+{"from": "orchestrate/07-composer", "changes": ["infra/main.tf", "infra/modules/governance/", "warehouse/dim_household.sql", "warehouse/households_contact.sql", "warehouse/households_open.sql"], "mocked": true, "gcp": true, "env": "gcp.sh", "venv": true}

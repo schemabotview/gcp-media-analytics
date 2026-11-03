@@ -1,0 +1,5 @@
+{
+  "raw_bucket": "sun-media-dev-raw",
+  "qos_job": "gs://sun-media-dev-dataproc/qos_job.py",
+  "dataproc_sa": "sa-dataproc@sun-media-dev.iam.gserviceaccount.com"
+}

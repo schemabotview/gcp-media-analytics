@@ -1,0 +1,8 @@
+[
+  {"name": "subscription_id", "type": "STRING"},
+  {"name": "household_id", "type": "STRING"},
+  {"name": "package_id", "type": "STRING"},
+  {"name": "valid_from", "type": "DATE"},
+  {"name": "valid_to", "type": "DATE"},
+  {"name": "updated_at", "type": "TIMESTAMP"}
+]

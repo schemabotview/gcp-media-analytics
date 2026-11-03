@@ -1,0 +1,4 @@
+resource.type="bigquery_project"
+protoPayload.metadata.jobChange.after="DONE"
+protoPayload.metadata.jobChange.job.jobConfig.labels.airflow-dag="viewing_daily"
+timestamp>="2026-11-01T09:30:00Z"

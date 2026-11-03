@@ -1,0 +1,1 @@
+{"from": "operate/07-two-environments", "changes": ["cloudbuild.yaml"], "mocked": true, "gcp": true, "env": "gcp.sh", "venv": true}

@@ -1,0 +1,16 @@
+$ S=--substitutions=_BILLING=$GOOGLE_BILLING_ACCOUNT
+$ gcloud builds submit --config=cloudbuild.yaml --region=europe-west2 $S
+Creating temporary archive of 214 file(s) totalling 1.2 MiB before compression.
+Uploading tarball of [.] to [gs://sun-media-dev_cloudbuild/source/1793701800.000
+000-00000000000000000000000000000001.tgz]
+Created [https://cloudbuild.googleapis.com/v1/projects/sun-media-dev/locations/e
+urope-west2/builds/00000000-0000-0000-0000-000000002001].
+Step #0 - "fmt": Already have image (with digest): hashicorp/terraform:1.17.0
+Step #1 - "validate": Success! The configuration is valid.
+Step #2 - "gates": All Finished!
+Step #3 - "plan": No changes. Your infrastructure matches the configuration.
+DONE
+ID                                    CREATE_TIME                DURATION  STATU
+S
+00000000-0000-0000-0000-000000002001  2026-11-01T09:30:00+00:00  2M14S     SUCCE
+SS

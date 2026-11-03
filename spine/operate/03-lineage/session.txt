@@ -1,0 +1,15 @@
+$ python governance/lineage.py gold.content_performance_daily
+gold.content_performance_daily
+    bronze.households_raw
+        gs://sun-media-dev-raw/source=crm
+    bronze.titles_raw
+        gs://sun-media-dev-raw/source=catalogue
+    silver.dim_subscriber
+        bronze.subscriptions
+            gs://sun-media-dev-raw/source=crm
+    silver.viewing_events
+        bronze.viewing_events
+            bronze.viewing_raw
+                gs://sun-media-dev-raw/source=viewing
+        bronze.viewing_quarantine
+            bronze.viewing_events
