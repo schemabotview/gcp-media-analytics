@@ -1,0 +1,98 @@
+Learn GCP by building a media & broadband analytics platform: full course, beginner to professional
+
+92 sections, 12 courses, 1:57:52.
+Every local number is really computed: PostgreSQL 18.6, Python 3.14.9 and Beam's direct runner. Every GCP resource is Terraform. The steps marked recorded were run once in a real project, their transcripts kept, then torn down. The rest says so on screen: emulated (fake-gcs-server, the Pub/Sub emulator), doc-cited, a model, or mocked. Mocked outputs (two steps of the BigQuery Silver build, and Courses 9–12) are written to match the code and the night's data, not run.
+
+⏱ CHAPTERS
+0:00:00 ▸ Media analytics, and what we’ll build — A night of viewing, in one picture
+0:01:21 Two questions, two clocks: the derby’s answer
+0:02:43 What we’ll build: viewing-pulse, both lanes
+0:04:11 ▸ How Google Cloud is built — Regions and zones: where London is
+0:05:33 The resource hierarchy: organization, folders, project
+0:06:56 APIs are switched on per project
+0:08:22 Control plane and data plane: a bucket and its objects
+0:09:49 Console, gcloud, Terraform: one API underneath
+0:11:09 Serverless and managed clusters: who runs what
+0:12:33 How GCP charges: a month, in billed units
+0:14:03 ▸ The sources, and a first deployment — Sun’s five sources: two batch, three ways to stream
+0:15:28 The CRM: households, packages, and every version
+0:16:51 The catalogue and the EPG: what aired, and when
+0:18:19 An event’s life: one box, one derby
+0:19:46 Signing in: one identity, one project, nothing yet
+0:21:10 A first Terraform file: the raw bucket, as code
+0:22:32 State, and where it lives: a bucket, and a lock
+0:23:52 Modules and a budget: code that grows, money that alerts
+0:25:10 ▸ Identity first — Cloud IAM: roles, members, and one policy
+0:26:28 IAM inheritance: a bucket’s policy, and its project’s
+0:27:57 Service accounts: one identity per job
+0:29:21 No key files: act as an account, briefly
+0:30:44 PERMISSION_DENIED: the identity works, the grant is missing
+0:32:04 Secret Manager: one password, one reader
+0:33:27 Cloud KMS: Sun’s own key on the raw zone
+0:34:49 Least privilege: the role matrix, applied
+0:36:12 ▸ Cloud Storage, and a batch you can trust — Buckets and the raw zone: one bucket, flat names
+0:37:34 Paths as partitions: one folder per source and night
+0:39:09 The nightly extracts: a snapshot and a window
+0:40:42 The manifest: what the copy must deliver
+0:42:07 G1 fails: the night billing came up short
+0:43:35 Retry-safe and sealed: a night lands once
+0:45:05 Immutable by policy: a delete the bucket refuses
+0:46:24 Hot to cold: lifecycle rules
+0:47:50 ▸ Pub/Sub: hearing every box — Why a stream: the match, while it plays
+0:49:08 Topics and subscriptions: three streams, in Terraform
+0:50:33 Publishing: the derby, replayed sixty times faster
+0:51:54 Pull and ack: a message comes back until it is handled
+0:53:12 At-least-once: the same event, twice
+0:54:35 Ordering keys: one device, one ordered lane
+0:55:59 Dead letters: five attempts, then set aside
+0:57:24 ▸ Counting viewers while the match plays — Beam’s model: a pipeline is a graph
+0:58:49 A first pipeline: read, parse, count
+1:00:05 Event time and processing time: two clocks
+1:01:28 Fixed windows: viewers per channel, per minute
+1:02:45 Watermarks and late data: on time, then right
+1:04:08 Dedupe in the stream: once per event_id
+1:05:31 Sessions: windows shaped by activity
+1:06:53 Into BigQuery: the live table
+1:08:14 On Dataflow: the job that never ends
+1:09:47 ▸ BigQuery: Bronze and Silver — Datasets and location
+1:11:00 External tables: schema on read
+1:12:10 Bronze: the night as delivered
+1:13:17 How BigQuery runs a query
+1:14:33 Partitioning and clustering
+1:15:50 G2: rows set aside
+1:17:01 Silver: one row per event
+1:18:10 SCD2: a household over time
+1:19:22 G3: the minutes the guide forgot
+1:20:33 ▸ Spark for the heavy join — Dataproc’s shapes
+1:21:49 PySpark locally first
+1:22:57 The BigQuery connector
+1:24:01 The buffering ratio
+1:24:58 The derby skew
+1:26:02 Fixing skew
+1:27:10 On Dataproc Serverless
+1:28:19 Writing back to Gold
+1:29:27 ▸ The answer, cheaply and safely — content_performance_daily
+1:30:37 Counting unique households
+1:31:46 G4: Gold against Silver
+1:32:57 What a query costs
+1:34:09 Sharing without exposing
+1:35:20 Materialized views and BI Engine
+1:36:28 Looker’s semantic model
+1:37:37 The answer
+1:38:48 ▸ Every night, and the night it fails — Airflow’s model
+1:39:59 The DAG
+1:41:12 Waiting for the batch
+1:42:17 Retries and SLAs
+1:43:23 A failed night
+1:44:35 Backfill, idempotently
+1:45:46 Composer
+1:46:58 Three kinds of progress
+1:48:09 ▸ Protect it, watch it, ship it — Policy tags
+1:49:17 Sensitive Data Protection
+1:50:22 Dataplex: catalog and lineage
+1:51:24 Dataplex data quality
+1:52:29 Cloud Logging
+1:53:29 Alerts
+1:54:31 Two environments
+1:55:37 CI with Cloud Build
+1:56:40 Where next

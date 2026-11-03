@@ -25,12 +25,18 @@ call (see below). GCP is torn down in full. `check:spine`: 83 steps, 0 problems.
 
 1. Owner review of `COURSE-PLAN.md` and the 92 routes (`#/intro-a-night-of-viewing` …
    `#/operate-where-next`); the map preview `#/preview-map-land` (the finished map is §1.3).
-2. Narration audio: `scripts/audio-manifest.json` is generated (`npm run gen:audio`, 92 entries;
-   re-run after ANY narration edit). Next: port the Colab notebook
-   (`scripts/colab_generate_audio.ipynb`) and `titles.json` from azure-trade-finance, then Colab +
-   Chatterbox. The shortest narrations (174–199 words, mostly Courses 9–12) may land under 82 s:
-   measure the wavs, lengthen the ones that do.
-3. Re-recording mocked steps for real is optional: remove `mocked` from a step.json, then `--record`.
+2. Narration audio: all 92 wavs are in (Colab + Chatterbox, 2026-11-03). **57 sections land under
+   82 s** (every one in Courses 8–12, 57–78 s; 1–8 s short in Courses 1–7): lengthen those
+   narrations, `npm run gen:audio`, regenerate the changed wavs, `npm run record:all` (unchanged
+   sections come from the segment cache), then `npm run film` again.
+3. Recorded (2026-11-03): every course at 4K (`scripts/out/<course>.mp4`), and a first cut of the
+   film, `scripts/out/film.mp4` (1:57:52, −14 LUFS). Publish kit in `output/`: `film-description.txt`
+   (92 chapters, 4,949 bytes of YouTube's 5,000), `descriptions/<course>.txt`, `thumbnails/film.png`
+   (the answer card from §1.2, `runs locally`) and `film-map.png`. Fix before publishing: §8.7's
+   mocked top minutes (18:02, 18:43) disagree with §7.8's recording (17:51, 17:52); §9.4's mocked
+   output has 12 exchanges where §1.2 has 15; §2.3's side-pane diagram uses a third of its width;
+   a stray glyph before §4.5's side-pane title.
+4. Re-recording mocked steps for real is optional: remove `mocked` from a step.json, then `--record`.
 
 **Built (infra):** the app (vite, shell `ConceptApp`, `--brand` #4285f4), `check-content`,
 `check-render`, `registry`, `shots` (also a bare scene id), `concept.json`, `spine-files.mjs` (the
@@ -39,9 +45,9 @@ explorer's file lists, `src/scenes/spine-files.ts`: run it after writing or reco
 GCP steps: recorder, used for Courses 3–5); `leaks.py`; `src/scenes/ide.ts`, `map.ts` (`BUILT` per
 course), `level.ts`, `lab.ts` (`labFrame`: terminal beside a diagram, the IDE frame's size, for Course 2's labs), `tree.ts`, `fold.ts`, `csv.ts`; installers `install-toolchain.sh`
 (Python 3.14.9, Java 21), `setup-postgres.sh` (PostgreSQL 18.6, OS user `priya`),
-`install-gcp-tools.sh` (fake-gcs-server 1.56.1, Terraform 1.17.0). Not yet: `film.mjs`,
-`thumb-film.mjs`, the Colab notebook, `titles.json` (port from azure-trade-finance when narration
-starts). `scripts/audio-manifest.json` is generated.
+`install-gcp-tools.sh` (fake-gcs-server 1.56.1, Terraform 1.17.0). `film.mjs` and
+`thumb-film.mjs` (ported from azure-trade-finance), `titles.json`. `scripts/audio-manifest.json` is
+generated. The Colab notebook is not in this repo.
 
 | # | course | sections | status |
 |---|---|---|---|

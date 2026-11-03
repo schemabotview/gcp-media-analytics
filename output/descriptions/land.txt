@@ -1,0 +1,32 @@
+Cloud Storage for Data Engineers: a Raw Zone, Partitioned Paths, a Manifest and a Failing Gate, Retention and Lifecycle Rules · GCP
+━━━━━━━━━━━━━━━━
+Part of GraphL's GCP series — every section pairs one diagram with the idea it explains, so the picture and the words land together.
+━━━━━━━━━━━━━━━━
+⏱ CHAPTERS
+0:00 Buckets and the raw zone: one bucket, flat names
+1:22 Paths as partitions: one folder per source and night
+2:56 The nightly extracts: a snapshot and a window
+4:29 The manifest: what the copy must deliver
+5:54 G1 fails: the night billing came up short
+7:22 Retry-safe and sealed: a night lands once
+8:52 Immutable by policy: a delete the bucket refuses
+10:11 Hot to cold: lifecycle rules
+━━━━━━━━━━━━━━━━
+▶ GCP — THE SERIES
+① GCP Data Engineering for Beginners: What We'll Build, a Live Stream and a Nightly Batch, and the Whole Architecture → https://graphl.in/gcp-media-analytics/#/intro
+② How Google Cloud Works: Regions and Zones, the Resource Hierarchy, APIs per Project, Control and Data Planes, and Billing → https://graphl.in/gcp-media-analytics/#/how-gcp-runs
+③ Terraform on Google Cloud for Beginners: gcloud Sign-in, a First Bucket, Remote State with a Lock, Modules and a Budget → https://graphl.in/gcp-media-analytics/#/start
+④ Google Cloud IAM Explained: Roles and Inheritance, Service Accounts without Key Files, PERMISSION_DENIED, Secret Manager and Cloud KMS → https://graphl.in/gcp-media-analytics/#/secure
+⑤ Cloud Storage for Data Engineers: a Raw Zone, Partitioned Paths, a Manifest and a Failing Gate, Retention and Lifecycle Rules  ◀ this video → https://graphl.in/gcp-media-analytics/#/land
+⑥ Google Cloud Pub/Sub Explained: Topics and Subscriptions, Pull and Ack, At-Least-Once Delivery, Ordering Keys and Dead Letters → https://graphl.in/gcp-media-analytics/#/stream
+⑦ Apache Beam and Dataflow Explained: Event Time, Fixed Windows, Watermarks and Late Data, Dedupe, Sessions, Streaming into BigQuery → https://graphl.in/gcp-media-analytics/#/dataflow
+⑧ BigQuery Lakehouse: Datasets, External Tables, Bronze and Silver, How a Query Runs, Partitioning and Clustering, SCD2 and Quality Gates → https://graphl.in/gcp-media-analytics/#/lakehouse
+⑨ PySpark on Dataproc: Local First, the BigQuery Connector, a Skewed Join and Salting It, Dataproc Serverless, Writing to Gold → https://graphl.in/gcp-media-analytics/#/dataproc
+⑩ BigQuery for Analytics: a Gold Table, Unique Counts with HLL, Query Cost, Authorized Views, Materialized Views, BI Engine and Looker → https://graphl.in/gcp-media-analytics/#/serve
+⑪ Apache Airflow on Google Cloud: a DAG, Sensors, Retries and SLAs, a Failed Night, Idempotent Backfill, and Cloud Composer → https://graphl.in/gcp-media-analytics/#/orchestrate
+⑫ Operating a GCP Data Platform: Policy Tags, Sensitive Data Protection, Dataplex Lineage and Quality, Logging, Alerts and Cloud Build CI → https://graphl.in/gcp-media-analytics/#/operate
+━━━━━━━━━━━━━━━━
+🔗 Watch interactively on GraphL → https://graphl.in/gcp-media-analytics/#/land
+🌐 More concepts → https://graphl.in
+━━━━━━━━━━━━━━━━
+#GoogleCloud #GCP #DataEngineering #BigQuery #Dataflow #TechEducation

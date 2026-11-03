@@ -16,7 +16,9 @@
     "thumb": "graphl-thumb",
     "check:spine": "python scripts/spine.py",
     "shots": "node scripts/shots.mjs",
-    "gen": "python -m sun_gen"
+    "gen": "python -m sun_gen",
+    "film": "node scripts/film.mjs",
+    "thumb:film": "node scripts/thumb-film.mjs"
   },
   "dependencies": {
     "@graphlearning/graphl-flow": "^0.9.0",

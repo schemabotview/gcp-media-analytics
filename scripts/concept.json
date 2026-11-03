@@ -7,6 +7,6 @@
   "panelBg": "radial-gradient(118% 104% at 70% 34%, #8ab4f8 0%, #4285f4 44%, #0b1220 100%)",
   "film": {
     "title": "Learn GCP by building a media & broadband analytics platform: full course, beginner to professional",
-    "blurb": "Every local number is really computed: PostgreSQL 18.6 and Python 3.14.9. Every GCP resource is Terraform. The GCP steps marked recorded were run once in a real project, their transcripts kept, then torn down. The rest says so on screen: emulated (fake-gcs-server, the Pub/Sub emulator), compiled (terraform validate, not deployed), doc-cited, or a model."
+    "blurb": "Every local number is really computed: PostgreSQL 18.6, Python 3.14.9 and Beam's direct runner. Every GCP resource is Terraform. The steps marked recorded were run once in a real project, their transcripts kept, then torn down. The rest says so on screen: emulated (fake-gcs-server, the Pub/Sub emulator), doc-cited, a model, or mocked. Mocked outputs (two steps of the BigQuery Silver build, and Courses 9–12) are written to match the code and the night's data, not run."
   }
 }
