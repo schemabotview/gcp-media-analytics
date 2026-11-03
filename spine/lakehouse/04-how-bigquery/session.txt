@@ -1,1 +1,14 @@
 $ python warehouse/explain.py warehouse/peaks.sql
+SUN-SPORTS-1 18:41 2140
+SUN-NEWS 22:05 62
+SUN-SPORTS-2 22:13 57
+SUN-MOVIES-1 21:34 56
+SUN-ONE 22:25 50
+SUN-MOVIES-2 22:02 43
+12,200,241 bytes read, 1,231 slot ms, in 0:00:00.797000
+stage                       read   written   slot ms
+S00: Input               401,958   344,306       808
+S01: Aggregate           344,306     6,197       337
+S02: Aggregate             6,197         6        33
+S03: Aggregate+                6         6        24
+S04: Output                    6         6        27

@@ -1,6 +1,471 @@
 $ cd infra
 $ terraform init -input=false -backend-config=bucket=$TF_VAR_project_id-tfstate
+Initializing the backend...
+
+Successfully configured the backend "gcs"! Terraform will automatically
+use this backend unless the backend configuration changes.
+
+Initializing modules...
+- pubsub in modules/pubsub
+- dataflow in modules/dataflow
+- live in modules/live
+- kms in modules/kms
+- secrets in modules/secrets
+- lakehouse in modules/lakehouse
+- storage in modules/storage
+- iam in modules/iam
+
+Initializing provider plugins...
+- Reusing version 8.9.0 of hashicorp/google from the dependency lock file
+- Reusing version 3.9.1 of hashicorp/random from the dependency lock file
+- Installing hashicorp/google v8.9.0...
+- Installed hashicorp/google v8.9.0 (signed by HashiCorp)
+- Installing hashicorp/random v3.9.1...
+- Installed hashicorp/random v3.9.1 (signed by HashiCorp)
+
+Terraform has been successfully initialized!
 $ terraform apply -var-file=envs/dev.tfvars -auto-approve
+Acquiring state lock. This may take a few moments...
+module.secrets.random_password.crm: Refreshing state... [id=none]
+module.secrets.google_project_service.secretmanager: Refreshing state... [id=sun
+-media-dev/secretmanager.googleapis.com]
+module.pubsub.google_project_service.pubsub: Refreshing state... [id=sun-media-d
+ev/pubsub.googleapis.com]
+module.kms.data.google_storage_project_service_account.gcs: Reading...
+module.kms.data.google_storage_project_service_account.gcs: Read complete after 
+1s [id=service-100000000001@gs-project-accounts.iam.gserviceaccount.com]
+module.dataflow.google_project_service.dataflow: Refreshing state... [id=sun-med
+ia-dev/dataflow.googleapis.com]
+module.dataflow.google_storage_bucket.staging: Refreshing state... [id=sun-media
+-dev-dataflow]
+module.kms.google_project_service.kms: Refreshing state... [id=sun-media-dev/clo
+udkms.googleapis.com]
+google_project_service.budgets["monitoring.googleapis.com"]: Refreshing state...
+ [id=sun-media-dev/monitoring.googleapis.com]
+google_project_service.budgets["billingbudgets.googleapis.com"]: Refreshing stat
+e... [id=sun-media-dev/billingbudgets.googleapis.com]
+module.lakehouse.google_bigquery_dataset.layer["gold"]: Refreshing state... [id=
+projects/sun-media-dev/datasets/gold]
+module.lakehouse.google_bigquery_dataset.layer["bronze"]: Refreshing state... [i
+d=projects/sun-media-dev/datasets/bronze]
+module.lakehouse.google_bigquery_dataset.layer["silver"]: Refreshing state... [i
+d=projects/sun-media-dev/datasets/silver]
+module.lakehouse.google_bigquery_dataset.layer["audit"]: Refreshing state... [id
+=projects/sun-media-dev/datasets/audit]
+data.google_project.this: Reading...
+data.google_project.this: Read complete after 0s [id=projects/sun-media-dev]
+module.iam.google_service_account.job["sa-ingest"]: Refreshing state... [id=proj
+ects/sun-media-dev/serviceAccounts/sa-ingest@sun-media-dev.iam.gserviceaccount.c
+om]
+module.iam.google_service_account.job["sa-airflow"]: Refreshing state... [id=pro
+jects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam.gserviceaccount
+.com]
+module.iam.google_service_account.job["sa-cicd"]: Refreshing state... [id=projec
+ts/sun-media-dev/serviceAccounts/sa-cicd@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_service_account.job["sa-dataflow"]: Refreshing state... [id=pr
+ojects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.iam.gserviceaccou
+nt.com]
+module.iam.google_service_account.job["sa-dataproc"]: Refreshing state... [id=pr
+ojects/sun-media-dev/serviceAccounts/sa-dataproc@sun-media-dev.iam.gserviceaccou
+nt.com]
+module.live.google_bigquery_dataset.live: Refreshing state... [id=projects/sun-m
+edia-dev/datasets/live]
+module.secrets.google_secret_manager_secret.crm: Refreshing state... [id=project
+s/sun-media-dev/secrets/crm-db-password]
+module.pubsub.google_pubsub_topic.dead_letter: Refreshing state... [id=projects/
+sun-media-dev/topics/dead-letter]
+module.pubsub.google_pubsub_topic.events["viewing-events"]: Refreshing state... 
+[id=projects/sun-media-dev/topics/viewing-events]
+module.pubsub.google_pubsub_topic.events["device-events"]: Refreshing state... [
+id=projects/sun-media-dev/topics/device-events]
+module.pubsub.google_pubsub_topic.events["network-telemetry"]: Refreshing state.
+.. [id=projects/sun-media-dev/topics/network-telemetry]
+module.kms.google_kms_key_ring.media: Refreshing state... [id=projects/sun-media
+-dev/locations/europe-west2/keyRings/kr-media]
+google_monitoring_notification_channel.email: Refreshing state... [id=projects/s
+un-media-dev/notificationChannels/10000000000000000001]
+module.lakehouse.google_bigquery_table.viewing_events: Refreshing state... [id=p
+rojects/sun-media-dev/datasets/bronze/tables/viewing_events]
+module.iam.google_project_iam_member.job["sa-airflow/roles/composer.worker"]: Re
+freshing state... [id=sun-media-dev/roles/composer.worker/serviceAccount:sa-airf
+low@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_project_iam_member.job["sa-dataproc/roles/dataproc.worker"]: R
+efreshing state... [id=sun-media-dev/roles/dataproc.worker/serviceAccount:sa-dat
+aproc@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_project_iam_member.job["sa-dataflow/roles/dataflow.worker"]: R
+efreshing state... [id=sun-media-dev/roles/dataflow.worker/serviceAccount:sa-dat
+aflow@sun-media-dev.iam.gserviceaccount.com]
+module.iam.google_service_account_iam_member.operator["sa-ingest"]: Refreshing s
+tate... [id=projects/sun-media-dev/serviceAccounts/sa-ingest@sun-media-dev.iam.g
+serviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@sun
+.example]
+module.iam.google_service_account_iam_member.operator["sa-airflow"]: Refreshing 
+state... [id=projects/sun-media-dev/serviceAccounts/sa-airflow@sun-media-dev.iam
+.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@s
+un.example]
+module.iam.google_service_account_iam_member.operator["sa-dataproc"]: Refreshing
+ state... [id=projects/sun-media-dev/serviceAccounts/sa-dataproc@sun-media-dev.i
+am.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya
+@sun.example]
+module.iam.google_service_account_iam_member.operator["sa-dataflow"]: Refreshing
+ state... [id=projects/sun-media-dev/serviceAccounts/sa-dataflow@sun-media-dev.i
+am.gserviceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya
+@sun.example]
+module.iam.google_service_account_iam_member.operator["sa-cicd"]: Refreshing sta
+te... [id=projects/sun-media-dev/serviceAccounts/sa-cicd@sun-media-dev.iam.gserv
+iceaccount.com/roles/iam.serviceAccountTokenCreator/serviceAccount:priya@sun.exa
+mple]
+module.live.google_bigquery_table.concurrent_viewers: Refreshing state... [id=pr
+ojects/sun-media-dev/datasets/live/tables/concurrent_viewers]
+module.secrets.google_secret_manager_secret_version.crm: Refreshing state... [id
+=projects/100000000001/secrets/crm-db-password/versions/1]
+module.pubsub.google_pubsub_subscription.audit: Refreshing state... [id=projects
+/sun-media-dev/subscriptions/dead-letter-audit]
+module.pubsub.google_pubsub_subscription.dataflow["device-events"]: Refreshing s
+tate... [id=projects/sun-media-dev/subscriptions/device-events-dataflow]
+module.pubsub.google_pubsub_subscription.dataflow["viewing-events"]: Refreshing 
+state... [id=projects/sun-media-dev/subscriptions/viewing-events-dataflow]
+module.pubsub.google_pubsub_subscription.dataflow["network-telemetry"]: Refreshi
+ng state... [id=projects/sun-media-dev/subscriptions/network-telemetry-dataflow]
+module.kms.google_kms_crypto_key.raw: Refreshing state... [id=projects/sun-media
+-dev/locations/europe-west2/keyRings/kr-media/cryptoKeys/k-raw]
+google_billing_budget.month: Refreshing state... [id=billingAccounts/000000-0000
+00-000001/budgets/00000000-0000-0000-0000-000000001000]
+module.pubsub.google_pubsub_topic_iam_member.dead_letter: Refreshing state... [i
+d=projects/sun-media-dev/topics/dead-letter/roles/pubsub.publisher/serviceAccoun
+t:service-100000000001@gcp-sa-pubsub.iam.gserviceaccount.com]
+module.pubsub.google_pubsub_subscription_iam_member.dead_letter["network-telemet
+ry"]: Refreshing state... [id=projects/sun-media-dev/subscriptions/network-telem
+etry-dataflow/roles/pubsub.subscriber/serviceAccount:service-100000000001@gcp-sa
+-pubsub.iam.gserviceaccount.com]
+module.pubsub.google_pubsub_subscription_iam_member.dead_letter["device-events"]
+: Refreshing state... [id=projects/sun-media-dev/subscriptions/device-events-dat
+aflow/roles/pubsub.subscriber/serviceAccount:service-100000000001@gcp-sa-pubsub.
+iam.gserviceaccount.com]
+module.pubsub.google_pubsub_subscription_iam_member.dead_letter["viewing-events"
+]: Refreshing state... [id=projects/sun-media-dev/subscriptions/viewing-events-d
+ataflow/roles/pubsub.subscriber/serviceAccount:service-100000000001@gcp-sa-pubsu
+b.iam.gserviceaccount.com]
+module.kms.google_kms_crypto_key_iam_member.gcs: Refreshing state... [id=project
+s/sun-media-dev/locations/europe-west2/keyRings/kr-media/cryptoKeys/k-raw/roles/
+cloudkms.cryptoKeyEncrypterDecrypter/serviceAccount:service-100000000001@gs-proj
+ect-accounts.iam.gserviceaccount.com]
+module.secrets.google_secret_manager_secret_iam_member.ingest: Refreshing state.
+.. [id=projects/sun-media-dev/secrets/crm-db-password/roles/secretmanager.secret
+Accessor/serviceAccount:sa-ingest@sun-media-dev.iam.gserviceaccount.com]
+module.dataflow.google_storage_bucket_iam_member.staging: Refreshing state... [i
+d=b/sun-media-dev-dataflow/roles/storage.objectAdmin/serviceAccount:sa-dataflow@
+sun-media-dev.iam.gserviceaccount.com]
+module.dataflow.google_project_iam_member.track: Refreshing state... [id=sun-med
+ia-dev/roles/pubsub.editor/serviceAccount:sa-dataflow@sun-media-dev.iam.gservice
+account.com]
+module.dataflow.google_bigquery_dataset_iam_member.write: Refreshing state... [i
+d=projects/sun-media-dev/datasets/live/roles/bigquery.dataEditor/serviceAccount:
+sa-dataflow@sun-media-dev.iam.gserviceaccount.com]
+module.dataflow.google_pubsub_subscription_iam_member.read["roles/pubsub.subscri
+ber"]: Refreshing state... [id=projects/sun-media-dev/subscriptions/viewing-even
+ts-dataflow/roles/pubsub.subscriber/serviceAccount:sa-dataflow@sun-media-dev.iam
+.gserviceaccount.com]
+module.dataflow.google_pubsub_subscription_iam_member.read["roles/pubsub.viewer"
+]: Refreshing state... [id=projects/sun-media-dev/subscriptions/viewing-events-d
+ataflow/roles/pubsub.viewer/serviceAccount:sa-dataflow@sun-media-dev.iam.gservic
+eaccount.com]
+module.storage.google_storage_bucket.raw: Refreshing state... [id=sun-media-dev-
+raw]
+module.storage.google_storage_bucket_iam_member.raw["ingest-create"]: Refreshing
+ state... [id=b/sun-media-dev-raw/roles/storage.objectCreator/serviceAccount:sa-
+ingest@sun-media-dev.iam.gserviceaccount.com]
+module.storage.google_storage_bucket_iam_member.raw["dataproc-view"]: Refreshing
+ state... [id=b/sun-media-dev-raw/roles/storage.objectViewer/serviceAccount:sa-d
+ataproc@sun-media-dev.iam.gserviceaccount.com]
+module.storage.google_storage_bucket_iam_member.raw["ingest-view"]: Refreshing s
+tate... [id=b/sun-media-dev-raw/roles/storage.objectViewer/serviceAccount:sa-ing
+est@sun-media-dev.iam.gserviceaccount.com]
+module.lakehouse.google_bigquery_table.viewing_raw: Refreshing state... [id=proj
+ects/sun-media-dev/datasets/bronze/tables/viewing_raw]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # module.lakehouse.google_bigquery_table.gate_results will be created
+  + resource "google_bigquery_table" "gate_results" {
+      + creation_time                = (known after apply)
+      + dataset_id                   = "audit"
+      + deletion_policy              = "DELETE"
+      + deletion_protection          = false
+      + effective_labels             = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + etag                         = (known after apply)
+      + expiration_time              = (known after apply)
+      + generated_schema_columns     = (known after apply)
+      + id                           = (known after apply)
+      + ignore_auto_generated_schema = false
+      + last_modified_time           = (known after apply)
+      + location                     = (known after apply)
+      + max_staleness                = (known after apply)
+      + num_bytes                    = (known after apply)
+      + num_long_term_bytes          = (known after apply)
+      + num_rows                     = (known after apply)
+      + project                      = "sun-media-dev"
+      + schema                       = jsonencode(
+            [
+              + {
+                  + mode = "REQUIRED"
+                  + name = "gate"
+                  + type = "STRING"
+                },
+              + {
+                  + mode = "REQUIRED"
+                  + name = "dt"
+                  + type = "DATE"
+                },
+              + {
+                  + mode = "REQUIRED"
+                  + name = "passed"
+                  + type = "BOOL"
+                },
+              + {
+                  + name = "detail"
+                  + type = "STRING"
+                },
+              + {
+                  + mode = "REQUIRED"
+                  + name = "checked_at"
+                  + type = "TIMESTAMP"
+                },
+            ]
+        )
+      + self_link                    = (known after apply)
+      + table_id                     = "gate_results"
+      + terraform_labels             = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + type                         = (known after apply)
+    }
+
+  # module.lakehouse.google_bigquery_table.titles_raw will be created
+  + resource "google_bigquery_table" "titles_raw" {
+      + creation_time                = (known after apply)
+      + dataset_id                   = "bronze"
+      + deletion_policy              = "DELETE"
+      + deletion_protection          = false
+      + effective_labels             = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + etag                         = (known after apply)
+      + expiration_time              = (known after apply)
+      + generated_schema_columns     = (known after apply)
+      + id                           = (known after apply)
+      + ignore_auto_generated_schema = false
+      + last_modified_time           = (known after apply)
+      + location                     = (known after apply)
+      + max_staleness                = (known after apply)
+      + num_bytes                    = (known after apply)
+      + num_long_term_bytes          = (known after apply)
+      + num_rows                     = (known after apply)
+      + project                      = "sun-media-dev"
+      + schema                       = (known after apply)
+      + self_link                    = (known after apply)
+      + table_id                     = "titles_raw"
+      + terraform_labels             = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + type                         = (known after apply)
+
+      + external_data_configuration {
+          + autodetect    = false
+          + compression   = "NONE"
+          + schema        = jsonencode(
+                [
+                  + {
+                      + name = "title_id"
+                      + type = "STRING"
+                    },
+                  + {
+                      + name = "title"
+                      + type = "STRING"
+                    },
+                  + {
+                      + name = "kind"
+                      + type = "STRING"
+                    },
+                  + {
+                      + name = "runtime_min"
+                      + type = "INT64"
+                    },
+                ]
+            )
+          + source_format = "CSV"
+          + source_uris   = [
+              + "gs://sun-media-dev-raw/source=catalogue/*",
+            ]
+
+          + csv_options {
+              + allow_jagged_rows     = false
+              + allow_quoted_newlines = false
+              + encoding              = "UTF-8"
+              + field_delimiter       = ","
+              + quote                 = "\""
+              + skip_leading_rows     = 1
+            }
+
+          + hive_partitioning_options {
+              + mode              = "CUSTOM"
+              + source_uri_prefix = "gs://sun-media-dev-raw/source=catalogue/{dt
+:DATE}"
+            }
+        }
+    }
+
+  # module.lakehouse.google_bigquery_table.viewing_quarantine will be created
+  + resource "google_bigquery_table" "viewing_quarantine" {
+      + creation_time                = (known after apply)
+      + dataset_id                   = "bronze"
+      + deletion_policy              = "DELETE"
+      + deletion_protection          = false
+      + effective_labels             = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + etag                         = (known after apply)
+      + expiration_time              = (known after apply)
+      + generated_schema_columns     = (known after apply)
+      + id                           = (known after apply)
+      + ignore_auto_generated_schema = false
+      + last_modified_time           = (known after apply)
+      + location                     = (known after apply)
+      + max_staleness                = (known after apply)
+      + num_bytes                    = (known after apply)
+      + num_long_term_bytes          = (known after apply)
+      + num_rows                     = (known after apply)
+      + project                      = "sun-media-dev"
+      + schema                       = jsonencode(
+            [
+              + {
+                  + name = "event_id"
+                  + type = "STRING"
+                },
+              + {
+                  + name = "type"
+                  + type = "STRING"
+                },
+              + {
+                  + name = "device_id"
+                  + type = "STRING"
+                },
+              + {
+                  + name = "household_id"
+                  + type = "STRING"
+                },
+              + {
+                  + name = "platform"
+                  + type = "STRING"
+                },
+              + {
+                  + name = "channel"
+                  + type = "STRING"
+                },
+              + {
+                  + name = "title_id"
+                  + type = "STRING"
+                },
+              + {
+                  + name = "event_ts"
+                  + type = "TIMESTAMP"
+                },
+              + {
+                  + name = "watched_s"
+                  + type = "INT64"
+                },
+              + {
+                  + name = "buffer_ms"
+                  + type = "INT64"
+                },
+              + {
+                  + name = "dt"
+                  + type = "DATE"
+                },
+              + {
+                  + name = "_src_file"
+                  + type = "STRING"
+                },
+              + {
+                  + name = "reason"
+                  + type = "STRING"
+                },
+            ]
+        )
+      + self_link                    = (known after apply)
+      + table_id                     = "viewing_quarantine"
+      + terraform_labels             = {
+          + "app"                        = "viewing-pulse"
+          + "env"                        = "dev"
+          + "goog-terraform-provisioned" = "true"
+          + "owner"                      = "media-data"
+        }
+      + type                         = (known after apply)
+    }
+
+Plan: 3 to add, 0 to change, 0 to destroy.
+module.lakehouse.google_bigquery_table.viewing_quarantine: Creating...
+module.lakehouse.google_bigquery_table.viewing_quarantine: Creation complete aft
+er 1s [id=projects/sun-media-dev/datasets/bronze/tables/viewing_quarantine]
+module.lakehouse.google_bigquery_table.gate_results: Creating...
+module.lakehouse.google_bigquery_table.gate_results: Creation complete after 1s 
+[id=projects/sun-media-dev/datasets/audit/tables/gate_results]
+module.lakehouse.google_bigquery_table.titles_raw: Creating...
+module.lakehouse.google_bigquery_table.titles_raw: Creation complete after 0s [i
+d=projects/sun-media-dev/datasets/bronze/tables/titles_raw]
+
+Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
 $ cd ..
 $ Q="bq -q query --nouse_legacy_sql --maximum_bytes_billed=200000000"
 $ $Q --parameter=dt:DATE:2026-10-31 < warehouse/g2.sql
+CREATE TEMP TABLE judged AS
+SELECT v.* EXCEPT (_ingest_ts),
+       CASE WHEN v.event_id IS NULL THEN 'no event_id'
+            WHEN t.title_id IS NULL THEN 'title not in the catalogue'
+       END AS reason
+FROM bronze.viewing_events AS v
+LEFT JOIN (SELECT DISTINCT title_id FROM bronze.titles_raw
+           WHERE dt = @dt) AS t USING (title_id)
+WHERE v.dt = @dt; -- at [4:1]
+Created sun-media-dev._script442661192b2cd8fae301b2fb190797197b889390.judged
+
+INSERT INTO bronze.viewing_quarantine
+SELECT * FROM judged WHERE reason IS NOT NULL; -- at [14:1]
+Number of affected rows: 7
+
+INSERT INTO audit.gate_results
+SELECT 'G2', @dt, COUNTIF(reason IS NOT NULL) * 1000 < COUNT(*),
+       FORMAT('%d of %d rows quarantined', COUNTIF(reason IS NOT NULL),
+              COUNT(*)), CURRENT_TIMESTAMP()
+FROM judged; -- at [17:1]
+Number of affected rows: 1
+
+SELECT reason, COUNT(*) AS rows_, MIN(title_id) AS a_title
+FROM bronze.viewing_quarantine WHERE dt = @dt GROUP BY reason; -- at [23:1]
++----------------------------+-------+---------+
+|           reason           | rows_ | a_title |
++----------------------------+-------+---------+
+| no event_id                |     4 | T-3003  |
+| title not in the catalogue |     3 | T-9999  |
++----------------------------+-------+---------+
