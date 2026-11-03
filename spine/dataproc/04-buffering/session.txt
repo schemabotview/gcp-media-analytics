@@ -1,0 +1,17 @@
+$ python spark/buffering.py
+WARNING: Using incubator modules: jdk.incubator.vector
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
+l(newLevel).
+EX-LDN-04  1,022,124 s watched    41,895 s buffering    4.1%
+EX-LDN-03  1,195,721 s watched     7,174 s buffering    0.6%
+EX-BHM-01  1,104,421 s watched     6,627 s buffering    0.6%
+EX-LDN-05  1,028,747 s watched     6,172 s buffering    0.6%
+EX-BHM-03  1,131,737 s watched     6,790 s buffering    0.6%
+EX-MAN-01  1,037,821 s watched     6,224 s buffering    0.6%
+EX-BHM-02  1,070,994 s watched     6,419 s buffering    0.6%
+EX-MAN-02  1,143,781 s watched     6,853 s buffering    0.6%
+EX-LDN-01  1,269,293 s watched     7,603 s buffering    0.6%
+EX-LDN-06  1,264,397 s watched     7,572 s buffering    0.6%
+EX-MAN-03  1,174,893 s watched     7,020 s buffering    0.6%
+EX-LDN-02  1,119,155 s watched     6,686 s buffering    0.6%

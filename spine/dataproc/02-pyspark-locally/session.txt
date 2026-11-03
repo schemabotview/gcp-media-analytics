@@ -1,0 +1,31 @@
+$ python spark/qos_by_exchange.py --exchange EX-LDN-04 --from 18:33
+WARNING: Using incubator modules: jdk.incubator.vector
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
+l(newLevel).
++------+----------+---------+-----------+----------+--------+
+|minute|households|watched_s|buffering_s|latency_ms|loss_pct|
++------+----------+---------+-----------+----------+--------+
+| 18:33|       128|     7440|       71.8|      13.5|    0.06|
+| 18:34|       133|     7680|      215.0|      11.2|    0.03|
+| 18:35|       137|     7980|      700.0|      85.8|    2.42|
+| 18:36|       143|     8220|      785.4|      89.4|    1.46|
+| 18:37|       148|     8580|      654.5|      94.1|    1.47|
+| 18:38|       155|     8880|      775.3|      80.3|    2.58|
++------+----------+---------+-----------+----------+--------+
+
+$ python spark/qos_by_exchange.py --exchange EX-LDN-01 --from 18:33
+WARNING: Using incubator modules: jdk.incubator.vector
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
+l(newLevel).
++------+----------+---------+-----------+----------+--------+
+|minute|households|watched_s|buffering_s|latency_ms|loss_pct|
++------+----------+---------+-----------+----------+--------+
+| 18:33|       164|     9480|       61.4|       9.9|    0.06|
+| 18:34|       172|     9840|      128.6|      15.5|    0.01|
+| 18:35|       176|    10320|       58.8|      11.6|    0.06|
+| 18:36|       183|    10560|       35.9|      14.4|    0.03|
+| 18:37|       187|    10980|       70.3|      11.0|    0.05|
+| 18:38|       191|    11220|       51.3|      13.4|    0.07|
++------+----------+---------+-----------+----------+--------+

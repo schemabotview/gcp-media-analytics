@@ -1,0 +1,39 @@
+$ python spark/skew.py --aqe
+WARNING: Using incubator modules: jdk.incubator.vector
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
+l(newLevel).
+film         65,208 events  1,369 households   3,815,902 s
+live-sport  277,937 events  2,459 households  15,330,555 s
+news         36,802 events  1,967 households   2,080,459 s
+series       21,009 events    469 households   1,230,543 s
+the join's stage: 11 tasks
+   99,901  ########################################
+   99,024  ########################################
+   81,057  ################################
+   43,828  ##################
+   26,324  ###########
+   13,708  #####
+   11,171  ####
+    9,821  ####
+    8,781  ####
+    4,076  ##
+    3,396  #
+$ python spark/skew.py --salt 4
+WARNING: Using incubator modules: jdk.incubator.vector
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
+l(newLevel).
+film         65,208 events  1,369 households   3,815,902 s
+live-sport  277,937 events  2,459 households  15,330,555 s
+news         36,802 events  1,967 households   2,080,459 s
+series       21,009 events    469 households   1,230,543 s
+the join's stage: 8 tasks
+   91,312  ########################################
+   90,808  ########################################
+   80,012  ###################################
+   77,409  ##################################
+   20,999  #########
+   20,215  #########
+   10,464  #####
+   10,153  ####

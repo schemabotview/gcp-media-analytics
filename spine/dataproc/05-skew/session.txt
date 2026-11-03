@@ -1,0 +1,18 @@
+$ python spark/skew.py
+WARNING: Using incubator modules: jdk.incubator.vector
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
+l(newLevel).
+film         65,208 events  1,369 households   3,815,902 s
+live-sport  277,937 events  2,459 households  15,330,555 s
+news         36,802 events  1,967 households   2,080,459 s
+series       21,009 events    469 households   1,230,543 s
+the join's stage: 8 tasks
+  259,623  ########################################
+   38,903  ######
+   29,915  #####
+   29,174  ####
+   19,603  ###
+    9,365  #
+    7,786  #
+    6,691  #

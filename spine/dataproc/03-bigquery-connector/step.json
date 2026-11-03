@@ -1,0 +1,1 @@
+{"from": "dataproc/02-pyspark-locally", "changes": ["spark/silver.py"], "mocked": true, "env": "gcp.sh", "venv": true, "gcp": true}

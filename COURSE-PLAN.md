@@ -354,12 +354,12 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 | --- | --- | --- | --- | --- |
 | 1 | ◆ full scene: Dataproc's shapes | concept | clusters vs Serverless batches; who manages what | D |
 | 2 | PySpark locally first | `qos_by_exchange.py` on local Spark | heartbeats ⋈ telemetry by exchange and minute | L |
-| 3 | The BigQuery connector | reading Silver; predicate and column pushdown | Spark → Storage Read API → only the columns asked | G |
+| 3 | The BigQuery connector | reading Silver; predicate and column pushdown | Spark → Storage Read API → only the columns asked | M |
 | 4 | Buffering ratio | buffering seconds / watched seconds per exchange | the ratio per exchange, `EX-LDN-04` high | L |
 | 5 | ⑂ The derby skew | one task takes most of the stage | tasks per partition, one straggler | L |
 | 6 | Fixing skew | AQE skew join; salting compared | the split partition | L |
-| 7 | On Dataproc Serverless | `gcloud dataproc batches submit pyspark`; properties | batch → executors → autoscaling | G |
-| 8 | Writing back | `gold.qos_by_exchange`, partition overwrite | Spark → BigQuery, idempotent per `dt` | G |
+| 7 | On Dataproc Serverless | `gcloud dataproc batches submit pyspark`; subnet with Private Google Access | batch → executors → Silver | M |
+| 8 | Writing back | `gold.qos_by_exchange`, dynamic partition overwrite, run twice | Spark → BigQuery, idempotent per `dt` | M |
 
 **10. `serve` · The answer, cheaply and safely · 8**
 

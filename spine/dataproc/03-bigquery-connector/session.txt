@@ -1,0 +1,37 @@
+$ python spark/silver.py --dt 2026-10-31
+:: loading settings :: url = jar:file:/home/priya/viewing-pulse/.venv/lib/python
+3.14/site-packages/pyspark/jars/ivy-2.5.3.jar!/org/apache/ivy/core/settings/ivys
+ettings.xml
+Ivy Default Cache set to: /home/priya/.ivy2.5.2/cache
+The jars for the packages stored in: /home/priya/.ivy2.5.2/jars
+com.google.cloud.spark#spark-4.0-bigquery added as a dependency
+:: resolving dependencies :: org.apache.spark#spark-submit-parent-6c1f3e2a-9d4b-
+4a7e-8f0c-2b5d7e9a1c3f;1.0
+        confs: [default]
+        found com.google.cloud.spark#spark-4.0-bigquery;0.46.0 in central
+downloading https://repo1.maven.org/maven2/com/google/cloud/spark/spark-4.0-bigq
+uery/0.46.0/spark-4.0-bigquery-0.46.0.jar ...
+        [SUCCESSFUL ] com.google.cloud.spark#spark-4.0-bigquery;0.46.0!spark-4.0
+-bigquery.jar (2214ms)
+:: resolution report :: resolve 1188ms :: artifacts dl 2219ms
+        :: modules in use:
+        com.google.cloud.spark#spark-4.0-bigquery;0.46.0 from central in [defaul
+t]
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   1   |   1   |   1   |   0   ||   1   |   1   |
+        ---------------------------------------------------------------------
+:: retrieving :: org.apache.spark#spark-submit-parent-6c1f3e2a-9d4b-4a7e-8f0c-2b
+5d7e9a1c3f
+        confs: [default]
+        1 artifacts copied, 0 already retrieved (41835kB/38ms)
+WARNING: Using incubator modules: jdk.incubator.vector
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
+l(newLevel).
+PushedFilters: [IsNotNull(dt), IsNotNull(title_id), EqualTo(dt,2026-10-31), Equa
+lTo(title_id,T-5001)]
+ReadSchema: struct<household_id:string,watched_s:bigint,buffer_ms:bigint>
+247,302 derby events read

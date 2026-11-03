@@ -1,0 +1,1 @@
+{"from": "dataproc/07-serverless", "changes": ["infra/modules/lakehouse/", "warehouse/gold_qos.sql"], "mocked": true, "env": "gcp.sh", "venv": true, "gcp": true}

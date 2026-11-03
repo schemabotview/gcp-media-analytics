@@ -56,7 +56,7 @@ azure-trade-finance when narration starts).
 | 6 | `stream` | 7 | authored, narrated (text), 4K-checked: §1 doc-cited, §2 and §7 recorded on GCP, §3–§6 L · E (gcloud's Pub/Sub emulator) |
 | 7 | `dataflow` | 9 | authored, narrated (text), 4K-checked: §1–§7 L (Beam's direct runner), §8–§9 recorded on GCP (§9 a Dataflow streaming job, drained) |
 | 8 | `lakehouse` | 9 | authored, narrated (text), 4K-checked: all recorded on GCP; §7's count and §8's load+MERGE output MOCKED (the recording's own SQL failed; corrected by hand, labelled) |
-| 9 | `dataproc` | 8 | planned |
+| 9 | `dataproc` | 8 | authored, narrated (text), 4K-checked, MOCKED: §1 doc-cited; §2, §4–§6 local Spark outputs from real runs of the same code made while drafting; §3, §7, §8 authored |
 | 10 | `serve` | 8 | planned |
 | 11 | `orchestrate` | 8 | planned |
 | 12 | `operate` | 9 | planned |

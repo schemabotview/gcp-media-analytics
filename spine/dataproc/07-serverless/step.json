@@ -1,0 +1,1 @@
+{"from": "dataproc/06-fixing-skew", "changes": ["gcp.sh", "infra/main.tf", "infra/modules/dataproc/", "spark/qos_job.py"], "mocked": true, "env": "gcp.sh", "venv": true, "gcp": true}
