@@ -23,14 +23,14 @@ sections, every one checked and shot at 4K. Courses 1–8 replayed locally or re
 (§8.7's count and §8.8's load corrected by hand, labelled mocked); Courses 9–12 MOCKED on the owner's
 call (see below). GCP is torn down in full. `check:spine`: 83 steps, 0 problems. Next:
 
-1. Owner review of `COURSE-PLAN.md`, the 34 routes (`#/intro-a-night-of-viewing` … `#/land-lifecycle`)
-   and the map preview `#/preview-map-land` (the finished map is §1.3).
-2. Courses 7–12. **The platform is UP** (2026-11-03): restored for §6.2 (`{"restore": true}`:
-   the parent's infra/ applied, `kr-media` imported) and left up across courses; tear down after
-   the last GCP recording of the batch (reviewed plan; empty the raw bucket after its retention).
-   Pub/Sub's service agent appears a little after the API is first enabled: §6.2's first apply
-   failed on its grant and was recorded again.
-3. Narration audio once the frames are approved (port the Colab notebook, `audio-manifest.json`).
+1. Owner review of `COURSE-PLAN.md` and the 92 routes (`#/intro-a-night-of-viewing` …
+   `#/operate-where-next`); the map preview `#/preview-map-land` (the finished map is §1.3).
+2. Narration audio: `scripts/audio-manifest.json` is generated (`npm run gen:audio`, 92 entries;
+   re-run after ANY narration edit). Next: port the Colab notebook
+   (`scripts/colab_generate_audio.ipynb`) and `titles.json` from azure-trade-finance, then Colab +
+   Chatterbox. The shortest narrations (174–199 words, mostly Courses 9–12) may land under 82 s:
+   measure the wavs, lengthen the ones that do.
+3. Re-recording mocked steps for real is optional: remove `mocked` from a step.json, then `--record`.
 
 **Built (infra):** the app (vite, shell `ConceptApp`, `--brand` #4285f4), `check-content`,
 `check-render`, `registry`, `shots` (also a bare scene id), `concept.json`, `spine-files.mjs` (the
@@ -40,8 +40,8 @@ GCP steps: recorder, used for Courses 3–5); `leaks.py`; `src/scenes/ide.ts`, `
 course), `level.ts`, `lab.ts` (`labFrame`: terminal beside a diagram, the IDE frame's size, for Course 2's labs), `tree.ts`, `fold.ts`, `csv.ts`; installers `install-toolchain.sh`
 (Python 3.14.9, Java 21), `setup-postgres.sh` (PostgreSQL 18.6, OS user `priya`),
 `install-gcp-tools.sh` (fake-gcs-server 1.56.1, Terraform 1.17.0). Not yet: `film.mjs`,
-`thumb-film.mjs`, the Colab notebook, `audio-manifest.json`, `titles.json` (port from
-azure-trade-finance when narration starts).
+`thumb-film.mjs`, the Colab notebook, `titles.json` (port from azure-trade-finance when narration
+starts). `scripts/audio-manifest.json` is generated.
 
 | # | course | sections | status |
 |---|---|---|---|
