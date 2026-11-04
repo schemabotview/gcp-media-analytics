@@ -1,29 +1,26 @@
-public/vendor/googlecloud-logo.svg — the Google Cloud mark used on the film thumbnail (`--mark gcp`)
+public/vendor/googlecloud-logo.png — the Google Cloud mark used on the film thumbnail (`--mark gcp`)
 ==================================================================================================
 
 WHAT IT IS
-  The Google Cloud mark as Simple Icons draws it: a single-colour silhouette of Google's cloud
-  logo, not Google's own four-colour artwork. Used by scripts/thumb-film.mjs for `--mark gcp`,
-  embedded AS SUPPLIED: never re-traced, re-proportioned or otherwise altered. The file carries no
-  fill, so the script paints it in the colour Simple Icons publishes for the brand, #4285F4. That
-  is the same mark and colour graphl-flow draws for its `gcp` icon key in the scenes.
+  Google's four-colour cloud (the "super cloud" gradient mark), 192x192 PNG with transparency.
+  Used by scripts/thumb-film.mjs for `--mark gcp`, embedded AS SUPPLIED: never recoloured,
+  re-traced, cropped, re-proportioned or otherwise altered. The cover draws it at 104x104.
 
 WHERE IT CAME FROM
-  Copied byte for byte on 2026-11-03 from simple-icons 16.36.0 (icons/googlecloud.svg), a
-  dependency of graphl-flow. Simple Icons lists its source as https://cloud.google.com and gives
-  no licence for this icon.
+  Downloaded byte for byte on 2026-11-04 from https://www.gstatic.com/cgc/super_cloud_gradient.png,
+  the file https://cloud.google.com/ names as its own apple-touch-icon.
+  SHA-256 a332b54b620a2fa04413561c01c925cd40f936581c7bed52df424ecccc9c08b4.
 
-  Simple Icons releases its project under CC0, but its DISCLAIMER says that does not mean every
-  icon is CC0. The mark is Google's trademark whatever the file's licence.
+  Google publishes no SVG of this mark at that address (its site lockup,
+  https://www.gstatic.com/cgc/google-cloud-logo-fullcolor.svg, is the "Google Cloud" wordmark
+  without the cloud). If a vector original turns up from Google's own brand resources, vendor it
+  here unaltered and point `MARKS.gcp` at it.
 
 THE TERMS THAT APPLY
-  Google's brand guidelines govern its logos. Read their current text before publishing: they
-  are the authority, and this note is not. The cover must not suggest that Google produced,
-  sponsored or endorsed the course. GraphL's FULL COURSE badge and the "data engineering" line
-  are the course's own identity, and nothing on it says otherwise.
-
-  If Google's terms call for its official logo instead of a silhouette, vendor that file here,
-  unaltered, and point `MARKS.gcp` at it.
+  The mark is Google's trademark. Google's brand guidelines govern its use; read their current
+  text before publishing: they are the authority, and this note is not. The cover must not
+  suggest that Google produced, sponsored or endorsed the course. GraphL's FULL COURSE badge and
+  the "data engineering" line are the course's own identity, and nothing on it says otherwise.
 
   TO BE COMPLETED BY THE OWNER before this is published:
     terms read on (date) : ................................................................

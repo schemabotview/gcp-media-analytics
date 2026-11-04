@@ -138,33 +138,35 @@ const THEMES = {
  *
  *   tile — public/favicon.svg, the GraphL concept tile: the repo's own mark, naming GCP only in
  *          TEXT (nominative use). Needs no one's permission.
- *   gcp  — Simple Icons' Google Cloud mark, vendored at public/vendor/googlecloud-logo.svg: the
- *          same mark graphl-flow draws for its `gcp` key. Placed AS SUPPLIED — never re-traced or
- *          re-proportioned. The file has no fill, so it is painted in Simple Icons' brand colour,
- *          as the engine paints it.
+ *   gcp  — Google's four-colour cloud, vendored at public/vendor/googlecloud-logo.png: the icon
+ *          cloud.google.com serves as its own touch icon. Placed AS SUPPLIED — never recoloured,
+ *          re-traced, cropped or re-proportioned: a redrawn "close enough" mark is worse than none.
  */
 const MARKS = {
   tile: { file: join(repoDir, 'public', 'favicon.svg'), label: 'viewing-pulse' },
-  gcp: { file: join(repoDir, 'public', 'vendor', 'googlecloud-logo.svg'), label: 'Google Cloud',
-         fill: '#4285f4' },
+  gcp: { file: join(repoDir, 'public', 'vendor', 'googlecloud-logo.png'), label: 'Google Cloud' },
 }
 
 function markSvg(mark) {
-  const { file, label, fill } = MARKS[mark]
+  const { file, label } = MARKS[mark]
   if (!existsSync(file)) {
     throw new Error(`--mark ${mark} needs ${file}, which is not there. This script will not draw a\n`
       + `  mark itself — vendor the real file, unaltered, with a NOTICE beside it.`)
   }
+  // A raster mark is embedded whole; object-fit keeps its own proportions in the square box.
+  if (file.endsWith('.png')) {
+    const b64 = readFileSync(file).toString('base64')
+    return `<img class="logo" src="data:image/png;base64,${b64}" alt="${label}" style="object-fit:contain">`
+  }
   const raw = readFileSync(file, 'utf8')
   const body = raw.slice(raw.indexOf('>', raw.indexOf('<svg')) + 1, raw.lastIndexOf('</svg>'))
-    .replace(/<title>[^<]*<\/title>/, '')
   const vb = raw.match(/viewBox="([^"]+)"/)?.[1]
   if (!vb) throw new Error(`${file} has no viewBox — cannot place it without distorting it`)
-  return `<svg class="logo" viewBox="${vb}" role="img" aria-label="${label}"${fill ? ` fill="${fill}"` : ''}
+  return `<svg class="logo" viewBox="${vb}" role="img" aria-label="${label}"
     xmlns="http://www.w3.org/2000/svg">${body}</svg>`
 }
 
-function pageHtml({ answer, map, theme, head1, head2, badge, mark }) {
+function pageHtml({ answer, map, theme, head1, head2, badge, mark, focus }) {
   const t = THEMES[theme]
   const fontFace = (fam, weight, file) => {
     const b64 = readFileSync(join(repoDir, 'node_modules', '@fontsource', fam, 'files', file)).toString('base64')
@@ -234,9 +236,12 @@ function pageHtml({ answer, map, theme, head1, head2, badge, mark }) {
   .c0{min-width:${250 * SCALE}px}.c1{min-width:${110 * SCALE}px;text-align:right}
   .foot{margin-top:${18 * SCALE}px;white-space:nowrap;font-family:'IBM Plex Mono',monospace;
         font-size:${23 * SCALE}px;color:rgba(255,255,255,.4);letter-spacing:.03em}
-  /* The diagram fills the card and keeps its aspect — it is a drawing, not a background. */
-  .card--map{padding:${16 * SCALE}px;align-items:center;justify-content:center}
-  .card--map img{max-width:100%;max-height:100%;object-fit:contain;border-radius:${8 * SCALE}px}
+  /* The map is ~2.4:1 and the card nearly square: fitted whole it is a thin strip of confetti. So it
+     fills the card's HEIGHT, keeps its aspect, and its sides are cut — --focus picks which part
+     stays: 0 (the default) keeps a clean left edge, Sun's sources flowing into the lanes; 50 centres
+     on the project and cuts labels on both sides; 100 ends on the business. */
+  .card--map{padding:0;overflow:hidden}
+  .card--map img{width:100%;height:100%;object-fit:cover;object-position:${focus}% 50%}
 </style>
 <div class="left">
   ${markSvg(mark)}
@@ -261,7 +266,7 @@ ${map ? `<div class="card card--map"><img src="${map.uri}" alt="the pipeline's m
 
 async function main() {
   const argv = process.argv.slice(2)
-  const opt = { theme: 'dark', out: 'output/thumbnails/film.png', source: 'answer', mark: 'tile',
+  const opt = { theme: 'dark', out: 'output/thumbnails/film.png', source: 'answer', mark: 'tile', focus: 0,
                 head1: 'LEARN', head2: 'GCP', badge: 'FULL COURSE' }
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]
@@ -272,11 +277,13 @@ async function main() {
     else if (a === '--badge') opt.badge = argv[++i]
     else if (a === '--source') opt.source = argv[++i]
     else if (a === '--mark') opt.mark = argv[++i]
+    else if (a === '--focus') opt.focus = +argv[++i]
     else { console.error(`unknown argument: ${a}`); process.exit(2) }
   }
   if (!THEMES[opt.theme]) { console.error(`unknown theme: ${opt.theme} (have: ${Object.keys(THEMES).join(', ')})`); process.exit(2) }
   if (!['answer', 'map'].includes(opt.source)) { console.error(`unknown source: ${opt.source} (have: answer, map)`); process.exit(2) }
   if (!MARKS[opt.mark]) { console.error(`unknown mark: ${opt.mark} (have: ${Object.keys(MARKS).join(', ')})`); process.exit(2) }
+  if (!(opt.focus >= 0 && opt.focus <= 100)) { console.error(`--focus is a percentage, 0–100 (got ${opt.focus})`); process.exit(2) }
 
   const answer = opt.source === 'answer' ? realAnswer() : null
   if (answer) {
