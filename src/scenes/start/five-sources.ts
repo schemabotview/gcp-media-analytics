@@ -1,5 +1,5 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { ideFrame } from '../ide'
+import { ideFrame2 } from '../frame'
 import { startTree } from './tree'
 import readme from '../../../spine/start/01-five-sources/project/sources/README.md?raw'
 import session from '../../../spine/start/01-five-sources/session.txt?raw'
@@ -10,7 +10,8 @@ import session from '../../../spine/start/01-five-sources/session.txt?raw'
 const lines = Object.fromEntries(session.split('\n').filter((l) => /^ +\d+ data\//.test(l))
   .map((l) => l.trim().split(/\s+/)).map(([n, f]) => [f, Number(n).toLocaleString('en-GB')]))
 
-export const startFiveSources: SceneModel = ideFrame({
+export const startFiveSources: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: startTree('sources/README.md', []),
   editor: { file: 'sources/README.md', code: readme, lang: 'text' },
   session,
@@ -50,7 +51,6 @@ export const startFiveSources: SceneModel = ideFrame({
         { id: 'c-telemetry', cells: ['telemetry/2026-10-31.jsonl', lines['data/telemetry/2026-10-31.jsonl']], tone: 'ingest' },
       ],
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'One Saturday: the viewing events outnumber every other source put together, about a hundred to one.' },
   ],
   edges: [
     { from: 's-crm', to: 'p-batch' },

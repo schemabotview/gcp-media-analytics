@@ -1,5 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { ideFrame, lineOf, linesFrom } from '../ide'
+import { lineOf, linesFrom } from '../ide'
+import { ideFrame2 } from '../frame'
 import { MOCKED, level } from '../level'
 import { stepTree } from '../files'
 import gov1 from '../../../spine/operate/01-policy-tags/project/infra/modules/governance/main.tf?raw'
@@ -25,7 +26,8 @@ const tree = (step: string, active: string, fresh = [active]) =>
   stepTree(step, active, { fresh, closed: CLOSED.filter((c) => !active.startsWith(c)), trim: ['warehouse', ...(active.startsWith('infra') ? ['infra', 'infra/modules'] : [])] })
 
 // §12.1 — policy tags
-export const opPolicyTags: SceneModel = ideFrame({
+export const opPolicyTags: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('operate/01-policy-tags', 'infra/modules/governance/main.tf', ['infra/modules/governance', 'warehouse/dim_household.sql', 'warehouse/households_open.sql', 'warehouse/households_contact.sql']),
   editor: { file: 'infra/modules/governance/main.tf', code: gov1, show: [[lineOf(gov1, 'resource "google_data_catalog_policy_tag" "contact"'), lineOf(gov1, 'member     = "group:pii-readers@sun.example"') + 1], [lineOf(gov1, '{ name = "email"'), lineOf(gov1, 'policyTags = { names = [google_data_catalog_policy_tag.contact.name] } },')]], highlight: linesFrom(gov1, '{ name = "email"', 'policyTags = { names = [google_data_catalog_policy_tag.contact.name] } },') },
   session: s1,
@@ -40,7 +42,6 @@ export const opPolicyTags: SceneModel = ideFrame({
         { type: 'item', id: 't-reader', title: 'pii-readers@sun.example', sub: 'fine-grained readers: the only ones who see them', icon: 'users', tone: 'store' },
       ],
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'Priya owns the project and is still refused: column access is granted per tag, never inherited from a role on the table.' },
   ],
   edges: [
     { from: 't-tax', to: 't-tag' },
@@ -52,7 +53,8 @@ export const opPolicyTags: SceneModel = ideFrame({
 // §12.2 — Sensitive Data Protection
 const findings = s2.split('\n').filter((l) => /^[A-Z_]+ +\w+ +[\d,]+ findings$/.test(l)).map((l) => l.split(/ +/))
 
-export const opDlp: SceneModel = ideFrame({
+export const opDlp: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('operate/02-dlp', 'governance/dlp.py', ['governance', 'requirements.txt']),
   editor: { file: 'governance/dlp.py', code: dlp, show: [[lineOf(dlp, 'KINDS = '), lineOf(dlp, 'KINDS = ')], [lineOf(dlp, 'config = {"info_types"'), lineOf(dlp, 'print(f"{kind:<15}')], [lineOf(dlp, 'replace = {'), lineOf(dlp, '"deidentify_config": replace')]], highlight: linesFrom(dlp, 'replace = {', '"primitive_transformation": {"replace_with_info_type_config": {}}}]}}') },
   session: s2,
@@ -84,7 +86,8 @@ const below = (name: string) => { const i = lines3.findIndex((l) => l.name === n
 const chain = ['gs://sun-media-dev-raw/source=viewing', 'bronze.viewing_raw', 'bronze.viewing_events', 'silver.viewing_events', 'gold.content_performance_daily']
 const path = chain.filter((n) => lines3.some((l) => l.name === n))
 
-export const opLineage: SceneModel = ideFrame({
+export const opLineage: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('operate/03-lineage', 'governance/lineage.py', ['governance/lineage.py', 'requirements.txt']),
   editor: { file: 'governance/lineage.py', code: lineage, show: [[lineOf(lineage, 'def upstream('), lineOf(lineage, 'upstream(sys.argv[1])')]], highlight: linesFrom(lineage, 'links = client.search_links(', '"parent": parent, "target": {"fully_qualified_name": fqn(table)}})') },
   session: s3,
@@ -101,7 +104,6 @@ export const opLineage: SceneModel = ideFrame({
       type: 'table', id: 'others', title: 'Its other direct sources', tone: 'store', columns: ['table', 'from'],
       rows: direct.filter((d) => d !== 'silver.viewing_events').map((d) => ({ id: `o-${d.replace(/\W/g, '')}`, cells: [d, below(d)] })),
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'Nobody drew this: every BigQuery job that wrote a table left a lineage link, and the script walks them back to the raw zone.' },
   ],
   edges: path.slice(1).map((_, i) => ({ from: `p-${i}`, to: `p-${i + 1}` })),
 })
@@ -109,7 +111,8 @@ export const opLineage: SceneModel = ideFrame({
 // §12.4 — Dataplex data quality
 const rows4 = /rowCount: '(\d+)'/.exec(s4)![1]
 
-export const opQuality: SceneModel = ideFrame({
+export const opQuality: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('operate/04-data-quality', 'infra/modules/governance/main.tf', ['infra/modules/governance']),
   editor: { file: 'infra/modules/governance/main.tf', code: gov4, show: [[lineOf(gov4, '# A data-quality scan on Silver'), lineOf(gov4, '# table cannot do.')], [lineOf(gov4, 'data_quality_spec {'), lineOf(gov4, 'uniqueness_expectation {}') + 1]], highlight: linesFrom(gov4, 'uniqueness_expectation {}', 'uniqueness_expectation {}') },
   session: s4,
@@ -139,7 +142,8 @@ export const opQuality: SceneModel = ideFrame({
 // §12.5 — Cloud Logging
 const jobs5 = s5.split('\n').filter((l) => /^\d\d:\d\d:\d\d +\w+ +\d+$/.test(l)).map((l) => l.split(/ +/))
 
-export const opLogging: SceneModel = ideFrame({
+export const opLogging: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('operate/05-logging', 'ops/night_jobs.logq', ['ops']),
   editor: { file: 'ops/night_jobs.logq', code: logq, highlight: [lineOf(logq, 'airflow-dag="viewing_daily"')] },
   session: s5,
@@ -164,7 +168,8 @@ export const opLogging: SceneModel = ideFrame({
 })
 
 // §12.6 — alerts
-export const opAlerts: SceneModel = ideFrame({
+export const opAlerts: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('operate/06-alerts', 'infra/modules/alerts/main.tf', ['infra/modules/alerts', 'infra/main.tf']),
   editor: { file: 'infra/modules/alerts/main.tf', code: alert, show: [[1, lineOf(alert, 'display_name = "oldest unacked')], [lineOf(alert, 'comparison      ='), lineOf(alert, 'content = ')]], highlight: linesFrom(alert, 'comparison      =', 'duration        =') },
   session: s6,
@@ -197,7 +202,8 @@ export const opAlerts: SceneModel = ideFrame({
 // §12.7 — two environments
 const plan7 = /^Plan: (.+)$/m.exec(s7)![1]
 
-export const opTwoEnvs: SceneModel = ideFrame({
+export const opTwoEnvs: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('operate/07-two-environments', 'infra/envs/prod.tfvars', ['infra/envs/prod.tfvars']),
   editor: { file: 'infra/envs/prod.tfvars', code: prod },
   session: s7,
@@ -226,7 +232,8 @@ export const opTwoEnvs: SceneModel = ideFrame({
 // §12.8 — CI with Cloud Build
 const steps8 = [...s8.matchAll(/^Step #(\d) - "(\w+)": (.+)$/gm)].map((m) => m.slice(1))
 
-export const opCloudBuild: SceneModel = ideFrame({
+export const opCloudBuild: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('operate/08-cloud-build', 'cloudbuild.yaml'),
   editor: { file: 'cloudbuild.yaml', code: cb, show: [[1, lineOf(cb, 'args: [fmt, -check, -recursive]')], [lineOf(cb, '- id: plan'), lineOf(cb, 'args:')]], highlight: [lineOf(cb, '- id: fmt'), lineOf(cb, '- id: plan')] },
   session: s8,

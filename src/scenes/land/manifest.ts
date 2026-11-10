@@ -1,5 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { ideFrame, lineOf, linesFrom } from '../ide'
+import { lineOf, linesFrom } from '../ide'
+import { ideFrame2 } from '../frame'
 import { FAKE_GCS } from '../level'
 import { landTree } from './tree'
 import code from '../../../spine/land/04-manifest/project/extract/extract.py?raw'
@@ -13,7 +14,8 @@ import manifest from '../../../spine/land/04-manifest/captured/sun-media-dev-raw
 const m = manifest.trimEnd()
 const fold = [[1, lineOf(m, '"charge_id"')], [lineOf(m, '"updated_at"'), m.split('\n').length]] as [number, number][]
 
-export const landManifest: SceneModel = ideFrame({
+export const landManifest: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: landTree('extract/extract.py', { extra: ['extract/extract.py'] }),
   editor: { file: 'extract/extract.py', code, show: [[lineOf(code, 'def plan'), lineOf(code, 'print(f"manifest')]], highlight: [lineOf(code, 'The manifest, written FIRST'), ...linesFrom(code, 'manifest = {', '"columns": columns}'), lineOf(code, 'bucket().blob(name).upload_from_string(json')] },
   session,

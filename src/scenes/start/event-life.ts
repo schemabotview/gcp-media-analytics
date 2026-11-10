@@ -1,5 +1,5 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { ideFrame } from '../ide'
+import { ideFrame2 } from '../frame'
 import { outputOf } from '../lab'
 import { CRM_FILES, startTree } from './tree'
 import code from '../../../spine/start/04-an-events-life/project/sources/events/trace.jq?raw'
@@ -16,7 +16,8 @@ const kickoff = rows.find((r) => r.includes('T-5001'))!.split(/\s+/)
 const stall = rows.find((r) => r.includes('buffer'))!.split(/\s+/)
 const stalled = rows.filter((r) => r.includes(' buffer ')).reduce((ms, r) => ms + Number(r.split(/\s+/)[5]), 0)
 
-export const startEventLife: SceneModel = ideFrame({
+export const startEventLife: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: startTree('sources/events/trace.jq', [...CRM_FILES, 'sources/epg/slots.py', 'sources/events/trace.jq']),
   editor: { file: 'sources/events/trace.jq', code, lang: 'text' },
   session,

@@ -1,5 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { ideFrame, lineOf, linesFrom } from '../ide'
+import { lineOf, linesFrom } from '../ide'
+import { ideFrame2 } from '../frame'
 import { outputOf } from '../lab'
 import { CRM_FILES, startTree } from './tree'
 import schema from '../../../spine/start/02-the-crm/project/sources/crm/schema.sql?raw'
@@ -12,7 +13,8 @@ const mix = rowsOf(outputOf(session, 'psql crm -P footer=off -f sources/crm/mix.
 const versions = rowsOf(outputOf(session, 'psql crm -P footer=off -v hh=HH-10042 -f sources/crm/history.sql'))
 const households = mix.reduce((n, r) => n + Number(r[2]), 0)
 
-export const startCrm: SceneModel = ideFrame({
+export const startCrm: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: startTree('sources/crm/schema.sql', CRM_FILES, CRM_FILES),
   editor: { file: 'sources/crm/schema.sql', code: schema, show: [[lineOf(schema, 'CREATE TABLE households'), schema.trimEnd().split('\n').length]], highlight: [lineOf(schema, 'household_id    text NOT NULL REFERENCES'), lineOf(schema, 'package_id      text NOT NULL REFERENCES'), ...linesFrom(schema, 'valid_from', 'valid_to')] },
   session,
@@ -32,7 +34,6 @@ export const startCrm: SceneModel = ideFrame({
       type: 'table', id: 'versions', title: 'HH-10042: two versions', tone: 'ingest', columns: ['package_id', 'valid_from', 'valid_to'],
       rows: versions.map(([p, from, to], i) => ({ id: `v-${i}`, cells: [p, from, to || 'current'], tone: to ? undefined : 'ingest' as const })),
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'The CRM keeps every version of a household’s package. Upgrading closes the old row and opens a new one, so the history is in the source.' },
   ],
   edges: [
     { from: 'e-households', to: 'e-subscriptions', label: '1 : many' },

@@ -1,5 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { ideFrame, lineOf, linesFrom } from '../ide'
+import { lineOf, linesFrom } from '../ide'
+import { ideFrame2 } from '../frame'
 import { level } from '../level'
 import { stepTree } from '../files'
 import code from '../../../spine/how-gcp-runs/07-meters/project/model/meters.py?raw'
@@ -43,14 +44,14 @@ export const howServerless: SceneModel = {
       type: 'table', id: 'line', title: 'The responsibility line', tone: 'store', columns: ['layer', 'BigQuery · Pub/Sub', 'Dataflow', 'Dataproc cluster'],
       rows: ROWS.map((r, i) => ({ id: `r-${i}`, cells: r, tone: i >= 3 ? 'store' as const : undefined })),
     },
-    { type: 'note', id: 'docs', tone: 'infra', text: 'cloud.google.com/bigquery/docs/introduction · cloud.google.com/dataflow/docs/overview · cloud.google.com/dataproc/docs/concepts/overview · cloud.google.com/dataproc-serverless/docs/overview · cloud.google.com/composer/docs/composer-3/composer-overview' },
   ],
 }
 
 // §2.7 — how GCP charges: a month of the platform in billed units, a model with its assumptions.
 const meters = session.split('\n').slice(1).filter(Boolean).map((l) => l.split(/\s{2,}/))
 
-export const howMeters: SceneModel = ideFrame({
+export const howMeters: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: stepTree('how-gcp-runs/07-meters', 'model/meters.py'),
   editor: { file: 'model/meters.py', code, show: [[lineOf(code, 'NIGHTS = 30'), lineOf(code, 'messages = sum')], [lineOf(code, 'rows = ['), lineOf(code, 'print(f"{service')]], highlight: linesFrom(code, 'DASHBOARD_QUERIES', 'WORKER_VCPUS') },
   session,
@@ -67,6 +68,5 @@ export const howMeters: SceneModel = ideFrame({
         { type: 'item', id: 'd-run', title: 'how long it runs', sub: 'workers bill while they exist: drain them (§7.9)', icon: 'timer', tone: 'consume' },
       ],
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'Prices change and differ by region: read them on the pricing page the day you need them. A cost frame later in the course shows the project’s own billing export.' },
   ],
 })

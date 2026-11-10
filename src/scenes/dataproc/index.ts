@@ -1,5 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { ideFrame, lineOf, linesFrom } from '../ide'
+import { lineOf, linesFrom } from '../ide'
+import { ideFrame2 } from '../frame'
 import { MOCKED, level } from '../level'
 import { stepTree } from '../files'
 import qos from '../../../spine/dataproc/02-pyspark-locally/project/spark/qos_by_exchange.py?raw'
@@ -63,7 +64,6 @@ export const procShapes: SceneModel = {
       ],
     },
     level('doc-cited', 'Google Cloud’s Dataproc and Dataproc Serverless overviews'),
-    { type: 'note', id: 'docs', tone: 'infra', text: 'cloud.google.com/dataproc/docs/concepts/overview · cloud.google.com/dataproc-serverless/docs/overview — viewing-pulse runs one batch a night: Serverless (§9.7).' },
   ],
   edges: [
     { from: 'c-vms', to: 'c-yarn' },
@@ -79,7 +79,8 @@ const tableAfter = (session: string, cmd: string) => {
 const ldn04 = tableAfter(s2, '--exchange EX-LDN-04')
 const ldn01 = tableAfter(s2, '--exchange EX-LDN-01')
 
-export const procLocal: SceneModel = ideFrame({
+export const procLocal: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('dataproc/02-pyspark-locally', 'spark/qos_by_exchange.py', ['spark', 'env.sh', 'requirements.txt']),
   editor: { file: 'spark/qos_by_exchange.py', code: qos, show: [[lineOf(qos, 'events = spark.read.json'), lineOf(qos, '"loss_pct"), ["exchange_id", "minute"])')]], highlight: linesFrom(qos, 'seen = (events.where', '"loss_pct"), ["exchange_id", "minute"])') },
   session: s2,
@@ -112,7 +113,8 @@ export const procLocal: SceneModel = ideFrame({
 const pushed = /^PushedFilters: \[(.*)\]$/m.exec(s3.replace(/\n(?=[^$\n][^\n]*\])/g, ''))![1].split(', ')
 const read = /^([\d,]+) derby events read$/m.exec(s3)![1]
 
-export const procConnector: SceneModel = ideFrame({
+export const procConnector: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('dataproc/03-bigquery-connector', 'spark/silver.py'),
   editor: { file: 'spark/silver.py', code: silverPy, show: [[lineOf(silverPy, 'events = (spark.read.format("bigquery")'), lineOf(silverPy, 'print(f"{events.count():,} derby events read")')]], highlight: linesFrom(silverPy, '.where((F.col("dt")', '.select("household_id"') },
   session: s3,
@@ -140,7 +142,8 @@ export const procConnector: SceneModel = ideFrame({
 // §9.4 — the buffering ratio per exchange.
 const ratios = s4.split('\n').filter((l) => /^EX-/.test(l)).map((l) => /^(\S+) +([\d,]+) s watched +([\d,]+) s buffering +([\d.]+%)/.exec(l)!.slice(1))
 
-export const procRatio: SceneModel = ideFrame({
+export const procRatio: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('dataproc/04-buffering', 'spark/buffering.py'),
   editor: { file: 'spark/buffering.py', code: buffering, show: [[lineOf(buffering, 'ratio = (events.where'), lineOf(buffering, 'f"{r[\'buffering_s\']:>8,.0f} s buffering  {r[\'ratio\']:6.1%}")')]], highlight: linesFrom(buffering, '.agg(F.sum("watched_s")', '.withColumn("ratio"') },
   session: s4,
@@ -156,14 +159,14 @@ export const procRatio: SceneModel = ideFrame({
       type: 'table', id: 'top', title: 'The answer, per exchange', tone: 'store', columns: ['exchange', 'watched s', 'buffering s', 'ratio'],
       rows: ratios.slice(0, 4).map(([e, w, b, r]) => ({ id: `r-${e}`, cells: [e, w, b, r], tone: e === 'EX-LDN-04' ? 'consume' as const : undefined })),
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'Every exchange buffers 0.6% of what it delivers; EX-LDN-04 buffers 4.1%, almost all of it after 18:35.' },
   ],
 })
 
 // §9.5 — ⑂ the derby skew: one task reads most of the join.
 const t5 = tasks(s5)
 
-export const procSkew: SceneModel = ideFrame({
+export const procSkew: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('dataproc/05-skew', 'spark/skew.py'),
   editor: { file: 'spark/skew.py', code: skew5, show: [[lineOf(skew5, 'spark = (SparkSession.builder'), lineOf(skew5, '.config("spark.sql.adaptive.enabled", a.aqe)')], [lineOf(skew5, 'joined = (events.join(titles'), lineOf(skew5, 'F.sum("watched_s").alias("watched_s")))')]], highlight: linesFrom(skew5, 'joined = (events.join(titles', 'joined = (events.join(titles') },
   session: s5,
@@ -185,7 +188,8 @@ export const procSkew: SceneModel = ideFrame({
 const aqe = tasks(s6, 0)
 const salted = tasks(s6, 1)
 
-export const procFixSkew: SceneModel = ideFrame({
+export const procFixSkew: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('dataproc/06-fixing-skew', 'spark/skew.py'),
   editor: { file: 'spark/skew.py', code: skew6, show: [[lineOf(skew6, '# this night is small'), lineOf(skew6, '.config("spark.sql.adaptive.advisoryPartitionSizeInBytes", "256KB")')], [lineOf(skew6, '# Salting:'), lineOf(skew6, 'titles = titles.crossJoin')]], highlight: linesFrom(skew6, 'events = events.withColumn("salt"', 'titles = titles.crossJoin') },
   session: s6,
@@ -200,7 +204,8 @@ export const procFixSkew: SceneModel = ideFrame({
 // §9.7 — on Dataproc Serverless: the same answer, from Silver.
 const batchRatio = s7.split('\n').filter((l) => /^EX-/.test(l)).map((l) => /^(\S+) .* ([\d.]+%)$/.exec(l)!.slice(1))
 
-export const procServerless: SceneModel = ideFrame({
+export const procServerless: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('dataproc/07-serverless', 'spark/qos_job.py', ['spark/qos_job.py', 'infra/modules/dataproc', 'gcp.sh']),
   editor: { file: 'spark/qos_job.py', code: job, show: [[lineOf(job, '# Only these columns'), lineOf(job, '.select("household_id", "exchange_id"))')]], highlight: linesFrom(job, 'events = (spark.read.format("bigquery")', '.select("household_id", "watched_s", "buffer_ms"))') },
   session: s7,
@@ -228,7 +233,8 @@ export const procServerless: SceneModel = ideFrame({
 // §9.8 — writing back: Gold, one partition per night, twice.
 const counts = [...s8.matchAll(/^\| 2026-10-31 \| +(\d+) \| +([\d.]+) \|$/gm)].map((m) => m.slice(1))
 
-export const procWriteBack: SceneModel = ideFrame({
+export const procWriteBack: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('dataproc/08-writing-back', 'spark/qos_job.py', ['warehouse/gold_qos.sql', 'infra/modules/lakehouse']),
   editor: { file: 'spark/qos_job.py', code: job, show: [[lineOf(job, 'if a.write:'), lineOf(job, 'print(f"gold.qos_by_exchange: dt={a.dt} written")')]], highlight: linesFrom(job, '(qos.write.format("bigquery").mode("overwrite")', '.save("gold.qos_by_exchange"))') },
   session: s8,

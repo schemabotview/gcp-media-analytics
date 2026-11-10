@@ -1,5 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { ideFrame, lineOf, linesFrom } from '../ide'
+import { lineOf, linesFrom } from '../ide'
+import { ideFrame2 } from '../frame'
 import { outputOf } from '../lab'
 import { RECORDED } from '../level'
 import { stepTree } from '../files'
@@ -20,7 +21,8 @@ const account = outputOf(s5, 'gcloud auth list --format="value(account)"').trim(
 const project = outputOf(s5, 'gcloud config get project').trim()
 const api = outputOf(s5, 'gcloud services list --enabled --filter=config.name=storage.googleapis.com').split('\n')[1].split(/\s{2,}/)
 
-export const startSigningIn: SceneModel = ideFrame({
+export const startSigningIn: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: stepTree('start/05-signing-in', 'gcp.sh', { closed: ['sources'] }),
   editor: { file: 'gcp.sh', code: gcpSh, highlight: [lineOf(gcpSh, 'TF_VAR_project_id='), lineOf(gcpSh, 'TF_VAR_operator=')] },
   session: s5,
@@ -54,7 +56,8 @@ const [bucketName, location, labels] = outputOf(s6, 'gcloud storage buckets desc
 const planned = /Plan: (\d+) to add/.exec(s6)![1]
 const took = /Creation complete after (\d+s)/.exec(s6)![1]
 
-export const startFirstTerraform: SceneModel = ideFrame({
+export const startFirstTerraform: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: stepTree('start/06-first-terraform', 'infra/main.tf', { fresh: ['infra/main.tf', 'infra/variables.tf'], closed: ['sources'] }),
   editor: { file: 'infra/main.tf', code: main6, show: [[lineOf(main6, 'provider "google"'), main6.trimEnd().split('\n').length]], highlight: linesFrom(main6, 'resource "google_storage_bucket" "raw"', 'public_access_prevention') },
   session: s6,
@@ -73,7 +76,6 @@ export const startFirstTerraform: SceneModel = ideFrame({
       type: 'table', id: 'labels', title: 'The bucket, read back with gcloud', tone: 'store', columns: ['label', 'value'],
       rows: labels.split(';').map((kv) => kv.split('=')).map(([k, v]) => ({ id: `b-${k}`, cells: [k, v] })),
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'plan says what would change; apply asks the API to make it so. Nothing existed before this apply, and nothing was clicked.' },
   ],
   edges: [
     { from: 'p-code', to: 'p-provider' },
@@ -86,7 +88,8 @@ export const startFirstTerraform: SceneModel = ideFrame({
 const stateObject = outputOf(s7, 'gcloud storage ls "gs://$B/**"').trim()
 const locals = outputOf(s7, 'ls terraform.tfstate*').split('\n').filter(Boolean)
 
-export const startState: SceneModel = ideFrame({
+export const startState: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: stepTree('start/07-state', 'infra/backend.tf', { fresh: ['infra/backend.tf', 'infra/bootstrap.sh'], closed: ['sources'] }),
   editor: { file: 'infra/backend.tf', code: backend7, highlight: linesFrom(backend7, 'backend "gcs"', 'prefix') },
   session: s7,
@@ -111,7 +114,6 @@ export const startState: SceneModel = ideFrame({
         { id: 'l-gcs', cells: [stateObject.split('/').slice(3).join('/'), 'the one Terraform reads'], tone: 'store' as const },
       ],
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'The state bucket is the one thing the CLI makes: Terraform needs somewhere to keep its state before it can make anything else.' },
   ],
   edges: [
     { from: 's-code', to: 's-state', label: 'compared with' },
@@ -123,7 +125,8 @@ export const startState: SceneModel = ideFrame({
 // §3.8 — modules, and a budget: the bucket moves into a module, and 80% of the month alerts.
 const added = /Plan: (\d+) to add/.exec(s8)![1]
 
-export const startModulesBudget: SceneModel = ideFrame({
+export const startModulesBudget: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: stepTree('start/08-modules-budget', 'infra/budget.tf', { fresh: ['infra/budget.tf', 'infra/modules/storage', 'infra/envs/dev.tfvars'], closed: ['sources'] }),
   editor: { file: 'infra/budget.tf', code: budget8, show: [[lineOf(budget8, '# 80%'), lineOf(budget8, 'all_updates_rule') - 1]], highlight: linesFrom(budget8, 'threshold_rules {', 'spend_basis') },
   session: s8,
@@ -143,7 +146,6 @@ export const startModulesBudget: SceneModel = ideFrame({
         { type: 'item', id: 'b-email', title: 'media-data@sun.example', sub: 'a Monitoring email channel; mail goes to the channel, not to people with billing roles', icon: 'bell' },
       ],
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'moved {} says the bucket in the module is the bucket that was at the root. Without it, Terraform would plan to destroy one and create the other.' },
   ],
   edges: [
     { from: 't-root', to: 't-storage', label: 'module "storage"' },

@@ -1,5 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { ideFrame, lineOf, linesFrom } from '../ide'
+import { lineOf, linesFrom } from '../ide'
+import { ideFrame2 } from '../frame'
 import { outputOf } from '../lab'
 import { FAKE_GCS } from '../level'
 import { landTree } from './tree'
@@ -17,7 +18,8 @@ const copied = /billing: (\d+) rows/.exec(session)![1]
 const promised = g1.find(([check]) => check.endsWith('rows'))![2]
 const published = /last published (\S+)/.exec(session)![1]
 
-export const landG1Fails: SceneModel = ideFrame({
+export const landG1Fails: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: landTree('extract/g1.py', { extra: ['extract/extract.py', 'extract/g1.py'], fresh: ['extract/g1.py'] }),
   editor: { file: 'extract/g1.py', code, show: [[lineOf(code, 'def check'), lineOf(code, 'return all(')]], highlight: [...linesFrom(code, 'results = [("files"', '(f"{file} rows"'), lineOf(code, 'return all(')] },
   session,

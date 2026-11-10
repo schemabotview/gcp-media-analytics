@@ -1,5 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { labFrame, outputOf } from '../lab'
+import { outputOf } from '../lab'
+import { labFrame2 } from '../frame'
 import { RECORDED } from '../level'
 import s1 from '../../../spine/how-gcp-runs/01-regions-zones/session.txt?raw'
 import s2 from '../../../spine/how-gcp-runs/02-hierarchy/session.txt?raw'
@@ -15,7 +16,8 @@ const regions = outputOf(s1, 'gcloud compute regions list --format="value(name)"
 const status = outputOf(s1, 'gcloud compute regions describe europe-west2 --format="value(status)"').trim()
 const zones = outputOf(s1, 'gcloud compute zones list --filter=name~europe-west2 --format="value(name)"').split('\n').filter(Boolean).sort()
 
-export const howRegions: SceneModel = labFrame({
+export const howRegions: SceneModel = labFrame2({
+  model: 'TODO',
   session: s1,
   side: [
     RECORDED,
@@ -44,7 +46,8 @@ const described = Object.fromEntries(outputOf(s2, 'gcloud projects describe $P -
   .split('\n').filter(Boolean).map((l) => l.split(': ').map((v) => v.replace(/'/g, ''))))
 const ancestors = outputOf(s2, 'gcloud projects get-ancestors $P').split('\n').slice(1).filter(Boolean).map((l) => l.trim().split(/\s+/))
 
-export const howHierarchy: SceneModel = labFrame({
+export const howHierarchy: SceneModel = labFrame2({
+  model: 'TODO',
   session: s2,
   side: [
     RECORDED,
@@ -73,7 +76,8 @@ export const howHierarchy: SceneModel = labFrame({
 const enabled = outputOf(s3, 'gcloud services list --enabled --format="value(config.name)" | wc -l').trim()
 const zones3 = outputOf(s3, 'gcloud compute zones list --filter=name~europe-west2 --format="value(name)"').split('\n').filter(Boolean)
 
-export const howApis: SceneModel = labFrame({
+export const howApis: SceneModel = labFrame2({
+  model: 'TODO',
   session: s3,
   side: [
     RECORDED,
@@ -106,7 +110,8 @@ const uris = [...s4.replace(/\n(?!\$|uri:)/g, '').matchAll(/^uri: (\S+)/gm)].map
 const [loc, cls] = ['location', 'default_storage_class'].map((k) => new RegExp(`${k}: (\\S+)`).exec(s4)![1])
 const objects = outputOf(s4, 'gcloud storage ls $B | wc -l').trim()
 
-export const howPlanes: SceneModel = labFrame({
+export const howPlanes: SceneModel = labFrame2({
+  model: 'TODO',
   session: s4,
   side: [
     RECORDED,
@@ -143,7 +148,8 @@ const gcloudUri = /uri: (\S+)/.exec(s5.replace(/\n(?!\$|uri:|method:)/g, ''))![1
 const curl = JSON.parse(outputOf(s5, "curl -s -H \"Authorization: Bearer $T\" $U | jq -c '{projectId,projectNumber}'"))
 const tfNumber = /"number" = "(\d+)"/.exec(s5)![1]
 
-export const howThreeClients: SceneModel = labFrame({
+export const howThreeClients: SceneModel = labFrame2({
+  model: 'TODO',
   session: s5,
   side: [
     RECORDED,

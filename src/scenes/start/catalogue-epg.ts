@@ -1,5 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { ideFrame, lineOf } from '../ide'
+import { lineOf } from '../ide'
+import { ideFrame2 } from '../frame'
 import { outputOf } from '../lab'
 import { CRM_FILES, startTree } from './tree'
 import code from '../../../spine/start/03-catalogue-epg/project/sources/epg/slots.py?raw'
@@ -17,7 +18,8 @@ const movies = slots(outputOf(session, 'python sources/epg/slots.py SUN-MOVIES-2
 const derby = sports.find((s) => s.id === 'T-5001')!
 const gap = movies.find((s) => s.id === 'no slot in the EPG')!
 
-export const startCatalogueEpg: SceneModel = ideFrame({
+export const startCatalogueEpg: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: startTree('sources/epg/slots.py', [...CRM_FILES, 'sources/epg/slots.py']),
   editor: { file: 'sources/epg/slots.py', code, show: [[1, lineOf(code, '"""', 2)], [lineOf(code, 'with open("data/catalogue'), lineOf(code, 'no slot in the EPG")')]], highlight: [lineOf(code, 'titles = {'), lineOf(code, 'print(f"{hhmm(s'), lineOf(code, 'if after and'), lineOf(code, 'no slot in the EPG")')] },
   session,
@@ -40,7 +42,6 @@ export const startCatalogueEpg: SceneModel = ideFrame({
       type: 'table', id: 'movies', title: 'SUN-MOVIES-2, the evening', tone: 'consume', columns: ['slot', 'title_id', 'title'],
       rows: movies.map((s) => ({ id: `m-${s.when}`, cells: s.title ? [s.when, s.id, s.title] : [s.when, '—', s.id], tone: s.title ? undefined : 'consume' as const })),
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'The catalogue says what a title is; the EPG says when it aired, and where. Viewing joins to both — so a slot the EPG lost is minutes the morning report would lose.' },
   ],
   edges: [
     { from: 'j-derby-slot', to: 'j-derby' },

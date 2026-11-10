@@ -1,5 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { ideFrame, lineOf, linesFrom } from '../ide'
+import { lineOf, linesFrom } from '../ide'
+import { ideFrame2 } from '../frame'
 import { outputOf } from '../lab'
 import { FAKE_GCS } from '../level'
 import { landTree } from './tree'
@@ -15,7 +16,8 @@ const crm = outputOf(session, 'python extract/extract.py crm --dt 2026-10-30')
 const billing = outputOf(session, 'python extract/extract.py billing --dt 2026-10-30')
 const [, from, to] = /window \((\S+), (\S+)\]/.exec(billing)!
 
-export const landExtracts: SceneModel = ideFrame({
+export const landExtracts: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: landTree('extract/extract.py', { extra: ['extract/extract.py'], fresh: ['extract/extract.py'] }),
   editor: {
     file: 'extract/extract.py', code,
@@ -43,7 +45,6 @@ export const landExtracts: SceneModel = ideFrame({
         { id: 's-charges', cells: ['charges.csv', rows(billing, 'charges.csv'), `updated in (${from.slice(5, 10)}, ${to.slice(5, 10)}]`], tone: 'ingest' },
       ],
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'A snapshot is simple and big; a window is small and needs its boundaries right. Each folder ends with an empty _SUCCESS: “this night is complete”.' },
   ],
   edges: [
     { from: 'f-crm', to: 'f-crm-raw', label: 'copy all' },

@@ -1,5 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { ideFrame, lineOf, linesFrom } from '../ide'
+import { lineOf, linesFrom } from '../ide'
+import { ideFrame2 } from '../frame'
 import { RECORDED } from '../level'
 import { stepTree } from '../files'
 import hello from '../../../spine/dataflow/01-beam-model/project/stream/hello.py?raw'
@@ -31,7 +32,8 @@ const hm = (t: string) => { const [h, m, s = '0'] = t.split(':'); return (Number
 // §7.1 — ◆ Beam's model: the smallest pipeline.
 const counts = s1.split('\n')[1]
 
-export const flowModel: SceneModel = ideFrame({
+export const flowModel: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('dataflow/01-beam-model', 'stream/hello.py', ['stream/hello.py', 'requirements.txt']),
   editor: { file: 'stream/hello.py', code: hello, show: [[lineOf(hello, 'KINDS ='), last(hello)]], highlight: linesFrom(hello, '| "events"', '| "count"') },
   session: s1,
@@ -50,7 +52,6 @@ export const flowModel: SceneModel = ideFrame({
         { id: 'r-dataflow', cells: ['DataflowRunner', 'Google’s workers', '§7.9'] },
       ],
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'Map works on each element alone, so it spreads across machines freely. CombinePerKey must bring a key’s elements together first: that grouping is the expensive step.' },
   ],
   edges: [
     { from: 'b-in', to: 'b-pair' },
@@ -62,7 +63,8 @@ export const flowModel: SceneModel = ideFrame({
 // §7.2 — a first pipeline: read, parse, keep a slice, count by type.
 const types = s2.split('\n').slice(1).filter(Boolean).map((l) => l.trim().split(/\s+/))
 
-export const flowFirst: SceneModel = ideFrame({
+export const flowFirst: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('dataflow/02-first-pipeline', 'stream/live_viewers.py'),
   editor: { file: 'stream/live_viewers.py', code: live1, show: [[lineOf(live1, 'def run'), lineOf(live1, '| "gather"')]], highlight: linesFrom(live1, '| "read"', '| "count"') },
   session: s2,
@@ -79,7 +81,6 @@ export const flowFirst: SceneModel = ideFrame({
       type: 'table', id: 'types', title: 'Five minutes of the derby', tone: 'store', columns: ['type', 'events'],
       rows: types.map(([t, n]) => ({ id: `t-${t}`, cells: [t, Number(n).toLocaleString('en-GB')] })),
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'A filter on event_ts works only because the whole night is already in the file. A stream is never complete: it needs windows.' },
   ],
   edges: [
     { from: 'g-read', to: 'g-parse' },
@@ -92,7 +93,8 @@ export const flowFirst: SceneModel = ideFrame({
 const heardRows = s3.split('\n').filter((l) => /^\d\d:\d\d:\d\d\s/.test(l)).map((l) => l.trim().split(/\s+/))
 const slowBoxes = /(\d+) slow boxes/.exec(s3)![1]
 
-export const flowTwoClocks: SceneModel = ideFrame({
+export const flowTwoClocks: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('dataflow/03-two-clocks', 'stream/arrivals.py'),
   editor: { file: 'stream/arrivals.py', code: arrivals, show: [[lineOf(arrivals, 'RESEND = 400'), lineOf(arrivals, 'SLOW_LAG')], [lineOf(arrivals, 'def slow'), lineOf(arrivals, 'return timedelta(seconds=1 +')]], highlight: [lineOf(arrivals, 'SLOW_EVERY'), lineOf(arrivals, 'SLOW_LAG'), ...linesFrom(arrivals, 'if slow(e["device_id"])', 'return timedelta(seconds=lo')] },
   session: s3,
@@ -109,14 +111,14 @@ export const flowTwoClocks: SceneModel = ideFrame({
       type: 'table', id: 'heard', title: `Two clocks: ${slowBoxes} slow boxes, the rest within seconds`, tone: 'store', columns: ['event time', 'heard at', 'late by'],
       rows: heardRows.map(([ev, at, n], i) => ({ id: `h-${i}`, cells: [ev, at, `${n} s`], tone: Number(n) > 60 ? 'consume' as const : undefined })),
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'Counted by when it was heard, a slow box’s viewing lands four minutes late, in the wrong minute.' },
   ],
 })
 
 // §7.4 — fixed windows: households per minute, in event time.
 const perMinute = s4.split('\n').filter((l) => /^\d\d:\d\d\s/.test(l)).map((l) => l.trim().split(/\s+/))
 
-export const flowWindows: SceneModel = ideFrame({
+export const flowWindows: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('dataflow/04-fixed-windows', 'stream/live_viewers.py'),
   editor: { file: 'stream/live_viewers.py', code: live2, show: [[lineOf(live2, 'def stamp'), lineOf(live2, 'return window.TimestampedValue')], [lineOf(live2, '| "event time"'), lineOf(live2, '| "count"')]], highlight: [lineOf(live2, '| "event time"'), lineOf(live2, '| "minutes"'), lineOf(live2, '| "once each"')] },
   session: s4,
@@ -130,7 +132,6 @@ export const flowWindows: SceneModel = ideFrame({
       type: 'table', id: 'minutes', title: 'Fixed windows, in event time', tone: 'store', columns: ['window', 'households'],
       rows: perMinute.map(([m, , n]) => ({ id: `m-${m}`, cells: [`${m}–${m.slice(0, 3)}${String(Number(m.slice(3)) + 1).padStart(2, '0')}`, n], tone: m === '18:41' ? 'ingest' as const : undefined })),
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'A window is a slice of event time. A household counts once per window, however many heartbeats it sent.' },
   ],
 })
 
@@ -138,7 +139,8 @@ export const flowWindows: SceneModel = ideFrame({
 const panes = s5.split('\n').filter((l) => /^\d\d:\d\d\s/.test(l)).map((l) => /^(\S+)\s+on time\s+(\d+)\s+late panes\s+(\d+)\s+final\s+(\d+)/.exec(l)!.slice(1))
 const lateSeconds = /ALLOWED_LATENESS = (\d+)/.exec(late)![1]
 
-export const flowWatermarks: SceneModel = ideFrame({
+export const flowWatermarks: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('dataflow/05-watermarks', 'stream/late.py'),
   editor: { file: 'stream/late.py', code: late, show: [[lineOf(late, 'def night'), lineOf(late, 'return stream.advance_watermark_to_infinity')], [lineOf(late, '| beam.WindowInto('), lineOf(late, 'allowed_lateness=ALLOWED_LATENESS)')]], highlight: [lineOf(late, 'stream.advance_watermark_to(heard'), ...linesFrom(late, 'trigger=trigger.AfterWatermark', 'allowed_lateness=ALLOWED_LATENESS)')] },
   session: s5,
@@ -155,7 +157,6 @@ export const flowWatermarks: SceneModel = ideFrame({
       type: 'table', id: 'panes', title: 'Every window: on time, then refined', tone: 'store', columns: ['window', 'on time', 'late panes', 'final'],
       rows: panes.map(([m, on, n, fin]) => ({ id: `p-${m}`, cells: [m, on, n, fin] })),
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'On time is fast and slightly low; the late panes make it right. Allowed lateness bounds how long the pipeline keeps a minute open.' },
   ],
   edges: [
     { from: 'w-pass', to: 'w-on' },
@@ -167,7 +168,8 @@ export const flowWatermarks: SceneModel = ideFrame({
 // §7.6 — dedupe in the stream: a retry's second copy, dropped by event_id.
 const dd = s6.split('\n').filter((l) => /^\d\d:\d\d\s/.test(l)).map((l) => l.trim().split(/\s+/))
 
-export const flowDedupe: SceneModel = ideFrame({
+export const flowDedupe: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('dataflow/06-dedupe', 'stream/live_viewers.py'),
   editor: { file: 'stream/live_viewers.py', code: live3, show: [[lineOf(live3, 'def run'), lineOf(live3, '| "count once"')]], highlight: linesFrom(live3, '| "by event_id"', '| "keep one"') },
   session: s6,
@@ -183,7 +185,6 @@ export const flowDedupe: SceneModel = ideFrame({
         { type: 'item', id: 'o-one', title: 'keep one', sub: 'then add up seconds watched', icon: 'check', tone: 'store' },
       ],
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'A retry arrives seconds after its first copy, inside the same window: the window is where the two meet.' },
   ],
   edges: [
     { from: 'o-in', to: 'o-group' },
@@ -195,7 +196,8 @@ export const flowDedupe: SceneModel = ideFrame({
 const runs = [...s7.matchAll(/^\$ python stream\/sessions.py (\S+) --gap (\d+)\n((?:session .*\n?)+)/gm)]
   .map((m) => ({ device: m[1], gap: m[2], spans: [...m[3].matchAll(/session (\S+)-(\S+)\s+(\d+) events/g)].map((x) => [x[1], x[2], x[3]]) }))
 
-export const flowSessions: SceneModel = ideFrame({
+export const flowSessions: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('dataflow/07-sessions', 'stream/sessions.py'),
   editor: { file: 'stream/sessions.py', code: sessions, show: [[1, 7], [lineOf(sessions, 'with beam.Pipeline'), last(sessions)]], highlight: [lineOf(sessions, 'window.Sessions(a.gap * 60)')] },
   session: s7,
@@ -209,7 +211,6 @@ export const flowSessions: SceneModel = ideFrame({
       type: 'table', id: 'sess', title: 'Sessions: activity, then a quiet gap', tone: 'store', columns: ['device', 'gap', 'session', 'events'],
       rows: runs.flatMap((r, i) => r.spans.map(([a, b, n], j) => ({ id: `s-${i}-${j}`, cells: [r.device, `${r.gap} min`, `${a}–${b}`, n] }))),
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'A session closes one gap after its last event. The gap is a business choice: thirty minutes hides a half-time break, ten shows it.' },
   ],
 })
 
@@ -217,7 +218,8 @@ export const flowSessions: SceneModel = ideFrame({
 const peak = s8.split('\n').filter((l) => /^\| \d\d:\d\d/.test(l)).map((l) => l.split('|').map((c) => c.trim()).filter(Boolean))
 const written = s8.split('\n').filter((l) => /^\d\d:\d\d\s+\d/.test(l)).length
 
-export const flowBigQuery: SceneModel = ideFrame({
+export const flowBigQuery: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('dataflow/08-into-bigquery', 'stream/live_viewers.py', ['stream/live_viewers.py', 'stream/peak.sql', 'infra/modules/live']),
   editor: { file: 'stream/live_viewers.py', code: live4, show: [[lineOf(live4, 'def row'), lineOf(live4, '"households": households')], [lineOf(live4, 'joined = {'), lineOf(live4, 'create_disposition="CREATE_NEVER"))')]], highlight: linesFrom(live4, '| "to BigQuery"', 'create_disposition="CREATE_NEVER"))') },
   session: s8,
@@ -235,7 +237,6 @@ export const flowBigQuery: SceneModel = ideFrame({
       type: 'table', id: 'peak', title: 'The live peak, read back with bq', tone: 'store', columns: ['minute', 'households', 'watched s'],
       rows: peak.map(([m, n, w]) => ({ id: `k-${m}`, cells: [m, n, w], tone: m === '18:41' ? 'ingest' as const : undefined })),
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'Terraform made the table; the pipeline only writes rows (CREATE_NEVER). Every bq query in this course caps the bytes it may bill.' },
   ],
   edges: [
     { from: 'p-beam', to: 'p-insert' },
@@ -248,7 +249,8 @@ const fired = s9.split('\n').filter((l) => /^\| \d\d:\d\d/.test(l)).map((l) => l
 const top = [...fired].sort((a, b) => Number(b[1]) - Number(a[1]))[0]
 const published = /published (\d+) messages/.exec(s9)![1]
 
-export const flowDataflow: SceneModel = ideFrame({
+export const flowDataflow: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('dataflow/09-on-dataflow', 'stream/live_viewers.py', ['stream/live_viewers.py', 'stream/stream_peak.sql', 'infra/modules/dataflow']),
   editor: { file: 'stream/live_viewers.py', code: live5, show: [[lineOf(live5, '# The job\'s watermark'), lineOf(live5, 'REPLAY_LATENESS = ')], [lineOf(live5, '| "read" >> beam.io.ReadFromPubSub('), lineOf(live5, '| "count" >> beam.CombinePerKey(Once())')]], highlight: linesFrom(live5, '| "minutes" >> beam.WindowInto(', 'accumulation_mode=trigger.AccumulationMode.ACCUMULATING)') },
   session: s9,
@@ -266,7 +268,6 @@ export const flowDataflow: SceneModel = ideFrame({
       type: 'table', id: 'fired', title: 'What the job wrote: each minute’s last firing', tone: 'store', columns: ['minute', 'households', 'firings'],
       rows: fired.filter(([m]) => m >= '18:39' && m <= '18:45').map(([m, n, f]) => ({ id: `f-${m}`, cells: [m, n, f], tone: m === top[0] ? 'ingest' as const : undefined })),
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'Drain stops reading at once, then closes every open window and stops: nothing in flight is lost. Cancel stops at once and drops it.' },
   ],
   edges: [
     { from: 'j-sub', to: 'j-job' },

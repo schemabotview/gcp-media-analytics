@@ -1,5 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { ideFrame, lineOf, linesFrom } from '../ide'
+import { lineOf, linesFrom } from '../ide'
+import { ideFrame2 } from '../frame'
 import { outputOf } from '../lab'
 import { PUBSUB_EMU, RECORDED, level } from '../level'
 import { stepTree } from '../files'
@@ -47,7 +48,6 @@ export const streamWhy: SceneModel = {
       ],
     },
     level('doc-cited', 'Google Cloud’s Pub/Sub overview'),
-    { type: 'note', id: 'docs', tone: 'infra', text: 'cloud.google.com/pubsub/docs/overview · cloud.google.com/pubsub/docs/subscription-overview' },
   ],
   edges: [{ from: 'c-stream', to: 'c-pubsub' }],
 }
@@ -57,7 +57,8 @@ const list = (cmd: string) => outputOf(s2, cmd).split('\n').filter(Boolean)
 const topics = list('gcloud pubsub topics list --filter=$L --format="$F"')
 const subs = list('gcloud pubsub subscriptions list --filter=$L --format="$F"')
 
-export const streamTopics: SceneModel = ideFrame({
+export const streamTopics: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('stream/02-topics', 'infra/modules/pubsub/main.tf', ['infra/modules/pubsub']),
   editor: { file: 'infra/modules/pubsub/main.tf', code: pubsubTf, show: [[1, 4], [lineOf(pubsubTf, "# Dataflow's subscriptions"), lineOf(pubsubTf, 'max_delivery_attempts') + 1]], highlight: linesFrom(pubsubTf, 'ack_deadline_seconds = 20', 'max_delivery_attempts') },
   session: s2,
@@ -88,7 +89,8 @@ export const streamTopics: SceneModel = ideFrame({
 const pub = /^(\d+) events.*\n {2}(.+)\npublished (\d+) messages \((\d+) re-sent/m.exec(s3)!
 const sample = outputOf(s3, 'python consume/pull.py viewing-events-dataflow --max 3').split('\n')[0]
 
-export const streamPublishing: SceneModel = ideFrame({
+export const streamPublishing: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('stream/03-publishing', 'produce/settop.py', ['produce', 'consume', 'env.sh', 'requirements.txt']),
   editor: { file: 'produce/settop.py', code: settop, show: [[lineOf(settop, 'SPEED = 60'), lineOf(settop, 'RESEND = 400')], [lineOf(settop, 'sent, resent, futures'), lineOf(settop, 'resent += i % RESEND')]], highlight: [lineOf(settop, 'time.sleep(max(0'), ...linesFrom(settop, 'futures.append(publisher.publish(', 'type=e["type"]')] },
   session: s3,
@@ -109,7 +111,6 @@ export const streamPublishing: SceneModel = ideFrame({
         { id: 'r-resent', cells: ['re-sent by a retry', pub[4]], tone: 'consume' as const },
       ],
     },
-    { type: 'note', id: 'note', tone: 'store', text: `The first message read back: ${sample.replace(/\s+/g, ' ')}.` },
   ],
   edges: [
     { from: 'm-box', to: 'm-message' },
@@ -121,7 +122,8 @@ export const streamPublishing: SceneModel = ideFrame({
 const lines4 = s4.split('\n').filter((l) => l.startsWith('message '))
 const unacked = outputOf(s4, 'python consume/pull.py viewing-events-dataflow --max 1 --no-ack').split('\n')[0].split(/\s+/)[1]
 
-export const streamPullAck: SceneModel = ideFrame({
+export const streamPullAck: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('stream/04-pull-ack', 'consume/pull.py', []),
   editor: { file: 'consume/pull.py', code: pull, show: [[1, 8], [lineOf(pull, 'got = sub.pull'), pull.trimEnd().split('\n').length]], highlight: linesFrom(pull, 'if got and not a.no_ack', 'sub.acknowledge') },
   session: s4,
@@ -149,7 +151,8 @@ export const streamPullAck: SceneModel = ideFrame({
 // §6.5 — at-least-once: 23 events arrive twice.
 const c5 = /(\d+) messages, (\d+) distinct event_ids\n(\d+) events arrived twice, e.g. event_id (\w+)/.exec(s5)!
 
-export const streamAtLeastOnce: SceneModel = ideFrame({
+export const streamAtLeastOnce: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('stream/05-at-least-once', 'consume/count.py'),
   editor: { file: 'consume/count.py', code: count, show: [[lineOf(count, 'sub = pubsub_v1'), count.trimEnd().split('\n').length]], highlight: [lineOf(count, 'messages.add'), lineOf(count, 'events[json.loads'), lineOf(count, 'twice = sorted')] },
   session: s5,
@@ -169,7 +172,6 @@ export const streamAtLeastOnce: SceneModel = ideFrame({
         { type: 'item', id: 'w-silver', title: 'Silver, next morning', sub: 'one row per event_id, whatever arrived (§8.7)', icon: 'bigquery', tone: 'store' },
       ],
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'Count events, not messages: the message_id is Pub/Sub’s, the event_id is the box’s. Only the event_id says two messages are one event.' },
   ],
   edges: [
     { from: 'w-retry', to: 'w-dataflow' },
@@ -180,7 +182,8 @@ export const streamAtLeastOnce: SceneModel = ideFrame({
 // §6.6 — ordering keys: one device, one ordered lane.
 const seq = s6.split('\n').filter((l) => l.startsWith('message ')).map((l) => l.split(/\s+/))
 
-export const streamOrdering: SceneModel = ideFrame({
+export const streamOrdering: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('stream/06-ordering', 'produce/settop.py', []),
   editor: { file: 'produce/settop.py', code: settop, show: [[lineOf(settop, 'options = pubsub_v1'), lineOf(settop, 'resent += i % RESEND')]], highlight: [...linesFrom(settop, 'options = pubsub_v1', 'enable_message_ordering'), lineOf(settop, 'key = e["device_id"]')] },
   session: s6,
@@ -209,7 +212,8 @@ export const streamOrdering: SceneModel = ideFrame({
 const attempts = s7.split('\n').filter((l) => l.startsWith('attempt '))
 const attrs = Object.fromEntries([...s7.matchAll(/CloudPubSubDeadLetter(\w+)=(\S+)/g)].map((m) => [m[1], m[2]]))
 
-export const streamDeadLetters: SceneModel = ideFrame({
+export const streamDeadLetters: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('stream/07-dead-letters', 'consume/strict.py'),
   editor: { file: 'consume/strict.py', code: strict, show: [[lineOf(strict, 'def handle'), strict.trimEnd().split('\n').length]], highlight: [...linesFrom(strict, 'except ValueError', 'message.nack()')] },
   session: s7,

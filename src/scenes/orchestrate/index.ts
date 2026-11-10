@@ -1,5 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { ideFrame, lineOf, linesFrom } from '../ide'
+import { lineOf, linesFrom } from '../ide'
+import { ideFrame2 } from '../frame'
 import { MOCKED, level } from '../level'
 import { stepTree } from '../files'
 import dag2 from '../../../spine/orchestrate/02-the-dag/project/dags/viewing_daily.py?raw'
@@ -47,7 +48,6 @@ export const orchModel: SceneModel = {
       ],
     },
     level('doc-cited', 'Apache Airflow’s core concepts; Cloud Composer’s overview'),
-    { type: 'note', id: 'docs', tone: 'infra', text: 'airflow.apache.org/docs/apache-airflow/2.10.5/core-concepts · cloud.google.com/composer/docs/composer-3/composer-overview — Airflow orchestrates; the work itself still runs in BigQuery and Dataproc.' },
   ],
   edges: [
     { from: 'd-sensor', to: 'd-op' },
@@ -58,7 +58,8 @@ export const orchModel: SceneModel = {
 }
 
 // §11.2 — the DAG
-export const orchDag: SceneModel = ideFrame({
+export const orchDag: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('orchestrate/02-the-dag', 'dags/viewing_daily.py', ['dags', 'airflow', 'warehouse/bronze.sql', 'warehouse/g2.sql', 'warehouse/silver.sql']),
   editor: { file: 'dags/viewing_daily.py', code: dag2, show: [[lineOf(dag2, 'def sql(task_id: str)'), lineOf(dag2, '"parameterValue": {"value": "{{ ds }}"}}]}})')], [lineOf(dag2, '# the guide is JSON'), lineOf(dag2, 'dag.get_task("gold_content")')]], highlight: linesFrom(dag2, '(landed >> sql("bronze")', 'dag.get_task("gold_content")') },
   session: s2,
@@ -77,7 +78,6 @@ export const orchDag: SceneModel = ideFrame({
         { type: 'item', id: 'f-answer', title: 'answer', sub: 'Gold, Spark', icon: 'check', tone: 'store' },
       ],
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'The run’s logical date is the night: {{ ds }} reaches every SQL file as @dt, so any night can be run again and gives the same tables.' },
   ],
   edges: [
     { from: 'f-wait', to: 'f-load' },
@@ -87,7 +87,8 @@ export const orchDag: SceneModel = ideFrame({
 })
 
 // §11.3 — waiting for the batch: the sensor
-export const orchSensor: SceneModel = ideFrame({
+export const orchSensor: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('orchestrate/03-waiting', 'dags/viewing_daily.py', []),
   editor: { file: 'dags/viewing_daily.py', code: dag2, show: [[lineOf(dag2, 'landed = GCSObjectExistenceSensor('), lineOf(dag2, 'mode="reschedule"')]], highlight: linesFrom(dag2, 'object="source=viewing/dt={{ ds }}/_SUCCESS",', 'mode="reschedule"') },
   session: s3,
@@ -119,7 +120,8 @@ export const orchSensor: SceneModel = ideFrame({
 const tries = (t: string) => (s4.match(new RegExp(`starting task_id=${t}$`, 'gm')) ?? []).length
 const failedTasks = [...s4.replace(/\n/g, '').matchAll(/Marking task as UPSTREAM_FAILED\. task_id=(\w+?)(?=\[|$)/g)].map((m) => m[1])
 
-export const orchRetries: SceneModel = ideFrame({
+export const orchRetries: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('orchestrate/04-retries', 'dags/viewing_daily.py'),
   editor: { file: 'dags/viewing_daily.py', code: dag4, show: [[lineOf(dag4, 'default_args={'), lineOf(dag4, '"sla": timedelta(hours=4)}) as dag:')]], highlight: linesFrom(dag4, '"retries": 2, "retry_delay"', '"sla": timedelta(hours=4)}) as dag:') },
   session: s4,
@@ -148,7 +150,8 @@ export const orchRetries: SceneModel = ideFrame({
 // §11.5 — ⑂ a failed night, fixed: re-delivered EPG, cleared, green
 const gates = s5.split('\n').filter((l) => /^\| G\d/.test(l)).map((l) => l.split('|').slice(1, -1).map((c) => c.trim()))
 
-export const orchFailed: SceneModel = ideFrame({
+export const orchFailed: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('orchestrate/05-failed-night', 'warehouse/epg.py'),
   editor: { file: 'warehouse/epg.py', code: epg5, show: [[lineOf(epg5, 'raw = storage.Client()'), lineOf(epg5, 'job.result()')]], highlight: linesFrom(epg5, 'latest = sorted(raw.list_blobs(', 'key=lambda b: b.name)[-1]') },
   session: s5,
@@ -176,7 +179,8 @@ export const orchFailed: SceneModel = ideFrame({
 // §11.6 — backfill, idempotently
 const nights = s6.split('\n').filter((l) => /^\| +401958/.test(l)).map((l) => l.split('|').slice(1, -1).map((c) => Number(c.trim()).toLocaleString('en-GB')))
 
-export const orchBackfill: SceneModel = ideFrame({
+export const orchBackfill: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('orchestrate/06-backfill', 'warehouse/bronze.sql', ['warehouse/night.sql']),
   editor: { file: 'warehouse/bronze.sql', code: bronze6, highlight: [lineOf(bronze6, 'DELETE FROM bronze.viewing_events WHERE dt = @dt;')] },
   session: s6,
@@ -204,7 +208,8 @@ export const orchBackfill: SceneModel = ideFrame({
 // §11.7 — Composer: planned, never applied
 const plan = /^Plan: (.+)$/m.exec(s7)![1]
 
-export const orchComposer: SceneModel = ideFrame({
+export const orchComposer: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('orchestrate/07-composer', 'infra/modules/composer/main.tf', ['infra/modules/composer', 'infra/main.tf']),
   editor: { file: 'infra/modules/composer/main.tf', code: composer, show: [[1, 3], [lineOf(composer, 'resource "google_composer_environment" "media"'), lineOf(composer, 'depends_on')]], highlight: linesFrom(composer, 'image_version = ', 'environment_size = ') },
   session: s7,
@@ -218,7 +223,6 @@ export const orchComposer: SceneModel = ideFrame({
         { type: 'item', id: 'm-sa', title: 'sa-airflow', sub: 'the DAG’s identity on Google Cloud', icon: 'gcpiam', tone: 'store' },
       ],
     },
-    { type: 'note', id: 'note', tone: 'store', text: `terraform plan: ${plan} An environment bills every hour it exists, so this course plans it and stops.` },
   ],
   edges: [
     { from: 'm-dags', to: 'm-env' },

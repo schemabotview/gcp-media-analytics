@@ -1,5 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { ideFrame, lineOf, linesFrom } from '../ide'
+import { lineOf, linesFrom } from '../ide'
+import { ideFrame2 } from '../frame'
 import { MOCKED, level } from '../level'
 import { stepTree } from '../files'
 import gold1 from '../../../spine/serve/01-content-performance/project/warehouse/gold_content.sql?raw'
@@ -36,7 +37,8 @@ const DT = '$Q --parameter=dt:DATE:2026-10-31 < warehouse/'
 const top = bqRows(s1, `${DT}top_titles.sql`)
 const written = /Number of affected rows: (\d+)\n\$ /.exec(s1)![1]
 
-export const serveGold: SceneModel = ideFrame({
+export const serveGold: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('serve/01-content-performance', 'warehouse/gold_content.sql', ['warehouse/gold_content.sql', 'warehouse/top_titles.sql', 'infra/modules/lakehouse']),
   editor: { file: 'warehouse/gold_content.sql', code: gold1, show: [[lineOf(gold1, 'INSERT INTO'), lineOf(gold1, 'GROUP BY')]], highlight: linesFrom(gold1, 'COUNTIF(v.channel IS NOT NULL)', 'HLL_COUNT.INIT') },
   session: s1,
@@ -64,7 +66,8 @@ export const serveGold: SceneModel = ideFrame({
 // §10.2 — counting unique households
 const [summed, exact, approx, sketches] = bqRows(s2, `${DT}households.sql`)[0]
 
-export const serveUnique: SceneModel = ideFrame({
+export const serveUnique: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('serve/02-unique-households', 'warehouse/households.sql'),
   editor: { file: 'warehouse/households.sql', code: uniq, highlight: linesFrom(uniq, '(SELECT HLL_COUNT.MERGE(households_sketch)', 'FROM gold.content_performance_daily WHERE dt = @dt) AS sketches') },
   session: s2,
@@ -96,7 +99,8 @@ export const serveUnique: SceneModel = ideFrame({
 // §10.3 — G4: the planted bug caught
 const [silverMin, goldMin, extra] = bqRows(s3, `${DT}g4.sql`)[0]
 
-export const serveG4: SceneModel = ideFrame({
+export const serveG4: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('serve/03-g4', 'warehouse/gold_content.sql', ['warehouse/gold_content.sql', 'warehouse/g4.sql', 'infra/modules/lakehouse']),
   editor: { file: 'warehouse/gold_content.sql', code: gold3, show: [[lineOf(gold3, 'INSERT INTO'), lineOf(gold3, 'd.package_id;')]], highlight: linesFrom(gold3, 'JOIN silver.dim_subscriber AS d', 'ON d.household_id = v.household_id') },
   session: s3,
@@ -129,7 +133,8 @@ export const serveG4: SceneModel = ideFrame({
 const g4ok = bqRows(s4, `${DT}g4.sql`)[0]
 const dry = /process upper bound of (\d+) bytes/.exec(s4)![1]
 
-export const serveCost: SceneModel = ideFrame({
+export const serveCost: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('serve/04-query-cost', 'infra/modules/lakehouse/main.tf', ['infra/modules/lakehouse', 'warehouse/derby_curve.sql', 'warehouse/curve_unfiltered.sql', 'warehouse/gold_content.sql']),
   editor: { file: 'infra/modules/lakehouse/main.tf', code: lake4, show: [[lineOf(lake4, '# Silver: one row per real event'), lineOf(lake4, 'require_partition_filter = true')]], highlight: linesFrom(lake4, '# a query must name the hours it wants', 'require_partition_filter = true') },
   session: s4,
@@ -157,7 +162,8 @@ export const serveCost: SceneModel = ideFrame({
 // §10.5 — sharing without exposing: an authorized view
 const regions = bqRows(s5, '$Q < warehouse/marketing.sql')
 
-export const serveView: SceneModel = ideFrame({
+export const serveView: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('serve/05-authorized-view', 'infra/modules/lakehouse/main.tf', ['infra/modules/lakehouse', 'warehouse/marketing.sql']),
   editor: { file: 'infra/modules/lakehouse/main.tf', code: lake5, show: [[lineOf(lake5, '# Marketing'), lineOf(lake5, 'resource "google_bigquery_dataset" "marketing"')], [lineOf(lake5, 'resource "google_bigquery_dataset_access" "title_audience"'), lineOf(lake5, 'member     = "group:marketing@sun.example"') + 1]], highlight: linesFrom(lake5, 'resource "google_bigquery_dataset_access" "title_audience"', 'table_id   = google_bigquery_table.title_audience.table_id') },
   session: s5,
@@ -185,7 +191,8 @@ export const serveView: SceneModel = ideFrame({
 // §10.6 — materialized views and BI Engine
 const runs = [...s6.matchAll(/^read +([\d,]+) bytes\nbilled +([\d,]+) bytes\nBI Engine (.+)$/gm)].map((m) => m.slice(1))
 
-export const serveMv: SceneModel = ideFrame({
+export const serveMv: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('serve/06-mv-bi-engine', 'infra/modules/lakehouse/main.tf', ['infra/modules/lakehouse', 'warehouse/derby_curve_mv.sql', 'warehouse/bytes.py']),
   editor: { file: 'infra/modules/lakehouse/main.tf', code: lake6, show: [[lineOf(lake6, '# The dashboard'), lineOf(lake6, 'refresh_interval_ms')], [lineOf(lake6, '# BI Engine'), lineOf(lake6, 'size     = 1073741824') + 1]], highlight: linesFrom(lake6, 'materialized_view {', 'refresh_interval_ms') },
   session: s6,
@@ -245,7 +252,6 @@ export const serveLooker: SceneModel = {
       ],
     },
     level('doc-cited', 'Google Cloud’s Looker and LookML documentation'),
-    { type: 'note', id: 'docs', tone: 'infra', text: 'cloud.google.com/looker/docs/what-is-lookml · cloud.google.com/looker/docs/reference/param-explore — viewing-pulse has no Looker instance: this frame shows the model, nothing runs.' },
   ],
   edges: [
     { from: 'l-table', to: 'l-view' },
@@ -257,7 +263,8 @@ export const serveLooker: SceneModel = {
 // §10.8 — the answer: the derby card
 const [peakAt, livePeak, goldHh, liveMin, worst, worstPct, nextPct] = bqRows(s8, '$Q < warehouse/derby_card.sql')[0]
 
-export const serveAnswer: SceneModel = ideFrame({
+export const serveAnswer: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: tree('serve/08-the-answer', 'warehouse/derby_card.sql'),
   editor: { file: 'warehouse/derby_card.sql', code: card, show: [[lineOf(card, 'WITH live AS ('), lineOf(card, 'FROM live, gold, qos')]], highlight: linesFrom(card, 'SELECT live.peak_at', 'FROM live, gold, qos') },
   session: s8,
@@ -270,7 +277,6 @@ export const serveAnswer: SceneModel = ideFrame({
         { type: 'item', id: 'c-qos', title: `${worst}: ${worstPct}% buffering`, sub: `every other exchange ${nextPct}%; from 18:35, the second half (§9.4)`, icon: 'network', tone: 'consume' },
       ],
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'Two lanes, one answer: the live peak and Gold’s audience agree, and one London exchange explains the complaints.' },
   ],
   edges: [
     { from: 'c-live', to: 'c-gold', label: 'agree' },

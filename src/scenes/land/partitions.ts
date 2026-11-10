@@ -1,5 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
-import { ideFrame, lineOf, linesFrom } from '../ide'
+import { lineOf, linesFrom } from '../ide'
+import { ideFrame2 } from '../frame'
 import { FAKE_GCS } from '../level'
 import { landTree } from './tree'
 import code from '../../../spine/land/02-partitions/project/extract/raw.py?raw'
@@ -12,7 +13,8 @@ import session from '../../../spine/land/02-partitions/session.txt?raw'
 const name = session.split('\n').find((l) => l.startsWith('gs://') && l.endsWith('.json'))!
 const [bucket, source, dt, file] = name.replace('gs://', '').split('/')
 
-export const landPartitions: SceneModel = ideFrame({
+export const landPartitions: SceneModel = ideFrame2({
+  model: 'TODO',
   tree: landTree('extract/raw.py', { fresh: ['extract/raw.py', 'env.sh', 'requirements.txt'] }),
   editor: { file: 'extract/raw.py', code, show: [[1, lineOf(code, '"""', 2)], [lineOf(code, 'def partition'), lineOf(code, 'return name')]], highlight: [...linesFrom(code, 'Cloud Storage has no folders', 'list like a folder'), lineOf(code, 'return f"source=')] },
   session,
@@ -38,7 +40,6 @@ export const landPartitions: SceneModel = ideFrame({
         },
       ],
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'Cloud Storage has no folders. A partition is a naming rule: every night of every source starts with the same two prefixes, so a reader can skip the nights it does not want.' },
   ],
   edges: [
     { from: 'l-objects', to: 'l-flat' },
