@@ -134,8 +134,7 @@ export interface Frame {
   cwd?: string
 }
 
-/* PORTING */ export function ideFrame2(f: Frame): SceneModel { try { return build(f) } catch (e) { console.error('FRAME ' + ('editor' in f ? f.editor.file : '') + ' ' + (e as Error).message); return { nodes: [] } } }
-function build({ model, editor, session, side, edges = [], project = 'viewing-pulse', cwd = project, keep, shown }: Frame): SceneModel {
+export function ideFrame2({ model, editor, session, side, edges = [], project = 'viewing-pulse', cwd = project, keep, shown }: Frame): SceneModel {
   const term = terminal(session)
   const termShow = shown ?? (keep && keepLines(term, keep))
   const rows = termRows(term, termShow)

@@ -27,7 +27,7 @@ const tree = (step: string, active: string, fresh = [active]) =>
 
 // §12.1 — policy tags
 export const opPolicyTags: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Policy tags: column access, granted per tag',
   tree: tree('operate/01-policy-tags', 'infra/modules/governance/main.tf', ['infra/modules/governance', 'warehouse/dim_household.sql', 'warehouse/households_open.sql', 'warehouse/households_contact.sql']),
   editor: { file: 'infra/modules/governance/main.tf', code: gov1, show: [[lineOf(gov1, 'resource "google_data_catalog_policy_tag" "contact"'), lineOf(gov1, 'member     = "group:pii-readers@sun.example"') + 1], [lineOf(gov1, '{ name = "email"'), lineOf(gov1, 'policyTags = { names = [google_data_catalog_policy_tag.contact.name] } },')]], highlight: linesFrom(gov1, '{ name = "email"', 'policyTags = { names = [google_data_catalog_policy_tag.contact.name] } },') },
   session: s1,
@@ -35,11 +35,11 @@ export const opPolicyTags: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'group', id: 'tags', title: 'Taxonomy → tag → column → reader', minH: 560, icon: 'shield', tone: 'ingest', children: [
-        { type: 'item', id: 't-tax', title: 'sun-pii', sub: 'a taxonomy: what Sun counts as sensitive', icon: 'layers' },
+      type: 'group', id: 'tags', title: 'Taxonomy → tag → column → reader', icon: 'shield', tone: 'ingest', children: [
+        { type: 'item', id: 't-tax', title: 'sun-pii', sub: 'a taxonomy: what is sensitive', icon: 'layers' },
         { type: 'item', id: 't-tag', title: 'contact', sub: 'a policy tag: a way to reach a person', icon: 'shield' },
-        { type: 'item', id: 't-col', title: 'silver.dim_household: email, phone', sub: 'the tagged columns; the rest of the table is open', icon: 'bigquery' },
-        { type: 'item', id: 't-reader', title: 'pii-readers@sun.example', sub: 'fine-grained readers: the only ones who see them', icon: 'users', tone: 'store' },
+        { type: 'item', id: 't-col', title: 'silver.dim_household: email, phone', sub: 'tagged; the rest is open', icon: 'bigquery' },
+        { type: 'item', id: 't-reader', title: 'pii-readers@sun.example', sub: 'the only ones who see them', icon: 'users', tone: 'store' },
       ],
     },
   ],
@@ -54,7 +54,7 @@ export const opPolicyTags: SceneModel = ideFrame2({
 const findings = s2.split('\n').filter((l) => /^[A-Z_]+ +\w+ +[\d,]+ findings$/.test(l)).map((l) => l.split(/ +/))
 
 export const opDlp: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Sensitive Data Protection: find, then mask',
   tree: tree('operate/02-dlp', 'governance/dlp.py', ['governance', 'requirements.txt']),
   editor: { file: 'governance/dlp.py', code: dlp, show: [[lineOf(dlp, 'KINDS = '), lineOf(dlp, 'KINDS = ')], [lineOf(dlp, 'config = {"info_types"'), lineOf(dlp, 'print(f"{kind:<15}')], [lineOf(dlp, 'replace = {'), lineOf(dlp, '"deidentify_config": replace')]], highlight: linesFrom(dlp, 'replace = {', '"primitive_transformation": {"replace_with_info_type_config": {}}}]}}') },
   session: s2,
@@ -62,10 +62,10 @@ export const opDlp: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'group', id: 'flow', title: 'Finding → transform → masked file', minH: 440, icon: 'dlp', tone: 'ingest', children: [
-        { type: 'item', id: 'd-find', title: 'inspect', sub: 'infoTypes: email, phone, a person’s name; LIKELY or surer', icon: 'search' },
+      type: 'group', id: 'flow', title: 'Finding → transform → masked file', icon: 'dlp', tone: 'ingest', children: [
+        { type: 'item', id: 'd-find', title: 'inspect', sub: 'email, phone, a name: LIKELY or surer', icon: 'search' },
         { type: 'item', id: 'd-replace', title: 'replace with its kind', sub: 'jack.hughes75@… → [EMAIL_ADDRESS]', icon: 'dlp' },
-        { type: 'item', id: 'd-file', title: 'households.redacted.csv', sub: 'shareable: region and postcode kept', icon: 'file', tone: 'store' },
+        { type: 'item', id: 'd-file', title: 'households.redacted.csv', sub: 'shareable', icon: 'file', tone: 'store' },
       ],
     },
     {
@@ -87,7 +87,7 @@ const chain = ['gs://sun-media-dev-raw/source=viewing', 'bronze.viewing_raw', 'b
 const path = chain.filter((n) => lines3.some((l) => l.name === n))
 
 export const opLineage: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Lineage: the longest path, Gold back to the raw zone',
   tree: tree('operate/03-lineage', 'governance/lineage.py', ['governance/lineage.py', 'requirements.txt']),
   editor: { file: 'governance/lineage.py', code: lineage, show: [[lineOf(lineage, 'def upstream('), lineOf(lineage, 'upstream(sys.argv[1])')]], highlight: linesFrom(lineage, 'links = client.search_links(', '"parent": parent, "target": {"fully_qualified_name": fqn(table)}})') },
   session: s3,
@@ -95,8 +95,8 @@ export const opLineage: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'group', id: 'path', title: 'The longest path, gold back to the raw zone', minH: 470, icon: 'dataplex', tone: 'ingest', children: path.map((n, i) => ({
-        type: 'item' as const, id: `p-${i}`, title: n, sub: i === 0 ? 'files the device platform delivered' : i === path.length - 1 ? 'the table asked about' : 'written by a BigQuery job',
+      type: 'group', id: 'path', bare: true, children: path.map((n, i) => ({
+        type: 'item' as const, id: `p-${i}`, title: n, sub: i === 0 ? 'the delivered files' : i === path.length - 1 ? 'the table asked about' : 'a BigQuery job wrote it',
         icon: n.startsWith('gs://') ? 'gcs' : 'bigquery', tone: i === path.length - 1 ? 'store' as const : undefined,
       })),
     },
@@ -112,7 +112,7 @@ export const opLineage: SceneModel = ideFrame2({
 const rows4 = /rowCount: '(\d+)'/.exec(s4)![1]
 
 export const opQuality: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'A scan for one table’s rules; a gate for two',
   tree: tree('operate/04-data-quality', 'infra/modules/governance/main.tf', ['infra/modules/governance']),
   editor: { file: 'infra/modules/governance/main.tf', code: gov4, show: [[lineOf(gov4, '# A data-quality scan on Silver'), lineOf(gov4, '# table cannot do.')], [lineOf(gov4, 'data_quality_spec {'), lineOf(gov4, 'uniqueness_expectation {}') + 1]], highlight: linesFrom(gov4, 'uniqueness_expectation {}', 'uniqueness_expectation {}') },
   session: s4,
@@ -120,9 +120,9 @@ export const opQuality: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'group', id: 'scan', title: `The scan: ${Number(rows4).toLocaleString('en-GB')} rows, 4 rules, passed`, minH: 400, icon: 'dataplex', tone: 'ingest', children: [
-        { type: 'item', id: 'q-scan', title: 'silver-viewing-events', sub: 'on demand here; scheduled after the DAG in production', icon: 'dataplex' },
-        { type: 'item', id: 'q-result', title: 'a result per rule, kept', sub: 'beside the table in Dataplex’s catalog', icon: 'check', tone: 'store' },
+      type: 'group', id: 'scan', title: `The scan: ${Number(rows4).toLocaleString('en-GB')} rows, 4 rules, passed`, icon: 'dataplex', tone: 'ingest', children: [
+        { type: 'item', id: 'q-scan', title: 'silver-viewing-events', sub: 'on demand here; after the DAG in prod', icon: 'dataplex' },
+        { type: 'item', id: 'q-result', title: 'a result per rule, kept', sub: 'beside the table in the catalog', icon: 'check', tone: 'store' },
       ],
     },
     {
@@ -143,17 +143,17 @@ export const opQuality: SceneModel = ideFrame2({
 const jobs5 = s5.split('\n').filter((l) => /^\d\d:\d\d:\d\d +\w+ +\d+$/.test(l)).map((l) => l.split(/ +/))
 
 export const opLogging: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Audit logs: every job, routed and queryable',
   tree: tree('operate/05-logging', 'ops/night_jobs.logq', ['ops']),
   editor: { file: 'ops/night_jobs.logq', code: logq, highlight: [lineOf(logq, 'airflow-dag="viewing_daily"')] },
   session: s5,
   side: [
     MOCKED,
     {
-      type: 'group', id: 'router', title: 'Sources → log router → where it is kept', minH: 360, icon: 'cloudlogging', tone: 'ingest', children: [
-        { type: 'item', id: 'l-src', title: 'every BigQuery job', sub: 'an audit entry when it finishes: who, what, bytes billed', icon: 'bigquery' },
-        { type: 'item', id: 'l-router', title: 'the log router', sub: 'the _Default sink: 30 days, queryable', icon: 'cloudlogging' },
-        { type: 'item', id: 'l-q', title: 'a query', sub: 'the night’s jobs, by the labels Airflow put on them', icon: 'search', tone: 'store' },
+      type: 'group', id: 'router', title: 'Sources → log router → where it is kept', icon: 'cloudlogging', tone: 'ingest', children: [
+        { type: 'item', id: 'l-src', title: 'every BigQuery job', sub: 'an audit entry: who, what, bytes', icon: 'bigquery' },
+        { type: 'item', id: 'l-router', title: 'the log router', sub: '_Default: 30 days, queryable', icon: 'cloudlogging' },
+        { type: 'item', id: 'l-q', title: 'a query', sub: 'the night’s jobs, by Airflow’s labels', icon: 'search', tone: 'store' },
       ],
     },
     {
@@ -169,7 +169,7 @@ export const opLogging: SceneModel = ideFrame2({
 
 // §12.6 — alerts
 export const opAlerts: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'An alert: metric, policy, channel',
   tree: tree('operate/06-alerts', 'infra/modules/alerts/main.tf', ['infra/modules/alerts', 'infra/main.tf']),
   editor: { file: 'infra/modules/alerts/main.tf', code: alert, show: [[1, lineOf(alert, 'display_name = "oldest unacked')], [lineOf(alert, 'comparison      ='), lineOf(alert, 'content = ')]], highlight: linesFrom(alert, 'comparison      =', 'duration        =') },
   session: s6,
@@ -177,10 +177,10 @@ export const opAlerts: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'group', id: 'alert', title: 'Metric → policy → channel', minH: 480, icon: 'cloudmonitoring', tone: 'ingest', children: [
-        { type: 'item', id: 'a-metric', title: 'oldest_unacked_message_age', sub: 'viewing-events-dataflow: how far behind the job is', icon: 'pubsub' },
-        { type: 'item', id: 'a-policy', title: 'over 300 s for 2 minutes', sub: 'an incident opens; it closes itself when the job catches up', icon: 'cloudmonitoring' },
-        { type: 'item', id: 'a-channel', title: 'media-data@sun.example', sub: 'the email channel made with the budget (§3.8)', icon: 'bell', tone: 'store' },
+      type: 'group', id: 'alert', title: 'Metric → policy → channel', icon: 'cloudmonitoring', tone: 'ingest', children: [
+        { type: 'item', id: 'a-metric', title: 'oldest_unacked_message_age', sub: 'how far behind the job is', icon: 'pubsub' },
+        { type: 'item', id: 'a-policy', title: 'over 300 s for 2 minutes', sub: 'an incident opens, and closes itself', icon: 'cloudmonitoring' },
+        { type: 'item', id: 'a-channel', title: 'media-data@sun.example', sub: 'the budget’s channel (§3.8)', icon: 'bell', tone: 'store' },
       ],
     },
     {
@@ -203,7 +203,7 @@ export const opAlerts: SceneModel = ideFrame2({
 const plan7 = /^Plan: (.+)$/m.exec(s7)![1]
 
 export const opTwoEnvs: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Two environments, one root module',
   tree: tree('operate/07-two-environments', 'infra/envs/prod.tfvars', ['infra/envs/prod.tfvars']),
   editor: { file: 'infra/envs/prod.tfvars', code: prod },
   session: s7,
@@ -211,9 +211,9 @@ export const opTwoEnvs: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'group', id: 'envs', title: 'One root module, two projects', minH: 420, icon: 'gcpproject', tone: 'ingest', dir: 'row', children: [
-        { type: 'item', id: 'e-dev', title: 'sun-media-dev', sub: 'envs/dev.tfvars · state in sun-media-dev-tfstate', icon: 'gcpproject' },
-        { type: 'item', id: 'e-prod', title: 'sun-media-prod', sub: 'envs/prod.tfvars · state in sun-media-prod-tfstate', icon: 'gcpproject', tone: 'store' },
+      type: 'group', id: 'envs', title: 'One root module, two projects', icon: 'gcpproject', tone: 'ingest', dir: 'row', children: [
+        { type: 'item', id: 'e-dev', title: 'sun-media-dev', sub: 'envs/dev.tfvars', stack: true, icon: 'gcpproject' },
+        { type: 'item', id: 'e-prod', title: 'sun-media-prod', sub: 'envs/prod.tfvars', stack: true, icon: 'gcpproject', tone: 'store' },
       ],
     },
     {
@@ -233,7 +233,7 @@ export const opTwoEnvs: SceneModel = ideFrame2({
 const steps8 = [...s8.matchAll(/^Step #(\d) - "(\w+)": (.+)$/gm)].map((m) => m.slice(1))
 
 export const opCloudBuild: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'CI: every push formatted, validated, planned',
   tree: tree('operate/08-cloud-build', 'cloudbuild.yaml'),
   editor: { file: 'cloudbuild.yaml', code: cb, show: [[1, lineOf(cb, 'args: [fmt, -check, -recursive]')], [lineOf(cb, '- id: plan'), lineOf(cb, 'args:')]], highlight: [lineOf(cb, '- id: fmt'), lineOf(cb, '- id: plan')] },
   session: s8,
@@ -241,10 +241,10 @@ export const opCloudBuild: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'group', id: 'ci', title: 'GitHub → trigger → build → plan', minH: 460, icon: 'cloudbuild', tone: 'ingest', children: [
-        { type: 'item', id: 'c-push', title: 'a push to main', sub: 'schemabotview/gcp-media-analytics', icon: 'github' },
+      type: 'group', id: 'ci', title: 'GitHub → trigger → build → plan', icon: 'cloudbuild', tone: 'ingest', children: [
+        { type: 'item', id: 'c-push', title: 'a push to main', sub: 'the repository', icon: 'github' },
         { type: 'item', id: 'c-build', title: 'Cloud Build, as sa-cicd', sub: 'fmt, validate, lint the SQL', icon: 'cloudbuild' },
-        { type: 'item', id: 'c-plan', title: 'a plan, in the build log', sub: 'a person reads it and applies: CI never does', icon: 'check', tone: 'store' },
+        { type: 'item', id: 'c-plan', title: 'a plan, in the build log', sub: 'a person applies; CI never does', icon: 'check', tone: 'store' },
       ],
     },
     {
