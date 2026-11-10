@@ -182,8 +182,10 @@ marked † are what `sun_gen` is built to produce; they are frozen when its `ver
   Bronze | Silver | Gold | Looker) and **stream** (Producers | Pub/Sub | Dataflow | `live` |
   dashboard), with G1–G4 as badges. A part not built yet is `muted`; `BUILT[course]` is what exists;
   what a section adds is ringed by its `focus`. Every map frame shares one fit.
-- **IDE frame** (ported from `azure-trade-finance`'s `ide.ts`): explorer | editor over terminal |
-  fixed side pane. HCL, Python (Beam, PySpark, Airflow), BigQuery SQL and YAML are all shown here.
+- **IDE frame v2** (`src/scenes/frame.ts` `ideFrame2`, Decision 9): editor over an 80-column
+  terminal | side pane 574, titled with the section's mental model; no explorer. HCL, Python (Beam,
+  PySpark, Airflow), BigQuery SQL and YAML are all shown here. Course 2's labs (`labFrame2`) are the
+  same grid with the terminal filling the work column.
 - **◆ full scene**: a canonical big picture (regions and zones, IAM inheritance, Beam's model,
   watermarks, BigQuery's architecture, Dataproc's shapes, Airflow's model, three kinds of progress),
   its own section, with real output inside it.
@@ -419,6 +421,19 @@ E emulated · C compiled · D doc-cited · M model. `L · E`: local code against
 8. From Course 9 on, nothing is recorded: every step's output is AUTHORED (mocked) to match the
    code and the facts, and its frame is labelled `mocked`. GCP was torn down after Course 8
    (2026-11-03, the owner's call).
+9. **IDE frame v2** (2026-11-10): graphl-flow 0.11.0 and shell 1.1.0, pinned exactly; every IDE and
+   lab section on the shared 1344 × 756 grid (one fit), as the other concept repos. Editor over an
+   80-column terminal sharing 26 rows (the terminal takes its transcript's rows after `keep`/`shown`)
+   | side pane 574. No explorer: the side pane takes its column (the editor's tab names the file).
+   A lab's terminal fills the work column and folds with `keep` (29 rows). A side pane holds one
+   diagram and at most one loose table; a narrated note became a card; doc-cited and verification
+   labels stay the pane's first node. When a highlight spans two distant regions and the hand-picked
+   ranges do not fit, the editor shows the highlighted lines themselves, grown to fill. §7.9's
+   highlight was anchored to the job's window (it had matched the local pipeline's, line 66). §9.5's
+   two plots became one with paired bars, plus the largest task per approach. 9 narrations changed
+   (each named a note, or a table's order): their wavs are removed for Colab, and every course is
+   re-recorded, because the frame changed. Map and full-scene frames are unchanged. Nothing was
+   re-recorded on GCP.
 
 ## Open
 

@@ -11,7 +11,7 @@
 | teaches | GCP, by building `viewing-pulse`: Sun's live concurrent-viewers stream (Pub/Sub → Dataflow → BigQuery) and nightly content-performance and QoS batch (GCS → BigQuery Bronze/Silver/Gold, Dataproc), gates G1–G4 |
 | cast | Priya (data engineer), Sun (fictional UK pay-TV and broadband provider); the Northbridge v Eastfield derby, 2026-10-31 |
 | reference repos | all public under `github.com/schemabotview`: **`azure-trade-finance`** (map + IDE frames, `spine.py` with local and recorded steps, `leaks.py`, the generator pattern, verification levels — port it), **`aws-ecommerce`** (record-once spine), **`sql-bank`** (`setup-postgres.sh`), **`spark-ecommerce-analytics`** (checks, registry, shots, film) |
-| engine / shell | `@graphlearning/graphl-flow`, `@graphlearning/shell` from npm: graphl-flow **^0.9.0** (its Google Cloud icon keys: see COURSE-PLAN, "Frames"), shell ^1.1.0 |
+| engine / shell | `@graphlearning/graphl-flow`, `@graphlearning/shell` from npm: graphl-flow **0.11.0** and shell **1.1.0**, pinned exactly (IDE frame v2, COURSE-PLAN Decision 9; Google Cloud icon keys: see "Frames") |
 | toolchain | see COURSE-PLAN, "Stack and pins": PostgreSQL 18.6, Python 3.14.9, Beam (Python), PySpark 4.2.0 on Java 21, Airflow + Google provider, gcloud + Pub/Sub emulator, fake-gcs-server, Terraform 1.17.0 (`hashicorp/google`) |
 | frames | map, IDE, timeline (new, Course 7), ◆ full scenes; `--brand` Google blue `#4285f4` |
 | secrets | `GOOGLE_PROJECT_ID`, a recording service account's credentials (environment secret, never committed, never printed) |
@@ -48,6 +48,22 @@ course), `level.ts`, `lab.ts` (`labFrame`: terminal beside a diagram, the IDE fr
 `install-gcp-tools.sh` (fake-gcs-server 1.56.1, Terraform 1.17.0). `film.mjs` and
 `thumb-film.mjs` (ported from azure-trade-finance), `titles.json`. `scripts/audio-manifest.json` is
 generated. The Colab notebook is not in this repo.
+
+**2026-11-10: ported to IDE frame v2** (COURSE-PLAN Decision 9). All 83 IDE and lab sections are on
+graphl-flow 0.11's shared grid (`src/scenes/frame.ts` `ideFrame2` / `labFrame2`, workbench id
+`ide-bench`): editor over the 80-column terminal | side pane 574, titled with the section's mental
+model; no explorer. Map and full-scene frames are unchanged. 9 narrations changed: their wavs are
+removed and the manifest regenerated, so check-content fails on those 9 until Colab regenerates
+them; then every course is re-recorded and the film re-cut (the recordings above are v1).
+
+**IDE frame v2, as built:** 26 rows shared by editor and terminal (terminal at least 6, editor at least
+8), the editor windowed around its highlight; a hand-picked `show` only when the highlight does not
+fit, and then the highlighted lines alone, grown to fill; it THROWS naming the scene when none fits.
+Side pane: ONE diagram (edges or a plot), at most one table outside it, no notes or bullets
+(check-content), filled ≥ 1/2 (check-render). An edge label widens every gap of its column: a
+vertical chain of 3+ labelled steps rarely fits. A second table joins the diagram by an edge to the
+table itself, outside any titled group. Plots are `compact` with `w: SIDE_W - 34`. A table fits ~50
+monospace characters a row.
 
 | # | course | sections | status |
 |---|---|---|---|
