@@ -31,7 +31,7 @@ const editor = json(s1, `jq '.bindings[] | select(.role == "roles/editor")' iam.
 const owners = outputOf(s1, `jq '.bindings[] | select(.role == "roles/owner").members | length' iam.json`).trim()
 
 export const secureCloudIam: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'An allow policy: bindings of a role to members',
   tree: stepTree('secure/01-cloud-iam', 'gcp.sh', { fresh: [], closed: [...CLOSED, 'infra'] }),
   editor: { file: 'gcp.sh', code: gcpSh, highlight: [lineOf(gcpSh, 'TF_VAR_operator=')] },
   session: s1,
@@ -41,7 +41,7 @@ export const secureCloudIam: SceneModel = ideFrame2({
       type: 'group', id: 'policy', title: 'The project’s allow policy', icon: 'gcpiam', tone: 'infra', children: [
         { type: 'item', id: 'p-policy', title: `${bindings} bindings`, sub: 'one policy, attached to the project', icon: 'file' },
         { type: 'item', id: 'p-binding', title: editor.role, sub: 'one binding: a role …', icon: 'shield' },
-        { type: 'item', id: 'p-members', title: `${editor.members.length} members`, sub: '… and who holds it: Google’s own service agents here', icon: 'users' },
+        { type: 'item', id: 'p-members', title: `${editor.members.length} members`, sub: '… and who holds it: Google’s agents', icon: 'users' },
       ],
     },
     {
@@ -57,6 +57,7 @@ export const secureCloudIam: SceneModel = ideFrame2({
   edges: [
     { from: 'p-policy', to: 'p-binding' },
     { from: 'p-binding', to: 'p-members' },
+    { from: 'p-members', to: 'members' },
   ],
 })
 
@@ -65,7 +66,7 @@ const projectBindings = outputOf(s2, "jq -r '[.bindings[].role] | length' iam.js
 const bucket = json(s2, "jq '.bindings' bucket.json") as { members: string[]; role: string }[]
 
 export const secureInheritance: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Policies union down the hierarchy',
   tree: stepTree('secure/02-inheritance', 'infra/modules/storage/main.tf', { fresh: [], closed: CLOSED }),
   editor: { file: 'infra/modules/storage/main.tf', code: storage2, highlight: [lineOf(storage2, 'uniform_bucket_level_access')] },
   session: s2,
@@ -97,7 +98,7 @@ const accounts = [...iam3.matchAll(/^ {4}(sa-\w+)\s+= "(.+)"$/gm)].map((m) => [m
 const made = outputOf(s3, 'terraform state list | grep google_service_account').split('\n').filter(Boolean)
 
 export const secureServiceAccounts: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'One service account per job',
   tree: stepTree('secure/03-service-accounts', 'infra/modules/iam/main.tf', { fresh: ['infra/modules/iam'], closed: CLOSED }),
   editor: { file: 'infra/modules/iam/main.tf', code: iam3 },
   session: s3,
@@ -126,7 +127,7 @@ export const secureServiceAccounts: SceneModel = ideFrame2({
 const keys = outputOf(s4, 'gcloud iam service-accounts keys list --iam-account=$SA --managed-by=user').trim()
 
 export const secureNoKeyFiles: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Impersonation: a token, never a key file',
   tree: stepTree('secure/04-no-key-files', 'infra/modules/iam/main.tf', { fresh: ['infra/modules/iam/variables.tf'], closed: CLOSED }),
   editor: { file: 'infra/modules/iam/main.tf', code: iam4, show: [[lineOf(iam4, 'resource "google_service_account" "job"'), iam4.trimEnd().split('\n').length]], highlight: linesFrom(iam4, '# Priya may ACT AS', 'member             = var.operator') },
   session: s4,
@@ -157,7 +158,7 @@ const tokenChars = outputOf(s5, 'gcloud auth print-access-token --impersonate-se
 const denied = /does not have (\S+) access/.exec(s5.replace(/\n/g, ''))![1].replace(/ /g, '')
 
 export const securePermissionDenied: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Read the permission an error names',
   tree: stepTree('secure/05-permission-denied', 'infra/modules/storage/main.tf', { fresh: [], closed: CLOSED }),
   editor: { file: 'infra/modules/storage/main.tf', code: storage2 },
   session: s5,
@@ -191,7 +192,7 @@ const versions = outputOf(s6, 'gcloud secrets versions list crm-db-password').sp
 const length = outputOf(s6, 'gcloud secrets versions access latest --secret=crm-db-password $AS=$SA | wc -c').split('\n').filter((l) => /^\d+$/.test(l))[0]
 
 export const secureSecretManager: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'A secret, readable by one account',
   tree: stepTree('secure/06-secret-manager', 'infra/modules/secrets/main.tf', { fresh: ['infra/modules/secrets'], closed: CLOSED }),
   editor: { file: 'infra/modules/secrets/main.tf', code: secrets6, show: [[lineOf(secrets6, '# The CRM'), lineOf(secrets6, 'special = false') + 1], [lineOf(secrets6, 'resource "google_secret_manager_secret_version"'), secrets6.trimEnd().split('\n').length]], highlight: [lineOf(secrets6, 'random_password'), lineOf(secrets6, 'secret_data'), ...linesFrom(secrets6, '# Only the extract', 'member    =')] },
   session: s6,
@@ -211,12 +212,7 @@ export const secureSecretManager: SceneModel = ideFrame2({
         },
       ],
     },
-    {
-      type: 'table', id: 'asked', title: 'Who asked for the latest version', tone: 'store', columns: ['as', 'got'], rows: [
-        { id: 'a-ingest', cells: ['sa-ingest', `${length} characters (counted, never printed)`], tone: 'store' },
-        { id: 'a-dataflow', cells: ['sa-dataflow', 'PERMISSION_DENIED'], tone: 'consume' },
-      ],
-    },
+    { type: 'item', id: 'rule', icon: 'lock', tone: 'ingest', title: 'Never printed: only its length', sub: 'read at run time; no password in code or on a laptop' },
   ],
   edges: [
     { from: 's-secret', to: 's-version' },
@@ -229,7 +225,7 @@ export const secureSecretManager: SceneModel = ideFrame2({
 const kmsKey = outputOf(s7, 'gcloud storage buckets describe $RAW --format="value(default_kms_key)"').replace(/\n/g, '').trim()
 
 export const secureKms: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'A key of Sun’s own: CMEK on the raw zone',
   tree: stepTree('secure/07-kms-cmek', 'infra/modules/kms/main.tf', { fresh: ['infra/modules/kms'], closed: CLOSED }),
   editor: { file: 'infra/modules/kms/main.tf', code: kms7, show: [[lineOf(kms7, '# A key ring'), lineOf(kms7, 'role          = "roles/cloudkms')]], highlight: [lineOf(kms7, 'rotation_period'), lineOf(kms7, 'roles/cloudkms.cryptoKeyEncrypterDecrypter')] },
   session: s7,
@@ -238,15 +234,15 @@ export const secureKms: SceneModel = ideFrame2({
     RECORDED,
     {
       type: 'group', id: 'kms', title: 'Sun’s key, on the raw zone', icon: 'cloudkms', tone: 'infra', children: [
-        { type: 'item', id: 'k-ring', title: 'key ring kr-media', sub: 'europe-west2 · can never be deleted', icon: 'cloudkms' },
-        { type: 'item', id: 'k-key', title: 'key k-raw', sub: 'rotates every 90 days', icon: 'key' },
-        { type: 'item', id: 'k-version', title: 'version 1, primary', sub: 'new objects use the newest version', icon: 'key' },
+        { type: 'item', id: 'k-ring', title: 'key ring kr-media', sub: 'never deletable', icon: 'cloudkms' },
+        { type: 'item', id: 'k-key', title: 'key k-raw', sub: 'rotates: 90 days', icon: 'key' },
+        { type: 'item', id: 'k-version', title: 'version 1, primary', sub: 'new objects use it', icon: 'key' },
         { type: 'item', id: 'k-bucket', title: 'sun-media-dev-raw', sub: 'default key: k-raw', icon: 'gcs', tone: 'store' },
       ],
     },
     {
       type: 'table', id: 'agent', title: 'Who encrypts', tone: 'store', columns: ['who', 'role on k-raw'], rows: [
-        { id: 'a-gcs', cells: ['Cloud Storage’s service agent', 'cryptoKeyEncrypterDecrypter'] },
+        { id: 'a-gcs', cells: ['Storage’s agent', 'cryptoKeyEncrypterDecrypter'] },
         { id: 'a-key', cells: [kmsKey.split('/').slice(-3).join('/'), 'the bucket’s default key'] },
       ],
     },
@@ -264,7 +260,7 @@ const project = matrix.slice(1, matrix.findIndex((l) => l.startsWith('bucket')))
 const onBucket = matrix.slice(matrix.findIndex((l) => l.startsWith('bucket')) + 1).filter(Boolean).map((l) => l.trim().split(/\s+/))
 
 export const secureLeastPrivilege: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Least privilege: the narrowest role, on the narrowest resource',
   tree: stepTree('secure/08-least-privilege', 'infra/modules/storage/main.tf', { fresh: ['infra/roles.sh'], closed: CLOSED }),
   editor: { file: 'infra/modules/storage/main.tf', code: storage8, show: [[lineOf(storage8, '# Who may touch'), storage8.trimEnd().split('\n').length]], highlight: linesFrom(storage8, '"ingest-create"', '"dataproc-view"') },
   session: s8,
@@ -285,7 +281,7 @@ export const secureLeastPrivilege: SceneModel = ideFrame2({
       ],
     },
   ],
-  edges: [{ from: 'n-ingest', to: 'n-raw', label: 'objectCreator + objectViewer' }],
+  edges: [{ from: 'n-ingest', to: 'n-raw', label: 'creator + viewer' }],
 })
 
 export const secureScenes: Record<string, SceneModel> = {
