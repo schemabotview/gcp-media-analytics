@@ -59,7 +59,7 @@ export const orchModel: SceneModel = {
 
 // §11.2 — the DAG
 export const orchDag: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'A DAG: one night, in order',
   tree: tree('orchestrate/02-the-dag', 'dags/viewing_daily.py', ['dags', 'airflow', 'warehouse/bronze.sql', 'warehouse/g2.sql', 'warehouse/silver.sql']),
   editor: { file: 'dags/viewing_daily.py', code: dag2, show: [[lineOf(dag2, 'def sql(task_id: str)'), lineOf(dag2, '"parameterValue": {"value": "{{ ds }}"}}]}})')], [lineOf(dag2, '# the guide is JSON'), lineOf(dag2, 'dag.get_task("gold_content")')]], highlight: linesFrom(dag2, '(landed >> sql("bronze")', 'dag.get_task("gold_content")') },
   session: s2,
@@ -71,11 +71,11 @@ export const orchDag: SceneModel = ideFrame2({
       rows: tasks.map(([op, t]) => ({ id: `t-${t}`, cells: [t, op.replace('Operator', '').replace('ObjectExistence', '')], tone: t.startsWith('gate') ? 'ingest' as const : undefined })),
     },
     {
-      type: 'group', id: 'flow', title: 'One night, in four moves', minH: 240, icon: 'airflow', tone: 'ingest', dir: 'row', children: [
-        { type: 'item', id: 'f-wait', title: 'wait', sub: '_SUCCESS', icon: 'clock' },
-        { type: 'item', id: 'f-load', title: 'load', sub: 'Bronze, Silver', icon: 'bigquery' },
-        { type: 'item', id: 'f-gate', title: 'gate', sub: 'G2, G3, G4', icon: 'shield' },
-        { type: 'item', id: 'f-answer', title: 'answer', sub: 'Gold, Spark', icon: 'check', tone: 'store' },
+      type: 'group', id: 'flow', title: 'One night, in four moves', icon: 'airflow', tone: 'ingest', dir: 'row', children: [
+        { type: 'item', id: 'f-wait', title: 'wait', sub: '_SUCCESS', icon: 'clock', stack: true },
+        { type: 'item', id: 'f-load', title: 'load', sub: 'layers', icon: 'bigquery', stack: true },
+        { type: 'item', id: 'f-gate', title: 'gate', sub: 'G2–G4', icon: 'shield', stack: true },
+        { type: 'item', id: 'f-answer', title: 'answer', sub: 'Gold', icon: 'check', tone: 'store', stack: true },
       ],
     },
   ],
@@ -88,7 +88,7 @@ export const orchDag: SceneModel = ideFrame2({
 
 // §11.3 — waiting for the batch: the sensor
 export const orchSensor: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'A sensor waits for _SUCCESS',
   tree: tree('orchestrate/03-waiting', 'dags/viewing_daily.py', []),
   editor: { file: 'dags/viewing_daily.py', code: dag2, show: [[lineOf(dag2, 'landed = GCSObjectExistenceSensor('), lineOf(dag2, 'mode="reschedule"')]], highlight: linesFrom(dag2, 'object="source=viewing/dt={{ ds }}/_SUCCESS",', 'mode="reschedule"') },
   session: s3,
@@ -96,14 +96,14 @@ export const orchSensor: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'group', id: 'poke', title: 'Sensor → poke → go', minH: 480, icon: 'clock', tone: 'ingest', children: [
+      type: 'group', id: 'poke', title: 'Sensor → poke → go', icon: 'clock', tone: 'ingest', children: [
         { type: 'item', id: 'p-poke', title: 'is _SUCCESS there?', sub: 'every 5 minutes, for up to 6 hours', icon: 'search' },
-        { type: 'item', id: 'p-wait', title: 'not yet: UP_FOR_RESCHEDULE', sub: 'the worker slot is given back while it waits', icon: 'clock', muted: true },
-        { type: 'item', id: 'p-go', title: 'there: SUCCESS', sub: 'the export finished writing; Bronze may load', icon: 'check', tone: 'store' },
+        { type: 'item', id: 'p-wait', title: 'not yet: UP_FOR_RESCHEDULE', sub: 'the worker slot is given back', icon: 'clock', muted: true },
+        { type: 'item', id: 'p-go', title: 'there: SUCCESS', sub: 'Bronze may load', icon: 'check', tone: 'store' },
       ],
     },
     {
-      type: 'table', id: 'pokes', title: 'Two tests of the sensor, for 2026-10-31', tone: 'store', columns: ['test', 'source=viewing/dt=2026-10-31/', 'state'],
+      type: 'table', id: 'pokes', title: 'Two tests of the sensor, for 2026-10-31', tone: 'store', columns: ['test', 'the night’s folder', 'state'],
       rows: [
         { id: 'k-1', cells: ['1', 'four parts, no _SUCCESS', 'up_for_reschedule'], tone: 'consume' },
         { id: 'k-2', cells: ['2', 'four parts + _SUCCESS', 'success'], tone: 'ingest' },
@@ -112,7 +112,7 @@ export const orchSensor: SceneModel = ideFrame2({
   ],
   edges: [
     { from: 'p-poke', to: 'p-wait', label: 'absent' },
-    { from: 'p-wait', to: 'p-go', label: 'the platform writes _SUCCESS' },
+    { from: 'p-wait', to: 'p-go', label: '_SUCCESS written' },
   ],
 })
 
@@ -121,7 +121,7 @@ const tries = (t: string) => (s4.match(new RegExp(`starting task_id=${t}$`, 'gm'
 const failedTasks = [...s4.replace(/\n/g, '').matchAll(/Marking task as UPSTREAM_FAILED\. task_id=(\w+?)(?=\[|$)/g)].map((m) => m[1])
 
 export const orchRetries: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'A blip is retried; a fact is not',
   tree: tree('orchestrate/04-retries', 'dags/viewing_daily.py'),
   editor: { file: 'dags/viewing_daily.py', code: dag4, show: [[lineOf(dag4, 'default_args={'), lineOf(dag4, '"sla": timedelta(hours=4)}) as dag:')]], highlight: linesFrom(dag4, '"retries": 2, "retry_delay"', '"sla": timedelta(hours=4)}) as dag:') },
   session: s4,
@@ -129,16 +129,16 @@ export const orchRetries: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'group', id: 'why', title: 'A blip is retried; a fact is not', minH: 380, icon: 'clock', tone: 'ingest', children: [
+      type: 'group', id: 'why', title: 'A blip is retried; a fact is not', icon: 'clock', tone: 'ingest', children: [
         { type: 'item', id: 'w-503', title: '503 from BigQuery', sub: 'gone a minute later: try 2 succeeds', icon: 'zap' },
-        { type: 'item', id: 'w-g3', title: 'G3 false', sub: 'the same on every try: fails after 3, emails media-data', icon: 'shield', tone: 'consume' },
+        { type: 'item', id: 'w-g3', title: 'G3 false', sub: 'the same every try: fails after 3, emails', icon: 'shield', tone: 'consume' },
       ],
     },
     {
       type: 'table', id: 'states', title: 'The run, task by task', tone: 'store', columns: ['task', 'tries', 'state'],
       rows: [
-        { id: 's-bronze', cells: ['bronze', String(tries('bronze')), 'success: a 503, retried'] },
-        { id: 's-g3', cells: ['g3', String(tries('g3')), 'success: the gate’s query ran'] },
+        { id: 's-bronze', cells: ['bronze', String(tries('bronze')), 'success, after a 503'] },
+        { id: 's-g3', cells: ['g3', String(tries('g3')), 'success: the query ran'] },
         { id: 's-gate', cells: ['gate_g3', String(tries('gate_g3')), 'failed: G3 is false'], tone: 'consume' },
         ...failedTasks.map((t) => ({ id: `s-${t}`, cells: [t, '0', 'upstream_failed'], tone: 'consume' as const })),
       ],
@@ -151,7 +151,7 @@ export const orchRetries: SceneModel = ideFrame2({
 const gates = s5.split('\n').filter((l) => /^\| G\d/.test(l)).map((l) => l.split('|').slice(1, -1).map((c) => c.trim()))
 
 export const orchFailed: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'A failed night: red, fixed, green',
   tree: tree('orchestrate/05-failed-night', 'warehouse/epg.py'),
   editor: { file: 'warehouse/epg.py', code: epg5, show: [[lineOf(epg5, 'raw = storage.Client()'), lineOf(epg5, 'job.result()')]], highlight: linesFrom(epg5, 'latest = sorted(raw.list_blobs(', 'key=lambda b: b.name)[-1]') },
   session: s5,
@@ -163,10 +163,10 @@ export const orchFailed: SceneModel = ideFrame2({
       rows: gates.map(([g, p, d], i) => ({ id: `g-${i}`, cells: [g, p, d], tone: p === 'false' ? 'consume' as const : g === 'G3' ? 'ingest' as const : undefined })),
     },
     {
-      type: 'group', id: 'fix', title: 'Red, then green', minH: 300, icon: 'workflow', tone: 'ingest', children: [
+      type: 'group', id: 'fix', title: 'Red, then green', icon: 'workflow', tone: 'ingest', children: [
         { type: 'item', id: 'f-red', title: 'gate_g3 failed', sub: 'SUN-MOVIES-2, 20:00–22:00: no slot', icon: 'shield', tone: 'consume' },
-        { type: 'item', id: 'f-fix', title: 'the vendor re-delivers: .r2.json', sub: 'a new object: the old is kept, retained', icon: 'gcs' },
-        { type: 'item', id: 'f-green', title: 'clear epg and downstream', sub: 'only those re-run; the run ends green', icon: 'check', tone: 'store' },
+        { type: 'item', id: 'f-fix', title: 'the vendor re-delivers: .r2.json', sub: 'a new object; the old one kept', icon: 'gcs' },
+        { type: 'item', id: 'f-green', title: 'clear epg and downstream', sub: 'only those re-run: green', icon: 'check', tone: 'store' },
       ],
     },
   ],
@@ -180,7 +180,7 @@ export const orchFailed: SceneModel = ideFrame2({
 const nights = s6.split('\n').filter((l) => /^\| +401958/.test(l)).map((l) => l.split('|').slice(1, -1).map((c) => Number(c.trim()).toLocaleString('en-GB')))
 
 export const orchBackfill: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'A backfill: a night replaced, never doubled',
   tree: tree('orchestrate/06-backfill', 'warehouse/bronze.sql', ['warehouse/night.sql']),
   editor: { file: 'warehouse/bronze.sql', code: bronze6, highlight: [lineOf(bronze6, 'DELETE FROM bronze.viewing_events WHERE dt = @dt;')] },
   session: s6,
@@ -188,8 +188,8 @@ export const orchBackfill: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'group', id: 'idem', title: 'dt is the logical date; a night is replaced', minH: 480, icon: 'layers', tone: 'ingest', children: [
-        { type: 'item', id: 'i-delete', title: 'DELETE … WHERE dt = @dt', sub: 'Bronze, the quarantine, Silver, Gold: the night goes', icon: 'workflow' },
+      type: 'group', id: 'idem', title: 'dt is the logical date; a night is replaced', icon: 'layers', tone: 'ingest', children: [
+        { type: 'item', id: 'i-delete', title: 'DELETE … WHERE dt = @dt', sub: 'every layer: the night goes', icon: 'workflow' },
         { type: 'item', id: 'i-insert', title: 'INSERT the night again', sub: 'from the same files: the same rows', icon: 'bigquery' },
         { type: 'item', id: 'i-same', title: 'a rerun changes nothing', sub: 'so a backfill can never double a night', icon: 'check', tone: 'store' },
       ],
@@ -209,7 +209,7 @@ export const orchBackfill: SceneModel = ideFrame2({
 const plan = /^Plan: (.+)$/m.exec(s7)![1]
 
 export const orchComposer: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Composer: the same DAG, Airflow run by Google',
   tree: tree('orchestrate/07-composer', 'infra/modules/composer/main.tf', ['infra/modules/composer', 'infra/main.tf']),
   editor: { file: 'infra/modules/composer/main.tf', code: composer, show: [[1, 3], [lineOf(composer, 'resource "google_composer_environment" "media"'), lineOf(composer, 'depends_on')]], highlight: linesFrom(composer, 'image_version = ', 'environment_size = ') },
   session: s7,
@@ -217,12 +217,13 @@ export const orchComposer: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'group', id: 'managed', title: 'Managed Airflow: what Google runs', minH: 540, icon: 'composer', tone: 'ingest', children: [
+      type: 'group', id: 'managed', title: 'Managed Airflow: what Google runs', icon: 'composer', tone: 'ingest', children: [
         { type: 'item', id: 'm-dags', title: 'the same dags/ folder', sub: 'synced to the environment’s bucket', icon: 'file' },
-        { type: 'item', id: 'm-env', title: 'Composer 3, small', sub: 'scheduler, workers, web server, database: Google’s to run and patch', icon: 'composer' },
+        { type: 'item', id: 'm-env', title: 'Composer 3, small', sub: 'scheduler, workers, web server, database', icon: 'composer' },
         { type: 'item', id: 'm-sa', title: 'sa-airflow', sub: 'the DAG’s identity on Google Cloud', icon: 'gcpiam', tone: 'store' },
       ],
     },
+    { type: 'item', id: 'plan', icon: 'terraform', tone: 'consume', title: `terraform plan: ${plan}`, sub: 'it bills every hour it exists: planned, never applied' },
   ],
   edges: [
     { from: 'm-dags', to: 'm-env' },
