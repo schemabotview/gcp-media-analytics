@@ -58,7 +58,7 @@ const topics = list('gcloud pubsub topics list --filter=$L --format="$F"')
 const subs = list('gcloud pubsub subscriptions list --filter=$L --format="$F"')
 
 export const streamTopics: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'A topic fans out to subscriptions',
   tree: tree('stream/02-topics', 'infra/modules/pubsub/main.tf', ['infra/modules/pubsub']),
   editor: { file: 'infra/modules/pubsub/main.tf', code: pubsubTf, show: [[1, 4], [lineOf(pubsubTf, "# Dataflow's subscriptions"), lineOf(pubsubTf, 'max_delivery_attempts') + 1]], highlight: linesFrom(pubsubTf, 'ack_deadline_seconds = 20', 'max_delivery_attempts') },
   session: s2,
@@ -66,11 +66,11 @@ export const streamTopics: SceneModel = ideFrame2({
   side: [
     RECORDED,
     {
-      type: 'group', id: 'fan', title: 'Publisher → topic → subscription → subscriber', icon: 'pubsub', tone: 'ingest', children: [
-        { type: 'item', id: 'f-boxes', title: 'the boxes', sub: 'publish every event', icon: 'screen' },
-        { type: 'item', id: 'f-topic', title: 'viewing-events', sub: 'a topic: kept a day', icon: 'pubsub' },
-        { type: 'item', id: 'f-sub', title: 'viewing-events-dataflow', sub: 'a subscription: ack within 20 s; 5 tries, then dead-letter', icon: 'pubsub', tone: 'store' },
-        { type: 'item', id: 'f-reader', title: 'Dataflow', sub: 'the reader, in Course 7', icon: 'dataflow', muted: true },
+      type: 'group', id: 'fan', title: 'Publisher → topic → subscriber', icon: 'pubsub', tone: 'ingest', children: [
+        { type: 'item', id: 'f-boxes', title: 'the boxes, publishing', icon: 'screen' },
+        { type: 'item', id: 'f-topic', title: 'viewing-events', sub: 'a topic: kept a day; a copy to each subscription', icon: 'pubsub' },
+        { type: 'item', id: 'f-sub', title: 'viewing-events-dataflow', sub: 'ack in 20 s; 5 tries, then dead-letter', icon: 'pubsub', tone: 'store' },
+        { type: 'item', id: 'f-reader', title: 'Dataflow, in Course 7', icon: 'dataflow', muted: true },
       ],
     },
     {
@@ -79,18 +79,17 @@ export const streamTopics: SceneModel = ideFrame2({
     },
   ],
   edges: [
-    { from: 'f-boxes', to: 'f-topic', label: 'publish' },
-    { from: 'f-topic', to: 'f-sub', label: 'a copy each' },
-    { from: 'f-sub', to: 'f-reader', label: 'pull, ack', dashed: true },
+    { from: 'f-boxes', to: 'f-topic' },
+    { from: 'f-topic', to: 'f-sub' },
+    { from: 'f-sub', to: 'f-reader', dashed: true },
   ],
 })
 
 // §6.3 — publishing: the derby replayed, 60× faster.
 const pub = /^(\d+) events.*\n {2}(.+)\npublished (\d+) messages \((\d+) re-sent/m.exec(s3)!
-const sample = outputOf(s3, 'python consume/pull.py viewing-events-dataflow --max 3').split('\n')[0]
 
 export const streamPublishing: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'One event, one message',
   tree: tree('stream/03-publishing', 'produce/settop.py', ['produce', 'consume', 'env.sh', 'requirements.txt']),
   editor: { file: 'produce/settop.py', code: settop, show: [[lineOf(settop, 'SPEED = 60'), lineOf(settop, 'RESEND = 400')], [lineOf(settop, 'sent, resent, futures'), lineOf(settop, 'resent += i % RESEND')]], highlight: [lineOf(settop, 'time.sleep(max(0'), ...linesFrom(settop, 'futures.append(publisher.publish(', 'type=e["type"]')] },
   session: s3,
@@ -99,14 +98,13 @@ export const streamPublishing: SceneModel = ideFrame2({
     {
       type: 'group', id: 'msg', title: 'One event becomes one message', icon: 'pubsub', tone: 'ingest', children: [
         { type: 'item', id: 'm-box', title: 'a box’s event', sub: 'play, heartbeat, buffer, stop', icon: 'screen' },
-        { type: 'item', id: 'm-message', title: 'a message', sub: 'data: the event as JSON · attributes: type, device_id', icon: 'file' },
-        { type: 'item', id: 'm-topic', title: 'viewing-events', sub: 'the topic: Pub/Sub keeps it, numbers it, fans it out', icon: 'pubsub', tone: 'store' },
+        { type: 'item', id: 'm-message', title: 'a message', sub: 'data: JSON · attributes: type, device', icon: 'file' },
+        { type: 'item', id: 'm-topic', title: 'viewing-events', sub: 'kept, numbered, fanned out', icon: 'pubsub', tone: 'store' },
       ],
     },
     {
       type: 'table', id: 'replay', title: '17:30–17:35, replayed at 60×', tone: 'store', columns: ['what', 'how many'], rows: [
         { id: 'r-events', cells: ['events in the window', pub[1]] },
-        ...pub[2].split(', ').map((kv) => kv.split(' ')).map(([k, v]) => ({ id: `r-${k}`, cells: [`  ${k}`, v] })),
         { id: 'r-messages', cells: ['messages published', pub[3]], tone: 'ingest' as const },
         { id: 'r-resent', cells: ['re-sent by a retry', pub[4]], tone: 'consume' as const },
       ],
@@ -123,7 +121,7 @@ const lines4 = s4.split('\n').filter((l) => l.startsWith('message '))
 const unacked = outputOf(s4, 'python consume/pull.py viewing-events-dataflow --max 1 --no-ack').split('\n')[0].split(/\s+/)[1]
 
 export const streamPullAck: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Pull, then ack, or it comes back',
   tree: tree('stream/04-pull-ack', 'consume/pull.py', []),
   editor: { file: 'consume/pull.py', code: pull, show: [[1, 8], [lineOf(pull, 'got = sub.pull'), pull.trimEnd().split('\n').length]], highlight: linesFrom(pull, 'if got and not a.no_ack', 'sub.acknowledge') },
   session: s4,
@@ -132,9 +130,9 @@ export const streamPullAck: SceneModel = ideFrame2({
     PUBSUB_EMU,
     {
       type: 'group', id: 'lease', title: `Message ${unacked}: pulled, not acknowledged`, icon: 'pubsub', tone: 'ingest', children: [
-        { type: 'item', id: 'l-pull', title: 'pulled', sub: 'leased to this reader for 10 s (the ack deadline)', icon: 'timer' },
+        { type: 'item', id: 'l-pull', title: 'pulled', sub: 'leased for 10 s: the ack deadline', icon: 'timer' },
         { type: 'item', id: 'l-none', title: 'no ack', sub: 'the reader crashed, or forgot', icon: 'lock', tone: 'consume' },
-        { type: 'item', id: 'l-again', title: `message ${unacked}, again`, sub: 'the lease ran out: delivered to the next pull', icon: 'pubsub', tone: 'store' },
+        { type: 'item', id: 'l-again', title: `message ${unacked}, again`, sub: 'the lease ran out: redelivered', icon: 'pubsub', tone: 'store' },
       ],
     },
     {
@@ -152,7 +150,7 @@ export const streamPullAck: SceneModel = ideFrame2({
 const c5 = /(\d+) messages, (\d+) distinct event_ids\n(\d+) events arrived twice, e.g. event_id (\w+)/.exec(s5)!
 
 export const streamAtLeastOnce: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'At least once: count events, not messages',
   tree: tree('stream/05-at-least-once', 'consume/count.py'),
   editor: { file: 'consume/count.py', code: count, show: [[lineOf(count, 'sub = pubsub_v1'), count.trimEnd().split('\n').length]], highlight: [lineOf(count, 'messages.add'), lineOf(count, 'events[json.loads'), lineOf(count, 'twice = sorted')] },
   session: s5,
@@ -160,7 +158,7 @@ export const streamAtLeastOnce: SceneModel = ideFrame2({
     PUBSUB_EMU,
     {
       type: 'table', id: 'counts', title: '18:30–18:35, every message drained', tone: 'store', columns: ['counted', 'how many'], rows: [
-        { id: 'k-messages', cells: ['messages (each its own message_id)', c5[1]] },
+        { id: 'k-messages', cells: ['messages (message_ids)', c5[1]] },
         { id: 'k-events', cells: ['distinct event_ids', c5[2]] },
         { id: 'k-twice', cells: ['events that arrived twice', c5[3]], tone: 'consume' },
       ],
@@ -183,7 +181,7 @@ export const streamAtLeastOnce: SceneModel = ideFrame2({
 const seq = s6.split('\n').filter((l) => l.startsWith('message ')).map((l) => l.split(/\s+/))
 
 export const streamOrdering: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'An ordering key: one lane per box',
   tree: tree('stream/06-ordering', 'produce/settop.py', []),
   editor: { file: 'produce/settop.py', code: settop, show: [[lineOf(settop, 'options = pubsub_v1'), lineOf(settop, 'resent += i % RESEND')]], highlight: [...linesFrom(settop, 'options = pubsub_v1', 'enable_message_ordering'), lineOf(settop, 'key = e["device_id"]')] },
   session: s6,
@@ -213,7 +211,7 @@ const attempts = s7.split('\n').filter((l) => l.startsWith('attempt '))
 const attrs = Object.fromEntries([...s7.matchAll(/CloudPubSubDeadLetter(\w+)=(\S+)/g)].map((m) => [m[1], m[2]]))
 
 export const streamDeadLetters: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'A dead-letter topic for what nobody can read',
   tree: tree('stream/07-dead-letters', 'consume/strict.py'),
   editor: { file: 'consume/strict.py', code: strict, show: [[lineOf(strict, 'def handle'), strict.trimEnd().split('\n').length]], highlight: [...linesFrom(strict, 'except ValueError', 'message.nack()')] },
   session: s7,
@@ -222,10 +220,10 @@ export const streamDeadLetters: SceneModel = ideFrame2({
     RECORDED,
     {
       type: 'group', id: 'dl', title: 'A message nobody can read', icon: 'pubsub', tone: 'consume', children: [
-        { type: 'item', id: 'd-poison', title: 'not JSON', sub: 'published to viewing-events', icon: 'file', tone: 'consume' },
-        { type: 'item', id: 'd-tries', title: `${attempts.length} deliveries, 5 nacks`, sub: 'retried 10 s apart (the retry policy)', icon: 'timer' },
-        { type: 'item', id: 'd-dead', title: 'dead-letter', sub: 'moved by Pub/Sub’s own service agent', icon: 'pubsub', tone: 'consume' },
-        { type: 'item', id: 'd-audit', title: 'dead-letter-audit', sub: 'a person reads it, with its history', icon: 'search' },
+        { type: 'item', id: 'd-poison', title: 'not JSON, on viewing-events', icon: 'file', tone: 'consume' },
+        { type: 'item', id: 'd-tries', title: `${attempts.length} deliveries, 5 nacks`, sub: 'retried 10 s apart', icon: 'timer' },
+        { type: 'item', id: 'd-dead', title: 'dead-letter', sub: 'moved by Pub/Sub’s agent', icon: 'pubsub', tone: 'consume' },
+        { type: 'item', id: 'd-audit', title: 'dead-letter-audit: a person reads it', icon: 'search' },
       ],
     },
     {
@@ -235,7 +233,7 @@ export const streamDeadLetters: SceneModel = ideFrame2({
   ],
   edges: [
     { from: 'd-poison', to: 'd-tries' },
-    { from: 'd-tries', to: 'd-dead', label: 'after 5' },
+    { from: 'd-tries', to: 'd-dead' },
     { from: 'd-dead', to: 'd-audit' },
   ],
 })
