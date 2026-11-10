@@ -17,7 +17,7 @@ const billing = outputOf(session, 'python extract/extract.py billing --dt 2026-1
 const [, from, to] = /window \((\S+), (\S+)\]/.exec(billing)!
 
 export const landExtracts: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'A snapshot and a window, sealed by _SUCCESS',
   tree: landTree('extract/extract.py', { extra: ['extract/extract.py'], fresh: ['extract/extract.py'] }),
   editor: {
     file: 'extract/extract.py', code,
@@ -29,12 +29,12 @@ export const landExtracts: SceneModel = ideFrame2({
     FAKE_GCS,
     {
       type: 'group', id: 'flow', title: 'The night of 30 October', icon: 'workflow', tone: 'ingest', dir: 'grid', cols: 2, children: [
-        { type: 'item', id: 'f-crm', title: 'CRM', sub: 'PostgreSQL · 3 tables', icon: 'postgresql' },
-        { type: 'item', id: 'f-crm-raw', title: 'source=crm/dt=2026-10-30/', sub: 'a snapshot: everything, again', icon: 'gcs', tone: 'store' },
-        { type: 'item', id: 'f-billing', title: 'Billing', sub: 'PostgreSQL · charges', icon: 'postgresql' },
-        { type: 'item', id: 'f-billing-raw', title: 'source=billing/dt=2026-10-30/', sub: 'a window: one night’s changes', icon: 'gcs', tone: 'store' },
-        { type: 'item', id: 'f-trust', title: 'nothing checks the copy', sub: 'what it found is what it marks', icon: 'shield', tone: 'consume' },
-        { type: 'item', id: 'f-success', title: '_SUCCESS, in each folder', sub: '“this night is complete”', icon: 'file' },
+        { type: 'item', id: 'f-crm', title: 'CRM', sub: '3 tables', icon: 'postgresql' },
+        { type: 'item', id: 'f-crm-raw', title: 'source=crm/', sub: 'a snapshot: all of it', icon: 'gcs', tone: 'store' },
+        { type: 'item', id: 'f-billing', title: 'Billing', sub: 'charges', icon: 'postgresql' },
+        { type: 'item', id: 'f-billing-raw', title: 'source=billing/', sub: 'a window: one night', icon: 'gcs', tone: 'store' },
+        { type: 'item', id: 'f-trust', title: 'nothing checks it', sub: 'what it found, it marks', icon: 'shield', tone: 'consume' },
+        { type: 'item', id: 'f-success', title: '_SUCCESS', sub: '“this night is complete”', icon: 'file' },
       ],
     },
     {

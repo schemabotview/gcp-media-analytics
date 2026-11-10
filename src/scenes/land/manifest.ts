@@ -12,24 +12,24 @@ import manifest from '../../../spine/land/04-manifest/captured/sun-media-dev-raw
 // BEFORE anything is copied: the window, each file's expected rows, its columns — what the copy must
 // deliver. The JSON in the side pane is the object itself, read back from the raw zone by the replay.
 const m = manifest.trimEnd()
-const fold = [[1, lineOf(m, '"charge_id"')], [lineOf(m, '"updated_at"'), m.split('\n').length]] as [number, number][]
+const fold = [[1, lineOf(m, '"charge_id"')], [lineOf(m, '"window"'), m.split('\n').length]] as [number, number][]
 
 export const landManifest: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'The manifest: a promise written first',
   tree: landTree('extract/extract.py', { extra: ['extract/extract.py'] }),
   editor: { file: 'extract/extract.py', code, show: [[lineOf(code, 'def plan'), lineOf(code, 'print(f"manifest')]], highlight: [lineOf(code, 'The manifest, written FIRST'), ...linesFrom(code, 'manifest = {', '"columns": columns}'), lineOf(code, 'bucket().blob(name).upload_from_string(json')] },
   session,
   side: [
     FAKE_GCS,
     {
-      type: 'group', id: 'order', title: 'dt=2026-10-31, in order', icon: 'workflow', tone: 'ingest', dir: 'grid', cols: 2, children: [
+      type: 'group', id: 'order', bare: true, dir: 'grid', cols: 2, children: [
         { type: 'item', id: 'o-plan', title: 'plan', sub: 'counts the window', icon: 'search' },
         { type: 'item', id: 'o-manifest', title: '_manifest.json', sub: 'the promise, written first', icon: 'file', tone: 'store' },
         { type: 'item', id: 'o-copy', title: 'copy', sub: 'writes charges.csv', icon: 'database', muted: true },
         { type: 'item', id: 'o-g1', title: 'G1', sub: 'holds the folder to the promise', icon: 'shield', muted: true },
       ],
     },
-    { type: 'code', id: 'manifest', filename: 'source=billing/dt=2026-10-31/_manifest.json', lang: 'js', code: m, show: fold, tone: 'store', fill: true },
+    { type: 'code', id: 'manifest', filename: 'source=billing/dt=2026-10-31/_manifest.json', lang: 'js', code: m, show: fold, tone: 'store' },
   ],
   edges: [
     { from: 'o-plan', to: 'o-manifest' },

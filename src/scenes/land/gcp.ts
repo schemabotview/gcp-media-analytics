@@ -22,7 +22,7 @@ const described = Object.fromEntries(outputOf(s1, 'gcloud storage buckets descri
 const softDays = Number(/retentionDurationSeconds: '(\d+)'/.exec(s1)![1]) / 86400
 
 export const landBuckets: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'A bucket holds objects; names only look like folders',
   tree: stepTree('land/01-buckets', 'infra/modules/storage/main.tf', { fresh: [], closed: CLOSED }),
   editor: { file: 'infra/modules/storage/main.tf', code: storage1, show: [[1, lineOf(storage1, '}', lineOf(storage1, 'default_kms_key_name') + 1)]], highlight: [lineOf(storage1, 'location'), lineOf(storage1, 'storage_class'), lineOf(storage1, 'uniform_bucket_level_access')] },
   session: s1,
@@ -42,7 +42,7 @@ export const landBuckets: SceneModel = ideFrame2({
     {
       type: 'group', id: 'flat', title: 'A bucket holds objects; names only look like folders', icon: 'gcs', tone: 'store', children: [
         { type: 'item', id: 'f-bucket', title: 'sun-media-dev-raw', sub: 'one bucket, one region', icon: 'gcs' },
-        { type: 'item', id: 'f-object', title: 'one object, one name', sub: 'source=billing/dt=…/charges.csv: the slashes are characters', icon: 'file' },
+        { type: 'item', id: 'f-object', title: 'one object, one name', sub: 'the slashes are characters', icon: 'file' },
       ],
     },
   ],
@@ -55,7 +55,7 @@ const rows = /charges\.csv rows\s+(\d+) of (\d+)/.exec(g1Lines)!
 const listed = outputOf(s6, 'gcloud storage ls "$RAW/source=billing/**"').split('\n').filter(Boolean).map((l) => l.split('/').at(-1)!)
 
 export const landRetrySafe: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Retry-safe: a night is sealed once',
   tree: stepTree('land/06-retry-safe', 'extract/g1.py', { fresh: ['extract/g1.py', 'extract/extract.py'], closed: [...CLOSED, 'infra'] }),
   editor: { file: 'extract/g1.py', code: g1Code, show: [[lineOf(g1Code, 'if __name__'), g1Code.trimEnd().split('\n').length]], highlight: linesFrom(g1Code, 'try:  # generation 0', 'refused: {night} is already sealed') },
   session: s6,
@@ -90,7 +90,7 @@ const period = /retentionPeriod: '(\d+)'/.exec(s7)![1]
 const expiry = /retention_expiration: (\S+)/.exec(s7)![1]
 
 export const landRetention: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Retention: no delete until the object is old enough',
   tree: stepTree('land/07-retention', 'infra/modules/storage/main.tf', { fresh: [], closed: [...CLOSED, 'extract'] }),
   editor: { file: 'infra/modules/storage/main.tf', code: storage7, show: [[1, lineOf(storage7, '}', lineOf(storage7, 'retention_period') + 1)]], highlight: linesFrom(storage7, '# Immutable by policy', 'retention_period') },
   session: s7,
@@ -105,13 +105,7 @@ export const landRetention: SceneModel = ideFrame2({
         { type: 'item', id: 'h-refused', title: 'gcloud storage rm', sub: 'refused, even for the project’s owner', icon: 'lock', tone: 'consume' },
       ],
     },
-    {
-      type: 'table', id: 'who', title: 'Who can delete a held object', tone: 'consume', columns: ['who', 'before expiry'], rows: [
-        { id: 'w-owner', cells: ['the project’s owner', 'no'] },
-        { id: 'w-ingest', cells: ['sa-ingest', 'no (and no role to)'] },
-        { id: 'w-after', cells: ['anyone, after expiry', 'only with delete rights'] },
-      ],
-    },
+    { type: 'item', id: 'limit', icon: 'clock', tone: 'ingest', title: 'dev holds an hour; production, years', sub: 'locking a policy makes it permanent: not done here' },
   ],
   edges: [
     { from: 'h-object', to: 'h-policy' },
@@ -125,7 +119,7 @@ const rules = (JSON.parse(outputOf(s8, 'gcloud storage buckets describe $RAW --f
   .sort((a, b) => a.condition.age - b.condition.age)
 
 export const landLifecycle: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Lifecycle: an object moves to colder classes as it ages',
   tree: stepTree('land/08-lifecycle', 'infra/modules/storage/main.tf', { fresh: [], closed: [...CLOSED, 'extract'] }),
   editor: { file: 'infra/modules/storage/main.tf', code: storage8, show: [[1, 2], [lineOf(storage8, '# Hot to cold'), lineOf(storage8, 'age = lifecycle_rule.value') + 3]], highlight: linesFrom(storage8, '# Hot to cold', 'age = lifecycle_rule.value') },
   session: s8,
@@ -138,6 +132,7 @@ export const landLifecycle: SceneModel = ideFrame2({
         ...rules.map((r) => ({ type: 'item' as const, id: `a-${r.action.storageClass}`, title: `${r.action.storageClass} · day ${r.condition.age}`, sub: r.action.storageClass === 'ARCHIVE' ? 'kept, almost never read' : 'cheaper to keep, dearer to read', icon: 'gcs', tone: r.action.storageClass === 'ARCHIVE' ? 'infra' as const : undefined })),
       ],
     },
+    { type: 'item', id: 'trade', icon: 'gauge', tone: 'ingest', title: 'Cheaper to keep, dearer to read', sub: 'the rule fires on age; nobody moves a file' },
   ],
   edges: [
     { from: 'a-standard', to: `a-${rules[0].action.storageClass}`, label: `${rules[0].condition.age} days` },

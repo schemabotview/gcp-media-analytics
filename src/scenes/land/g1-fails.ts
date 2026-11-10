@@ -19,7 +19,7 @@ const promised = g1.find(([check]) => check.endsWith('rows'))![2]
 const published = /last published (\S+)/.exec(session)![1]
 
 export const landG1Fails: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'G1: a short night is never published',
   tree: landTree('extract/g1.py', { extra: ['extract/extract.py', 'extract/g1.py'], fresh: ['extract/g1.py'] }),
   editor: { file: 'extract/g1.py', code, show: [[lineOf(code, 'def check'), lineOf(code, 'return all(')]], highlight: [...linesFrom(code, 'results = [("files"', '(f"{file} rows"'), lineOf(code, 'return all(')] },
   session,
@@ -27,8 +27,8 @@ export const landG1Fails: SceneModel = ideFrame2({
     FAKE_GCS,
     {
       type: 'group', id: 'night', title: '⑂ The night billing came up short', icon: 'clock', tone: 'consume', children: [
-        { type: 'item', id: 'n-plan', title: '02:00:00 plan', sub: `${promised} charges in the window: the manifest says ${promised}`, icon: 'search' },
-        { type: 'item', id: 'n-rerate', title: `${latest.slice(11, 19)} billing re-rates ${Number(promised) - Number(copied)} rentals`, sub: 'their updated_at moves past the window’s end', icon: 'card', tone: 'infra' },
+        { type: 'item', id: 'n-plan', title: '02:00:00 plan', sub: `the manifest promises ${promised}`, icon: 'search' },
+        { type: 'item', id: 'n-rerate', title: `${latest.slice(11, 19)} billing re-rates ${Number(promised) - Number(copied)} rentals`, sub: 'updated_at moves past the window', icon: 'card', tone: 'infra' },
         { type: 'item', id: 'n-copy', title: 'copy reads the window', sub: `${copied} rows land in charges.csv`, icon: 'database' },
         { type: 'item', id: 'n-g1', title: 'G1 FAIL', sub: `no _SUCCESS · last published stays ${published}`, icon: 'shield', tone: 'consume' },
       ],
