@@ -14,29 +14,30 @@ const versions = rowsOf(outputOf(session, 'psql crm -P footer=off -v hh=HH-10042
 const households = mix.reduce((n, r) => n + Number(r[2]), 0)
 
 export const startCrm: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Households, versions of a subscription, packages',
   tree: startTree('sources/crm/schema.sql', CRM_FILES, CRM_FILES),
   editor: { file: 'sources/crm/schema.sql', code: schema, show: [[lineOf(schema, 'CREATE TABLE households'), schema.trimEnd().split('\n').length]], highlight: [lineOf(schema, 'household_id    text NOT NULL REFERENCES'), lineOf(schema, 'package_id      text NOT NULL REFERENCES'), ...linesFrom(schema, 'valid_from', 'valid_to')] },
   session,
   side: [
     {
-      type: 'group', id: 'er', title: 'The CRM, as tables', icon: 'database', tone: 'store', children: [
-        { type: 'item', id: 'e-households', title: `households · ${households.toLocaleString('en-GB')}`, sub: 'who: name, email, phone, region, exchange_id', icon: 'users' },
-        { type: 'item', id: 'e-subscriptions', title: 'subscriptions', sub: 'one row per version: valid_from, valid_to', icon: 'table' },
-        { type: 'item', id: 'e-packages', title: `packages · ${mix.length}`, sub: 'what: name, monthly_price', icon: 'package' },
+      type: 'group', id: 'er', title: 'The CRM, as tables', icon: 'database', tone: 'store', dir: 'row', children: [
+        { type: 'item', id: 'e-households', title: `households ${households.toLocaleString('en-GB')}`, sub: 'who, and where', icon: 'users', stack: true },
+        { type: 'item', id: 'e-subscriptions', title: 'subscriptions', sub: 'a row per version', icon: 'table', stack: true },
+        { type: 'item', id: 'e-packages', title: `packages ${mix.length}`, sub: 'what, and its price', icon: 'package', stack: true },
       ],
-    },
-    {
-      type: 'table', id: 'mix', title: 'Households by current package', tone: 'store', columns: ['package', '£ a month', 'households'],
-      rows: mix.map(([name, price, n]) => ({ id: `m-${name}`, cells: [name, price, n] })),
     },
     {
       type: 'table', id: 'versions', title: 'HH-10042: two versions', tone: 'ingest', columns: ['package_id', 'valid_from', 'valid_to'],
       rows: versions.map(([p, from, to], i) => ({ id: `v-${i}`, cells: [p, from, to || 'current'], tone: to ? undefined : 'ingest' as const })),
     },
+    {
+      type: 'table', id: 'mix', title: 'Households by current package', tone: 'store', columns: ['package', '£ a month', 'households'],
+      rows: mix.map(([name, price, n]) => ({ id: `m-${name}`, cells: [name, price, n] })),
+    },
   ],
   edges: [
-    { from: 'e-households', to: 'e-subscriptions', label: '1 : many' },
-    { from: 'e-subscriptions', to: 'e-packages', label: 'many : 1' },
+    { from: 'e-households', to: 'e-subscriptions', label: '1:n' },
+    { from: 'e-subscriptions', to: 'e-packages', label: 'n:1' },
+    { from: 'e-subscriptions', to: 'versions' },
   ],
 })

@@ -11,7 +11,7 @@ const lines = Object.fromEntries(session.split('\n').filter((l) => /^ +\d+ data\
   .map((l) => l.trim().split(/\s+/)).map(([n, f]) => [f, Number(n).toLocaleString('en-GB')]))
 
 export const startFiveSources: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Five sources, two paths',
   tree: startTree('sources/README.md', []),
   editor: { file: 'sources/README.md', code: readme, lang: 'text' },
   session,
@@ -30,11 +30,11 @@ export const startFiveSources: SceneModel = ideFrame2({
         {
           type: 'group', id: 'to', bare: true, children: [
             {
-              type: 'group', id: 'p-batch', title: 'Nightly batch', sub: 'correct, next morning', icon: 'clock', tone: 'store', minH: 190,
+              type: 'group', id: 'p-batch', title: 'Nightly batch', sub: 'correct, next morning', icon: 'clock', tone: 'store',
               children: [{ type: 'item', id: 'p-batch-how', title: 'raw zone → BigQuery', sub: 'Courses 5, 8–11', icon: 'gcs' }],
             },
             {
-              type: 'group', id: 'p-stream', title: 'Live stream', sub: 'seconds, while it plays', icon: 'zap', tone: 'ingest', minH: 120,
+              type: 'group', id: 'p-stream', title: 'Live stream', sub: 'seconds, while it plays', icon: 'zap', tone: 'ingest',
               children: [{ type: 'item', id: 'p-stream-how', title: 'Pub/Sub → Dataflow', sub: 'Courses 6–7', icon: 'pubsub' }],
             },
           ],

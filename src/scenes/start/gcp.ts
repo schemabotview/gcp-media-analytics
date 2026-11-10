@@ -22,7 +22,7 @@ const project = outputOf(s5, 'gcloud config get project').trim()
 const api = outputOf(s5, 'gcloud services list --enabled --filter=config.name=storage.googleapis.com').split('\n')[1].split(/\s{2,}/)
 
 export const startSigningIn: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Identity, project, API: before anything is built',
   tree: stepTree('start/05-signing-in', 'gcp.sh', { closed: ['sources'] }),
   editor: { file: 'gcp.sh', code: gcpSh, highlight: [lineOf(gcpSh, 'TF_VAR_project_id='), lineOf(gcpSh, 'TF_VAR_operator=')] },
   session: s5,
@@ -57,7 +57,7 @@ const planned = /Plan: (\d+) to add/.exec(s6)![1]
 const took = /Creation complete after (\d+s)/.exec(s6)![1]
 
 export const startFirstTerraform: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'terraform apply: code to a real bucket',
   tree: stepTree('start/06-first-terraform', 'infra/main.tf', { fresh: ['infra/main.tf', 'infra/variables.tf'], closed: ['sources'] }),
   editor: { file: 'infra/main.tf', code: main6, show: [[lineOf(main6, 'provider "google"'), main6.trimEnd().split('\n').length]], highlight: linesFrom(main6, 'resource "google_storage_bucket" "raw"', 'public_access_prevention') },
   session: s6,
@@ -89,7 +89,7 @@ const stateObject = outputOf(s7, 'gcloud storage ls "gs://$B/**"').trim()
 const locals = outputOf(s7, 'ls terraform.tfstate*').split('\n').filter(Boolean)
 
 export const startState: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'State: what Terraform made, kept in a bucket',
   tree: stepTree('start/07-state', 'infra/backend.tf', { fresh: ['infra/backend.tf', 'infra/bootstrap.sh'], closed: ['sources'] }),
   editor: { file: 'infra/backend.tf', code: backend7, highlight: linesFrom(backend7, 'backend "gcs"', 'prefix') },
   session: s7,
@@ -110,7 +110,7 @@ export const startState: SceneModel = ideFrame2({
     },
     {
       type: 'table', id: 'where', title: 'Where the state was, and is', tone: 'store', columns: ['file', 'now'], rows: [
-        ...locals.map((f) => ({ id: `l-${f}`, cells: [`infra/${f}`, 'the laptop’s old copy: delete it'] })),
+        ...locals.map((f) => ({ id: `l-${f}`, cells: [`infra/${f}`, 'old copy: delete'] })),
         { id: 'l-gcs', cells: [stateObject.split('/').slice(3).join('/'), 'the one Terraform reads'], tone: 'store' as const },
       ],
     },
@@ -126,7 +126,7 @@ export const startState: SceneModel = ideFrame2({
 const added = /Plan: (\d+) to add/.exec(s8)![1]
 
 export const startModulesBudget: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'A module, and a budget that alerts',
   tree: stepTree('start/08-modules-budget', 'infra/budget.tf', { fresh: ['infra/budget.tf', 'infra/modules/storage', 'infra/envs/dev.tfvars'], closed: ['sources'] }),
   editor: { file: 'infra/budget.tf', code: budget8, show: [[lineOf(budget8, '# 80%'), lineOf(budget8, 'all_updates_rule') - 1]], highlight: linesFrom(budget8, 'threshold_rules {', 'spend_basis') },
   session: s8,
@@ -143,7 +143,7 @@ export const startModulesBudget: SceneModel = ideFrame2({
       type: 'group', id: 'budget', title: `The budget (${added} resources added)`, icon: 'gcpbilling', tone: 'consume', children: [
         { type: 'item', id: 'b-budget', title: 'viewing-pulse-dev', sub: '£50 a month, this project only', icon: 'gcpbilling' },
         { type: 'item', id: 'b-rule', title: '80%, spent or forecast', sub: 'an alert, never a cut-off', icon: 'gauge' },
-        { type: 'item', id: 'b-email', title: 'media-data@sun.example', sub: 'a Monitoring email channel; mail goes to the channel, not to people with billing roles', icon: 'bell' },
+        { type: 'item', id: 'b-email', title: 'media-data@sun.example', sub: 'a Monitoring email channel', icon: 'bell' },
       ],
     },
   ],

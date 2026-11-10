@@ -19,7 +19,7 @@ const derby = sports.find((s) => s.id === 'T-5001')!
 const gap = movies.find((s) => s.id === 'no slot in the EPG')!
 
 export const startCatalogueEpg: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Channel × slot → title',
   tree: startTree('sources/epg/slots.py', [...CRM_FILES, 'sources/epg/slots.py']),
   editor: { file: 'sources/epg/slots.py', code, show: [[1, lineOf(code, '"""', 2)], [lineOf(code, 'with open("data/catalogue'), lineOf(code, 'no slot in the EPG")')]], highlight: [lineOf(code, 'titles = {'), lineOf(code, 'print(f"{hhmm(s'), lineOf(code, 'if after and'), lineOf(code, 'no slot in the EPG")')] },
   session,
@@ -35,10 +35,6 @@ export const startCatalogueEpg: SceneModel = ideFrame2({
       ],
     },
     {
-      type: 'table', id: 'sports', title: 'SUN-SPORTS-1, the evening', tone: 'store', columns: ['slot', 'title_id', 'title'],
-      rows: sports.map((s) => ({ id: `s-${s.when}`, cells: [s.when, s.id, s.title], tone: s.id === 'T-5001' ? 'ingest' as const : undefined })),
-    },
-    {
       type: 'table', id: 'movies', title: 'SUN-MOVIES-2, the evening', tone: 'consume', columns: ['slot', 'title_id', 'title'],
       rows: movies.map((s) => ({ id: `m-${s.when}`, cells: s.title ? [s.when, s.id, s.title] : [s.when, '—', s.id], tone: s.title ? undefined : 'consume' as const })),
     },
@@ -47,5 +43,6 @@ export const startCatalogueEpg: SceneModel = ideFrame2({
     { from: 'j-derby-slot', to: 'j-derby' },
     { from: 'j-film-slot', to: 'j-film' },
     { from: 'j-gap-slot', to: 'j-gap', dashed: true },
+    { from: 'j-gap', to: 'movies' },
   ],
 })

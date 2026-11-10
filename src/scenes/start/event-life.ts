@@ -17,7 +17,7 @@ const stall = rows.find((r) => r.includes('buffer'))!.split(/\s+/)
 const stalled = rows.filter((r) => r.includes(' buffer ')).reduce((ms, r) => ms + Number(r.split(/\s+/)[5]), 0)
 
 export const startEventLife: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'One box’s night, as events',
   tree: startTree('sources/events/trace.jq', [...CRM_FILES, 'sources/epg/slots.py', 'sources/events/trace.jq']),
   editor: { file: 'sources/events/trace.jq', code, lang: 'text' },
   session,
@@ -25,10 +25,10 @@ export const startEventLife: SceneModel = ideFrame2({
   side: [
     {
       type: 'group', id: 'life', title: 'STB-13795, derby night', icon: 'screen', tone: 'ingest', children: [
-        { type: 'item', id: 'l-play', title: `${play[0]} play`, sub: `SUN-SPORTS-1, the build-up: ${play[2]}`, icon: 'zap' },
+        { type: 'item', id: 'l-play', title: `${play[0]} play`, sub: `the build-up: ${play[2]}`, icon: 'zap' },
         { type: 'item', id: 'l-kickoff', title: `${kickoff[0]} kick-off`, sub: `the heartbeats' title turns ${kickoff[2]}`, icon: 'clock' },
         { type: 'item', id: 'l-beats', title: `heartbeat × ${counts.heartbeat}`, sub: 'one a minute, 60 s watched each', icon: 'activity' },
-        { type: 'item', id: 'l-buffer', title: `buffer × ${counts.buffer}`, sub: `from ${stall[0]}: ${(stalled / 1000).toFixed(0)} s stalled, all in the second half`, icon: 'timer', tone: 'consume' },
+        { type: 'item', id: 'l-buffer', title: `buffer × ${counts.buffer}`, sub: `from ${stall[0]}: ${(stalled / 1000).toFixed(0)} s stalled`, icon: 'timer', tone: 'consume' },
         { type: 'item', id: 'l-stop', title: `${stop[0]} stop`, sub: 'after the final whistle', icon: 'power' },
       ],
     },
