@@ -249,10 +249,14 @@ const fired = s9.split('\n').filter((l) => /^\| \d\d:\d\d/.test(l)).map((l) => l
 const top = [...fired].sort((a, b) => Number(b[1]) - Number(a[1]))[0]
 const published = /published (\d+) messages/.exec(s9)![1]
 
+// The job's window, not the local pipeline's earlier in the file (the first "minutes" is line 66).
+const jobFrom = lineOf(live5, '| "minutes" >> beam.WindowInto(', lineOf(live5, '| "read" >> beam.io.ReadFromPubSub('))
+const jobWindow = Array.from({ length: lineOf(live5, 'accumulation_mode=trigger.AccumulationMode.ACCUMULATING)', jobFrom) - jobFrom + 1 }, (_, i) => jobFrom + i)
+
 export const flowDataflow: SceneModel = ideFrame2({
   model: 'TODO',
   tree: tree('dataflow/09-on-dataflow', 'stream/live_viewers.py', ['stream/live_viewers.py', 'stream/stream_peak.sql', 'infra/modules/dataflow']),
-  editor: { file: 'stream/live_viewers.py', code: live5, show: [[lineOf(live5, '# The job\'s watermark'), lineOf(live5, 'REPLAY_LATENESS = ')], [lineOf(live5, '| "read" >> beam.io.ReadFromPubSub('), lineOf(live5, '| "count" >> beam.CombinePerKey(Once())')]], highlight: linesFrom(live5, '| "minutes" >> beam.WindowInto(', 'accumulation_mode=trigger.AccumulationMode.ACCUMULATING)') },
+  editor: { file: 'stream/live_viewers.py', code: live5, show: [[lineOf(live5, '# The job\'s watermark'), lineOf(live5, 'REPLAY_LATENESS = ')], [lineOf(live5, '| "read" >> beam.io.ReadFromPubSub('), lineOf(live5, '| "count" >> beam.CombinePerKey(Once())')]], highlight: jobWindow },
   session: s9,
   keep: ['$ python stream/live_viewers.py', 'published', '$ gcloud dataflow jobs drain', 'JOB_STATE_DRAINED', '| 18:41'],
   side: [

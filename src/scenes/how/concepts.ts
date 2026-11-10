@@ -51,7 +51,7 @@ export const howServerless: SceneModel = {
 const meters = session.split('\n').slice(1).filter(Boolean).map((l) => l.split(/\s{2,}/))
 
 export const howMeters: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Three meters: kept, read, running',
   tree: stepTree('how-gcp-runs/07-meters', 'model/meters.py'),
   editor: { file: 'model/meters.py', code, show: [[lineOf(code, 'NIGHTS = 30'), lineOf(code, 'messages = sum')], [lineOf(code, 'rows = ['), lineOf(code, 'print(f"{service')]], highlight: linesFrom(code, 'DASHBOARD_QUERIES', 'WORKER_VCPUS') },
   session,
@@ -62,11 +62,16 @@ export const howMeters: SceneModel = ideFrame2({
       rows: meters.map(([s, m, q]) => ({ id: `m-${m.replace(/\W+/g, '-')}-${s.replace(/\W+/g, '-')}`, cells: [s, m, q], tone: m === 'GB scanned' || m === 'vCPU-hours' ? 'consume' as const : undefined })),
     },
     {
-      type: 'group', id: 'drives', title: 'What moves each meter', icon: 'gauge', tone: 'infra', children: [
-        { type: 'item', id: 'd-data', title: 'how much is kept', sub: 'storage: small, and cheaper as it cools (§5.8)', icon: 'gcs' },
-        { type: 'item', id: 'd-read', title: 'how much is read', sub: 'BigQuery bills the bytes a query scans (§10.4)', icon: 'bigquery', tone: 'consume' },
-        { type: 'item', id: 'd-run', title: 'how long it runs', sub: 'workers bill while they exist: drain them (§7.9)', icon: 'timer', tone: 'consume' },
+      type: 'group', id: 'drives', bare: true, dir: 'row', children: [
+        { type: 'item', id: 'd-data', title: 'how much is kept', sub: 'cheaper as it cools (§5.8)', icon: 'gcs', stack: true },
+        { type: 'item', id: 'd-read', title: 'how much is read', sub: 'bytes scanned (§10.4)', icon: 'bigquery', tone: 'consume', stack: true },
+        { type: 'item', id: 'd-run', title: 'how long it runs', sub: 'workers bill: drain (§7.9)', icon: 'timer', tone: 'consume', stack: true },
       ],
     },
+  ],
+  edges: [
+    { from: 'meters', to: 'd-data' },
+    { from: 'meters', to: 'd-read' },
+    { from: 'meters', to: 'd-run' },
   ],
 })

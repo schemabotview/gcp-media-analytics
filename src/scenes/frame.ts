@@ -134,7 +134,7 @@ export interface Frame {
   cwd?: string
 }
 
-/* PORTING */ export function ideFrame2(f: Frame): SceneModel { try { return build(f) } catch (e) { console.error('FRAME ' + (e as Error).message); return { nodes: [] } } }
+/* PORTING */ export function ideFrame2(f: Frame): SceneModel { try { return build(f) } catch (e) { console.error('FRAME ' + ('editor' in f ? f.editor.file : '') + ' ' + (e as Error).message); return { nodes: [] } } }
 function build({ model, editor, session, side, edges = [], project = 'viewing-pulse', cwd = project, keep, shown }: Frame): SceneModel {
   const term = terminal(session)
   const termShow = shown ?? (keep && keepLines(term, keep))
@@ -153,7 +153,12 @@ function build({ model, editor, session, side, edges = [], project = 'viewing-pu
       : windowFor(code, editor.show?.[0][0] ?? 1, editor.show?.[0][0] ?? 1, editorRows)
   } catch (e) {
     if (!editor.show) throw new Error(`"${model}": ${(e as Error).message}`)
-    try { show = grow(code, editor.show, editorRows) } catch (f) { throw new Error(`"${model}": ${(f as Error).message}`) }
+    try { show = grow(code, editor.show, editorRows) } catch (f) {
+      // The hand-picked ranges do not fit either: keep only the highlighted lines (each skipped run
+      // a fold row), grown back out to fill the editor. Throws when even those do not fit.
+      if (!hl.length) throw new Error(`"${model}": ${(f as Error).message}`)
+      try { show = grow(code, hl.map((n) => [n, n] as [number, number]), editorRows) } catch (g) { throw new Error(`"${model}": ${(g as Error).message}`) }
+    }
   }
   const ed: Code = {
     type: 'code', id: 'editor', filename: editor.file, lang: editor.lang ?? langOf(editor.file), code, highlight: hl, wrap: true,
@@ -166,9 +171,14 @@ function build({ model, editor, session, side, edges = [], project = 'viewing-pu
 
 /** Course 2's read-only labs change no file: the terminal fills the work column, on the same grid
  *  (and so the same fit) as every IDE frame. */
+/** A lab's terminal fills the frame's height. */
+const LAB_ROWS = Math.floor((FRAME_H - CHROME) / ROW)
+
 export function labFrame2({ model, session, keep, side, edges = [] }: { model: string; session: string; keep?: Keep[]; side: SceneNode[]; edges?: Edge[] }): SceneModel {
   const term = terminal(session)
   const termShow = keep && keepLines(term, keep)
+  const rows = termRows(term, termShow)
+  if (rows > LAB_ROWS) throw new Error(`frame.ts "${model}": the lab's transcript is ${rows} rows, the terminal shows ${LAB_ROWS}: keep fewer`)
   const tm: Code = { type: 'code', id: 'terminal', terminal: true, filename: 'terminal — viewing-pulse', code: term, ...(termShow && { show: termShow }), fill: true, w: WORK_W, minH: FRAME_H }
   const pane: Group = { type: 'group', id: 'side', title: model, tone: 'ingest', spread: true, w: SIDE_W, minH: FRAME_H, children: side }
   return { dir: 'row', padding: 0.01, nodes: [{ type: 'group', id: 'ide-bench', bare: true, children: [tm] }, pane], edges }

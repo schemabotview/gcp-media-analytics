@@ -17,12 +17,12 @@ const status = outputOf(s1, 'gcloud compute regions describe europe-west2 --form
 const zones = outputOf(s1, 'gcloud compute zones list --filter=name~europe-west2 --format="value(name)"').split('\n').filter(Boolean).sort()
 
 export const howRegions: SceneModel = labFrame2({
-  model: 'TODO',
+  model: 'A region is three zones; a resource lives at one scope',
   session: s1,
   side: [
     RECORDED,
     {
-      type: 'group', id: 'global', title: `Google’s network: ${regions} regions`, icon: 'globe', tone: 'infra', minH: 560, children: [
+      type: 'group', id: 'global', title: `Google’s network: ${regions} regions`, icon: 'globe', tone: 'infra', children: [
         {
           type: 'group', id: 'region', title: `europe-west2 · London · ${status}`, icon: 'building', tone: 'ingest', dir: 'row', children:
             zones.map((z) => ({ type: 'item' as const, id: `z-${z}`, title: z, sub: 'a zone: its own power, cooling, network', icon: 'server' })),
@@ -47,12 +47,12 @@ const described = Object.fromEntries(outputOf(s2, 'gcloud projects describe $P -
 const ancestors = outputOf(s2, 'gcloud projects get-ancestors $P').split('\n').slice(1).filter(Boolean).map((l) => l.trim().split(/\s+/))
 
 export const howHierarchy: SceneModel = labFrame2({
-  model: 'TODO',
+  model: 'Organization, folders, project, resources',
   session: s2,
   side: [
     RECORDED,
     {
-      type: 'group', id: 'tree', title: 'Organization → folders → projects → resources', icon: 'boxes', tone: 'infra', minH: 560, children: [
+      type: 'group', id: 'tree', title: 'Organization → folders → projects → resources', icon: 'boxes', tone: 'infra', children: [
         { type: 'item', id: 'h-org', title: 'organization', sub: 'none: get-ancestors stops at the project', icon: 'building', muted: true },
         { type: 'item', id: 'h-folder', title: 'folders', sub: 'none', icon: 'folder', muted: true },
         { type: 'item', id: 'h-project', title: `project ${described.projectId}`, sub: `number ${described.projectNumber}: the id Google uses internally`, icon: 'gcpproject', tone: 'ingest' },
@@ -63,7 +63,7 @@ export const howHierarchy: SceneModel = labFrame2({
       type: 'table', id: 'ancestors', title: 'get-ancestors', tone: 'store', columns: ['id', 'type'],
       rows: ancestors.map(([id, type]) => ({ id: `a-${id}`, cells: [id, type] })),
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'A project is the unit of billing, APIs and IAM. With an organization above it, policies would flow down from there too.' },
+    { type: 'item', id: 'unit', icon: 'gcpproject', tone: 'ingest', title: 'The project: the unit of billing, APIs and IAM', sub: 'one project, torn down cleanly' },
   ],
   edges: [
     { from: 'h-org', to: 'h-folder', dashed: true },
@@ -77,26 +77,20 @@ const enabled = outputOf(s3, 'gcloud services list --enabled --format="value(con
 const zones3 = outputOf(s3, 'gcloud compute zones list --filter=name~europe-west2 --format="value(name)"').split('\n').filter(Boolean)
 
 export const howApis: SceneModel = labFrame2({
-  model: 'TODO',
+  model: 'An API is switched on per project',
   session: s3,
+  keep: [['$ gcloud services list', 'ERROR: (gcloud'], ['to access projects', 'ified by the'], 'reason: SERVICE_DISABLED', ['$ gcloud services enable', 'europe-west2-a']],
   side: [
     RECORDED,
     {
-      type: 'group', id: 'switch', title: 'One project, its switched-on APIs', icon: 'gcpproject', tone: 'infra', minH: 560, children: [
+      type: 'group', id: 'switch', title: 'One project, its switched-on APIs', icon: 'gcpproject', tone: 'infra', children: [
         { type: 'item', id: 'a-project', title: 'sun-media-dev', sub: `${enabled} APIs enabled`, icon: 'gcpproject' },
         { type: 'item', id: 'a-off', title: 'compute.googleapis.com: off', sub: 'the call is refused: SERVICE_DISABLED', icon: 'lock', tone: 'consume' },
         { type: 'item', id: 'a-enable', title: 'gcloud services enable', sub: 'switched on, for this project only', icon: 'zap' },
         { type: 'item', id: 'a-on', title: `the same call: ${zones3.length} zones`, sub: zones3.sort().join(', '), icon: 'server', tone: 'store' },
       ],
     },
-    {
-      type: 'table', id: 'calls', title: 'The same call, before and after', tone: 'store', columns: ['command', 'answer'], rows: [
-        { id: 'c-before', cells: ['compute zones list', 'SERVICE_DISABLED'], tone: 'consume' },
-        { id: 'c-enable', cells: ['services enable compute', 'finished successfully'] },
-        { id: 'c-after', cells: ['compute zones list', `${zones3.length} zones`], tone: 'store' },
-      ],
-    },
-    { type: 'note', id: 'note', tone: 'store', text: 'An API is switched on per project. From Course 3, Terraform switches on what the platform needs (google_project_service); this one switch is the CLI’s.' },
+    { type: 'item', id: 'rule', icon: 'terraform', tone: 'ingest', title: 'From Course 3: Terraform switches APIs on', sub: 'google_project_service; this one switch is the CLI’s' },
   ],
   edges: [
     { from: 'a-project', to: 'a-off' },
@@ -111,20 +105,20 @@ const [loc, cls] = ['location', 'default_storage_class'].map((k) => new RegExp(`
 const objects = outputOf(s4, 'gcloud storage ls $B | wc -l').trim()
 
 export const howPlanes: SceneModel = labFrame2({
-  model: 'TODO',
+  model: 'Control plane and data plane',
   session: s4,
   side: [
     RECORDED,
     {
       type: 'group', id: 'planes', title: 'One bucket, two kinds of request', icon: 'gcs', tone: 'infra', dir: 'row', children: [
         {
-          type: 'group', id: 'control', title: 'control plane', sub: 'the bucket as a resource', icon: 'settings', tone: 'infra', minH: 470, children: [
+          type: 'group', id: 'control', title: 'control plane', sub: 'the bucket as a resource', icon: 'settings', tone: 'infra', children: [
             { type: 'item', id: 'c-uri', title: '/storage/v1/b/{bucket}', sub: `its settings: ${loc}, ${cls}`, icon: 'settings' },
             { type: 'item', id: 'c-who', title: 'create, configure, set policy', sub: 'what Terraform does', icon: 'terraform' },
           ],
         },
         {
-          type: 'group', id: 'data', title: 'data plane', sub: 'what it holds', icon: 'database', tone: 'store', minH: 470, children: [
+          type: 'group', id: 'data', title: 'data plane', sub: 'what it holds', icon: 'database', tone: 'store', children: [
             { type: 'item', id: 'd-uri', title: '/storage/v1/b/{bucket}/o', sub: `its objects: ${objects} at the top level`, icon: 'file' },
             { type: 'item', id: 'd-who', title: 'read, write, list', sub: 'what the pipeline does', icon: 'workflow' },
           ],
@@ -135,7 +129,6 @@ export const howPlanes: SceneModel = labFrame2({
       type: 'table', id: 'uris', title: 'The two URIs gcloud called (--log-http)', tone: 'store', columns: ['request', 'path'],
       rows: uris.map((u, i) => ({ id: `u-${i}`, cells: [i === 0 ? 'describe' : 'ls', u.replace('https://storage.googleapis.com', '')] })),
     },
-    { type: 'note', id: 'note', tone: 'store', text: 'gs://cloud-samples-data is Google’s public sample bucket: anyone may read it, so this lab reads without creating anything.' },
   ],
   edges: [
     { from: 'c-uri', to: 'c-who' },
@@ -149,12 +142,13 @@ const curl = JSON.parse(outputOf(s5, "curl -s -H \"Authorization: Bearer $T\" $U
 const tfNumber = /"number" = "(\d+)"/.exec(s5)![1]
 
 export const howThreeClients: SceneModel = labFrame2({
-  model: 'TODO',
+  model: 'Three clients, one REST API',
   session: s5,
+  keep: [['$ P=$(gcloud', '$ terraform init'], 'Read complete', 'Apply complete!', ['project = {', '}']],
   side: [
     RECORDED,
     {
-      type: 'group', id: 'clients', title: 'Three clients, one REST API', icon: 'workflow', tone: 'infra', dir: 'row', minH: 560, children: [
+      type: 'group', id: 'clients', title: 'Three clients, one REST API', icon: 'workflow', tone: 'infra', dir: 'row', children: [
         {
           type: 'group', id: 'callers', bare: true, children: [
             { type: 'item', id: 'k-gcloud', title: 'gcloud', sub: 'what Priya types', icon: 'terminal' },
@@ -164,7 +158,7 @@ export const howThreeClients: SceneModel = labFrame2({
           ],
         },
         {
-          type: 'group', id: 'k-api', title: 'one API', sub: 'cloudresourcemanager.googleapis.com', icon: 'gcpproject', tone: 'store', minH: 330,
+          type: 'group', id: 'k-api', title: 'one API', sub: 'cloudresourcemanager.googleapis.com', icon: 'gcpproject', tone: 'store', 
           children: [{ type: 'item', id: 'k-get', title: 'GET /v1/projects/{id}', sub: 'the same request, whoever sends it', icon: 'code' }],
         },
       ],

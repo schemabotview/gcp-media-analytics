@@ -1,6 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
 import { lineOf, linesFrom } from '../ide'
-import { ideFrame2 } from '../frame'
+import { SIDE_W, ideFrame2 } from '../frame'
 import { outputOf } from '../lab'
 import { BUILT, mapScene } from '../map'
 import { stepTree } from '../files'
@@ -72,13 +72,13 @@ const peak = /peak (\d+) households at (\S+)/.exec(session)!
 const ratios = outputOf(session, 'python answer/derby.py').split('\n').filter((l) => /^ {2}\S/.test(l)).map((l) => l.trim().split(/\s{2,}/))
 
 export const introTwoClocks: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Two questions, two clocks',
   tree: stepTree('intro/02-two-clocks', 'answer/derby.py'),
   editor: { file: 'answer/derby.py', code, show: [[lineOf(code, 'watching = defaultdict'), lineOf(code, 'stalled[ex] += e')], [lineOf(code, 'peak = max'), lineOf(code, 'print(f"live')]], highlight: [lineOf(code, 'watching[e["event_ts"]'), ...linesFrom(code, 'watched[ex] += e', 'stalled[ex] += e')] },
   session,
   side: [
     {
-      type: 'plot', id: 'curve', title: `Derby households watching, per minute — peak ${peak[1]} at ${peak[2]}`, compact: true,
+      type: 'plot', id: 'curve', title: `Derby households watching, per minute — peak ${peak[1]} at ${peak[2]}`, compact: true, w: SIDE_W - 34,
       x: { min: 30, max: 150, step: 30, label: 'minutes after 17:00 UTC' }, y: { min: 0, max: 2400, step: 600, label: 'households' },
       series: [{ kind: 'line', points, tone: 'ingest' }],
     },
@@ -86,6 +86,7 @@ export const introTwoClocks: SceneModel = ideFrame2({
       type: 'table', id: 'ratio', title: 'Next morning: buffering ÷ watched, the derby', tone: 'store', columns: ['exchange', 'ratio'],
       rows: ratios.map(([ex, r]) => ({ id: `r-${ex.replace(/\W+/g, '-')}`, cells: [ex, r], tone: ex === 'EX-LDN-04' ? 'consume' as const : undefined })),
     },
+    { type: 'item', id: 'laptop', icon: 'laptop', tone: 'consume', title: 'One laptop, after the fact', sub: 'the platform: live, then right by morning' },
   ],
 })
 
