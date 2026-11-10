@@ -1,6 +1,6 @@
 import type { SceneModel } from '@graphlearning/graphl-flow'
 import { lineOf, linesFrom } from '../ide'
-import { ideFrame2 } from '../frame'
+import { SIDE_W, ideFrame2 } from '../frame'
 import { MOCKED, level } from '../level'
 import { stepTree } from '../files'
 import qos from '../../../spine/dataproc/02-pyspark-locally/project/spark/qos_by_exchange.py?raw'
@@ -29,7 +29,7 @@ function tasks(session: string, n = 0): number[] {
   return runs[n].split('\n').filter((l) => /^ *[\d,]+  #/.test(l)).map((l) => Number(l.trim().split(/\s+/)[0].replace(/,/g, '')))
 }
 const bars = (rows: number[], id: string, title: string, tone: 'ingest' | 'store' | 'consume') => ({
-  type: 'plot' as const, id, title, compact: true,
+  type: 'plot' as const, id, title, compact: true, w: SIDE_W - 34,
   x: { min: 0, max: rows.length + 1, step: 1, label: 'task' }, y: { min: 0, max: 280000, step: 70000, label: 'rows read' },
   series: [{ kind: 'bar' as const, points: rows.map((r, i) => [i + 1, r] as [number, number]), tone }],
 })
@@ -80,7 +80,7 @@ const ldn04 = tableAfter(s2, '--exchange EX-LDN-04')
 const ldn01 = tableAfter(s2, '--exchange EX-LDN-01')
 
 export const procLocal: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'One row per exchange and minute, joined in Spark',
   tree: tree('dataproc/02-pyspark-locally', 'spark/qos_by_exchange.py', ['spark', 'env.sh', 'requirements.txt']),
   editor: { file: 'spark/qos_by_exchange.py', code: qos, show: [[lineOf(qos, 'events = spark.read.json'), lineOf(qos, '"loss_pct"), ["exchange_id", "minute"])')]], highlight: linesFrom(qos, 'seen = (events.where', '"loss_pct"), ["exchange_id", "minute"])') },
   session: s2,
@@ -88,18 +88,18 @@ export const procLocal: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'group', id: 'join', title: 'Two sources, one row per exchange and minute', minH: 380, icon: 'spark', tone: 'ingest', children: [
+      type: 'group', id: 'join', title: 'Two sources, one row per exchange and minute', icon: 'spark', tone: 'ingest', children: [
         {
           type: 'group', id: 'j-src', bare: true, dir: 'row', children: [
             { type: 'item', id: 'j-boxes', title: 'the boxes', sub: 'households, watched s, buffering s', icon: 'screen' },
             { type: 'item', id: 'j-lines', title: 'the exchange', sub: 'latency, packet loss', icon: 'network' },
           ],
         },
-        { type: 'item', id: 'j-row', title: 'joined on exchange and minute', sub: 'local[4]: Spark on four cores of the laptop', icon: 'spark', tone: 'store' },
+        { type: 'item', id: 'j-row', title: 'joined on exchange and minute', sub: 'local[4]: four cores of the laptop', icon: 'spark', tone: 'store' },
       ],
     },
     {
-      type: 'table', id: 'cmp', title: 'From 18:35, EX-LDN-04 and a healthy exchange', tone: 'store', columns: ['minute', '04 buffering s', '04 ms', '01 buffering s', '01 ms'],
+      type: 'table', id: 'cmp', title: 'From 18:35, EX-LDN-04 and a healthy exchange', tone: 'store', columns: ['minute', '04 buf s', '04 ms', '01 buf s', '01 ms'],
       rows: ldn04.map((r, i) => ({ id: `m-${r[0]}`, cells: [r[0], r[3], r[4], ldn01[i][3], ldn01[i][4]], tone: r[0] >= '18:35' ? 'consume' as const : undefined })),
     },
   ],
@@ -114,7 +114,7 @@ const pushed = /^PushedFilters: \[(.*)\]$/m.exec(s3.replace(/\n(?=[^$\n][^\n]*\]
 const read = /^([\d,]+) derby events read$/m.exec(s3)![1]
 
 export const procConnector: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'The connector pushes filters down to BigQuery',
   tree: tree('dataproc/03-bigquery-connector', 'spark/silver.py'),
   editor: { file: 'spark/silver.py', code: silverPy, show: [[lineOf(silverPy, 'events = (spark.read.format("bigquery")'), lineOf(silverPy, 'print(f"{events.count():,} derby events read")')]], highlight: linesFrom(silverPy, '.where((F.col("dt")', '.select("household_id"') },
   session: s3,
@@ -122,9 +122,9 @@ export const procConnector: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'group', id: 'push', title: 'Spark → Storage Read API → only what was asked', minH: 400, icon: 'bigquery', tone: 'ingest', children: [
+      type: 'group', id: 'push', title: 'Spark → Storage Read API → only what was asked', icon: 'bigquery', tone: 'ingest', children: [
         { type: 'item', id: 'p-spark', title: 'Spark, on the laptop', sub: 'a where and a select, in Python', icon: 'spark' },
-        { type: 'item', id: 'p-api', title: 'the Storage Read API', sub: 'a read session: filters and columns applied in BigQuery', icon: 'bigquery' },
+        { type: 'item', id: 'p-api', title: 'the Storage Read API', sub: 'filters and columns applied in BigQuery', icon: 'bigquery' },
         { type: 'item', id: 'p-rows', title: `${read} rows, 3 columns`, sub: 'not 400,949 rows of 11', icon: 'layers', tone: 'store' },
       ],
     },
@@ -143,7 +143,7 @@ export const procConnector: SceneModel = ideFrame2({
 const ratios = s4.split('\n').filter((l) => /^EX-/.test(l)).map((l) => /^(\S+) +([\d,]+) s watched +([\d,]+) s buffering +([\d.]+%)/.exec(l)!.slice(1))
 
 export const procRatio: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Buffering per second watched, per exchange',
   tree: tree('dataproc/04-buffering', 'spark/buffering.py'),
   editor: { file: 'spark/buffering.py', code: buffering, show: [[lineOf(buffering, 'ratio = (events.where'), lineOf(buffering, 'f"{r[\'buffering_s\']:>8,.0f} s buffering  {r[\'ratio\']:6.1%}")')]], highlight: linesFrom(buffering, '.agg(F.sum("watched_s")', '.withColumn("ratio"') },
   session: s4,
@@ -151,14 +151,15 @@ export const procRatio: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'plot', id: 'ratio', title: 'Buffering seconds per second watched, the whole derby', compact: true,
+      type: 'plot', id: 'ratio', title: 'Buffering seconds per second watched, the whole derby', compact: true, w: SIDE_W - 34,
       x: { min: 0, max: 13, step: 1, label: 'exchange (EX-LDN-04 first)' }, y: { min: 0, max: 5, step: 1, label: '%' },
       series: [{ kind: 'bar', points: ratios.map((r, i) => [i + 1, Number(r[3].replace('%', ''))] as [number, number]), tone: 'consume' }],
     },
     {
       type: 'table', id: 'top', title: 'The answer, per exchange', tone: 'store', columns: ['exchange', 'watched s', 'buffering s', 'ratio'],
-      rows: ratios.slice(0, 4).map(([e, w, b, r]) => ({ id: `r-${e}`, cells: [e, w, b, r], tone: e === 'EX-LDN-04' ? 'consume' as const : undefined })),
+      rows: ratios.slice(0, 3).map(([e, w, b, r]) => ({ id: `r-${e}`, cells: [e, w, b, r], tone: e === 'EX-LDN-04' ? 'consume' as const : undefined })),
     },
+    { type: 'item', id: 'minutes', icon: 'clock', tone: 'consume', title: 'EX-LDN-04 4.1%, the rest 0.6%: almost all after 18:35' },
   ],
 })
 
@@ -166,7 +167,7 @@ export const procRatio: SceneModel = ideFrame2({
 const t5 = tasks(s5)
 
 export const procSkew: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Skew: one key, one task, everyone waits',
   tree: tree('dataproc/05-skew', 'spark/skew.py'),
   editor: { file: 'spark/skew.py', code: skew5, show: [[lineOf(skew5, 'spark = (SparkSession.builder'), lineOf(skew5, '.config("spark.sql.adaptive.enabled", a.aqe)')], [lineOf(skew5, 'joined = (events.join(titles'), lineOf(skew5, 'F.sum("watched_s").alias("watched_s")))')]], highlight: linesFrom(skew5, 'joined = (events.join(titles', 'joined = (events.join(titles') },
   session: s5,
@@ -175,9 +176,9 @@ export const procSkew: SceneModel = ideFrame2({
     MOCKED,
     bars(t5, 'tasks', 'Rows each task of the join read', 'consume'),
     {
-      type: 'group', id: 'why', title: 'One title, one partition', minH: 300, icon: 'spark', tone: 'consume', children: [
-        { type: 'item', id: 'w-hash', title: 'hash(title_id) mod 8', sub: 'every row of a title lands in the same task', icon: 'layers' },
-        { type: 'item', id: 'w-derby', title: `T-5001: ${t5[0].toLocaleString('en-GB')} rows in one task`, sub: 'the derby is 62% of the night; the stage waits for it', icon: 'clock', tone: 'consume' },
+      type: 'group', id: 'why', title: 'One title, one partition', icon: 'spark', tone: 'consume', children: [
+        { type: 'item', id: 'w-hash', title: 'hash(title_id) mod 8', sub: 'a title’s rows: one task', icon: 'layers' },
+        { type: 'item', id: 'w-derby', title: `T-5001: ${t5[0].toLocaleString('en-GB')} rows in one task`, sub: '62% of the night: the stage waits', icon: 'clock', tone: 'consume' },
       ],
     },
   ],
@@ -189,15 +190,27 @@ const aqe = tasks(s6, 0)
 const salted = tasks(s6, 1)
 
 export const procFixSkew: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Split the hot key: AQE, or salt by hand',
   tree: tree('dataproc/06-fixing-skew', 'spark/skew.py'),
   editor: { file: 'spark/skew.py', code: skew6, show: [[lineOf(skew6, '# this night is small'), lineOf(skew6, '.config("spark.sql.adaptive.advisoryPartitionSizeInBytes", "256KB")')], [lineOf(skew6, '# Salting:'), lineOf(skew6, 'titles = titles.crossJoin')]], highlight: linesFrom(skew6, 'events = events.withColumn("salt"', 'titles = titles.crossJoin') },
   session: s6,
   keep: ['$ python spark/skew.py --aqe', ['the join\'s stage', '99,024'], '$ python spark/skew.py --salt 4', ['the join\'s stage', '90,808']],
   side: [
     MOCKED,
-    bars(aqe, 'aqe', `AQE’s skew join: ${aqe.length} tasks, the derby split`, 'store'),
-    bars(salted, 'salt', 'Salted by hand, 4 ways: the derby over 4 tasks', 'ingest'),
+    {
+      type: 'plot', id: 'split', title: `Rows each task read: AQE (${aqe.length} tasks), salted (${salted.length})`, compact: true, w: SIDE_W - 34,
+      x: { min: 0, max: Math.max(aqe.length, salted.length) + 1, step: 1, label: 'task' }, y: { min: 0, max: 280000, step: 70000, label: 'rows read' },
+      series: [
+        { kind: 'bar', label: 'AQE', points: aqe.map((r, i) => [i + 0.8, r] as [number, number]), tone: 'store' },
+        { kind: 'bar', label: 'salted', points: salted.map((r, i) => [i + 1.2, r] as [number, number]), tone: 'ingest' },
+      ],
+    },
+    {
+      type: 'table', id: 'biggest', title: 'The largest task, from the run', tone: 'store', columns: ['join', 'tasks', 'largest'], rows: [
+        { id: 'b-aqe', cells: ['AQE skew join', String(aqe.length), Math.max(...aqe).toLocaleString('en-GB')], tone: 'store' },
+        { id: 'b-salt', cells: ['salted, 4 ways', String(salted.length), Math.max(...salted).toLocaleString('en-GB')] },
+      ],
+    },
   ],
 })
 
@@ -205,7 +218,7 @@ export const procFixSkew: SceneModel = ideFrame2({
 const batchRatio = s7.split('\n').filter((l) => /^EX-/.test(l)).map((l) => /^(\S+) .* ([\d.]+%)$/.exec(l)!.slice(1))
 
 export const procServerless: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Dataproc Serverless: a batch, not a cluster',
   tree: tree('dataproc/07-serverless', 'spark/qos_job.py', ['spark/qos_job.py', 'infra/modules/dataproc', 'gcp.sh']),
   editor: { file: 'spark/qos_job.py', code: job, show: [[lineOf(job, '# Only these columns'), lineOf(job, '.select("household_id", "exchange_id"))')]], highlight: linesFrom(job, 'events = (spark.read.format("bigquery")', '.select("household_id", "watched_s", "buffer_ms"))') },
   session: s7,
@@ -213,10 +226,10 @@ export const procServerless: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'group', id: 'batch', title: 'A batch: a file and its arguments', minH: 420, icon: 'dataproc', tone: 'ingest', children: [
-        { type: 'item', id: 'b-submit', title: 'gcloud … batches submit pyspark', sub: 'runtime 3.0 · subnet sn-dataproc · sa-dataproc', icon: 'terminal' },
-        { type: 'item', id: 'b-exec', title: 'driver and executors', sub: 'started for this batch, scaled by Dataproc, gone after', icon: 'spark' },
-        { type: 'item', id: 'b-read', title: 'Silver + the raw zone', sub: 'BigQuery through the connector; households from GCS', icon: 'bigquery', tone: 'store' },
+      type: 'group', id: 'batch', title: 'A batch: a file and its arguments', icon: 'dataproc', tone: 'ingest', children: [
+        { type: 'item', id: 'b-submit', title: 'gcloud … batches submit pyspark', sub: 'runtime 3.0 · sa-dataproc', icon: 'terminal' },
+        { type: 'item', id: 'b-exec', title: 'driver and executors', sub: 'started for this batch, gone after', icon: 'spark' },
+        { type: 'item', id: 'b-read', title: 'Silver + the raw zone', sub: 'BigQuery and GCS', icon: 'bigquery', tone: 'store' },
       ],
     },
     {
@@ -234,7 +247,7 @@ export const procServerless: SceneModel = ideFrame2({
 const counts = [...s8.matchAll(/^\| 2026-10-31 \| +(\d+) \| +([\d.]+) \|$/gm)].map((m) => m.slice(1))
 
 export const procWriteBack: SceneModel = ideFrame2({
-  model: 'TODO',
+  model: 'Idempotent per night: replace one partition',
   tree: tree('dataproc/08-writing-back', 'spark/qos_job.py', ['warehouse/gold_qos.sql', 'infra/modules/lakehouse']),
   editor: { file: 'spark/qos_job.py', code: job, show: [[lineOf(job, 'if a.write:'), lineOf(job, 'print(f"gold.qos_by_exchange: dt={a.dt} written")')]], highlight: linesFrom(job, '(qos.write.format("bigquery").mode("overwrite")', '.save("gold.qos_by_exchange"))') },
   session: s8,
@@ -242,7 +255,7 @@ export const procWriteBack: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'group', id: 'idem', title: 'Idempotent per night', minH: 480, icon: 'bigquery', tone: 'ingest', children: [
+      type: 'group', id: 'idem', title: 'Idempotent per night', icon: 'bigquery', tone: 'ingest', children: [
         { type: 'item', id: 'i-batch', title: 'the batch, with --write', sub: 'mode overwrite, partitions DYNAMIC', icon: 'spark' },
         { type: 'item', id: 'i-part', title: 'the 2026-10-31 partition', sub: 'of gold.qos_by_exchange: replaced, and only it', icon: 'bigquery', tone: 'store' },
         { type: 'item', id: 'i-other', title: 'every other night', sub: 'untouched', icon: 'layers', muted: true },
