@@ -1,16 +1,14 @@
-// IDE frame v2 — graphl-flow 0.11's shared grid (python-expense-tracker's frame v2), ported via
-// snowflake-ecommerce-warehouse (2026-11-10):
+// IDE frame v2 — graphl-flow 0.11's shared grid, in spark-ecommerce-analytics' layout (2026-11-11):
 //
-//   editor (the rows the terminal leaves)     | side pane, TITLED with the section's mental model
-//   terminal docked under it (its transcript) |
+//   explorer | editor (the rows the terminal leaves)     | side pane, TITLED with the section's
+//   (175)    | terminal docked under it (72 columns)     | mental model: one diagram, ≤ 1 table
 //
-// One 1344 × 756 grid at a 1% margin: every v2 frame lands on ONE fit (check-render asserts it).
-// The transcripts are wrapped at 80 columns by scripts/spine.py, so the work column is the
-// 80-column console's 760 and a transcript is never re-wrapped. No explorer: the side pane takes its
-// column, 574. The editor's tab names the file; it soft-wraps past 76. Editor and terminal share
-// ROWS rows: the terminal takes its transcript's rows (after `keep`'s folds or `shown`'s ranges, at
-// least MIN_TERMINAL), the editor the rest, windowed around its highlighted lines. The verification
-// level (level.ts) stays the side pane's first node.
+// One 1344 × 756 grid at a 1% margin: every v2 frame lands on ONE fit, and the explorer and the side
+// pane never move (check-render asserts both). The replay wraps transcripts at 80 columns
+// (scripts/spine.py); `rewrap` joins a wrapped line back and cuts every line at 72, as a 72-column
+// terminal would, so the spine is untouched. Editor and terminal share ROWS rows: the terminal takes
+// its rows after `keep`'s folds (at least MIN_TERMINAL), the editor the rest, windowed around its
+// highlighted lines. A lab (labFrame2) has no explorer: its terminal spans both left columns at 80.
 //
 // The workbench's id is `ide-bench` (v1's is `workbench`): that is how the checks tell the two apart.
 import type { Code, Edge, Group, SceneModel, SceneNode, Tree, TreeEntry } from '@graphlearning/graphl-flow'
