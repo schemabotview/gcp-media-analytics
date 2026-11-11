@@ -196,7 +196,7 @@ export const secureSecretManager: SceneModel = ideFrame2({
   tree: stepTree('secure/06-secret-manager', 'infra/modules/secrets/main.tf', { fresh: ['infra/modules/secrets'], closed: CLOSED }),
   editor: { file: 'infra/modules/secrets/main.tf', code: secrets6, show: [[lineOf(secrets6, '# The CRM'), lineOf(secrets6, 'special = false') + 1], [lineOf(secrets6, 'resource "google_secret_manager_secret_version"'), secrets6.trimEnd().split('\n').length]], highlight: [lineOf(secrets6, 'random_password'), lineOf(secrets6, 'secret_data'), ...linesFrom(secrets6, '# Only the extract', 'member    =')] },
   session: s6,
-  keep: ['Apply complete', '1     enabled', '$ gcloud secrets versions access latest --secret=crm-db-password $AS=$SA', length, '$ gcloud secrets versions access latest --secret=crm-db-password $AS=$DF', 'PERMISSION_DENIED'],
+  keep: ['Apply complete', '$ gcloud secrets versions access latest --secret=crm-db-password $AS=$SA', length, '$ gcloud secrets versions access latest --secret=crm-db-password $AS=$DF', 'PERMISSION_DENIED'],
   side: [
     RECORDED,
     {

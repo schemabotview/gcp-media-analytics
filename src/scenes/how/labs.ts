@@ -25,16 +25,16 @@ export const howRegions: SceneModel = labFrame2({
       type: 'group', id: 'global', title: `Google’s network: ${regions} regions`, icon: 'globe', tone: 'infra', children: [
         {
           type: 'group', id: 'region', title: `europe-west2 · London · ${status}`, icon: 'building', tone: 'ingest', dir: 'row', children:
-            zones.map((z) => ({ type: 'item' as const, id: `z-${z}`, title: z, sub: 'a zone: its own power, cooling, network', icon: 'server' })),
+            zones.map((z) => ({ type: 'item' as const, id: `z-${z}`, title: z, sub: 'own power, network', icon: 'server', stack: true })),
         },
         { type: 'item', id: 'g-others', title: `${Number(regions) - 1} other regions`, sub: 'joined by Google’s private network', icon: 'globe', muted: true },
       ],
     },
     {
       type: 'table', id: 'scope', title: 'Where this platform’s resources live', tone: 'store', columns: ['scope', 'survives', 'here'], rows: [
-        { id: 'r-zonal', cells: ['zonal', 'nothing beyond its zone', 'a Dataproc worker'] },
-        { id: 'r-regional', cells: ['regional', 'a zone failing', 'buckets, datasets, keys'], tone: 'store' },
-        { id: 'r-global', cells: ['global', 'a region failing', 'IAM, the project itself'] },
+        { id: 'r-zonal', cells: ['zonal', 'nothing', 'a worker'] },
+        { id: 'r-regional', cells: ['regional', 'a zone down', 'buckets, keys'], tone: 'store' },
+        { id: 'r-global', cells: ['global', 'a region down', 'IAM, project'] },
       ],
     },
   ],
@@ -53,10 +53,10 @@ export const howHierarchy: SceneModel = labFrame2({
     RECORDED,
     {
       type: 'group', id: 'tree', title: 'Organization → folders → projects → resources', icon: 'boxes', tone: 'infra', children: [
-        { type: 'item', id: 'h-org', title: 'organization', sub: 'none: get-ancestors stops at the project', icon: 'building', muted: true },
+        { type: 'item', id: 'h-org', title: 'organization', sub: 'none here', icon: 'building', muted: true },
         { type: 'item', id: 'h-folder', title: 'folders', sub: 'none', icon: 'folder', muted: true },
-        { type: 'item', id: 'h-project', title: `project ${described.projectId}`, sub: `number ${described.projectNumber}: the id Google uses internally`, icon: 'gcpproject', tone: 'ingest' },
-        { type: 'item', id: 'h-resources', title: 'resources', sub: 'buckets, datasets, topics, keys: each belongs to one project', icon: 'gcs' },
+        { type: 'item', id: 'h-project', title: `project ${described.projectId}`, sub: `number ${described.projectNumber}`, icon: 'gcpproject', tone: 'ingest' },
+        { type: 'item', id: 'h-resources', title: 'resources', sub: 'each belongs to one project', icon: 'gcs' },
       ],
     },
     {
@@ -110,24 +110,24 @@ export const howPlanes: SceneModel = labFrame2({
   side: [
     RECORDED,
     {
-      type: 'group', id: 'planes', title: 'One bucket, two kinds of request', icon: 'gcs', tone: 'infra', dir: 'row', children: [
+      type: 'group', id: 'planes', bare: true, children: [
         {
           type: 'group', id: 'control', title: 'control plane', sub: 'the bucket as a resource', icon: 'settings', tone: 'infra', children: [
-            { type: 'item', id: 'c-uri', title: '/storage/v1/b/{bucket}', sub: `its settings: ${loc}, ${cls}`, icon: 'settings' },
-            { type: 'item', id: 'c-who', title: 'create, configure, set policy', sub: 'what Terraform does', icon: 'terraform' },
+            { type: 'item', id: 'c-uri', title: '/storage/v1/b/{bucket}', sub: `${loc}, ${cls}`, icon: 'settings' },
+            { type: 'item', id: 'c-who', title: 'create, configure', sub: 'Terraform', icon: 'terraform' },
           ],
         },
         {
           type: 'group', id: 'data', title: 'data plane', sub: 'what it holds', icon: 'database', tone: 'store', children: [
-            { type: 'item', id: 'd-uri', title: '/storage/v1/b/{bucket}/o', sub: `its objects: ${objects} at the top level`, icon: 'file' },
-            { type: 'item', id: 'd-who', title: 'read, write, list', sub: 'what the pipeline does', icon: 'workflow' },
+            { type: 'item', id: 'd-uri', title: '/storage/v1/b/{bucket}/o', sub: `${objects} at the top`, icon: 'file' },
+            { type: 'item', id: 'd-who', title: 'read, write, list', sub: 'the pipeline', icon: 'workflow' },
           ],
         },
       ],
     },
     {
-      type: 'table', id: 'uris', title: 'The two URIs gcloud called (--log-http)', tone: 'store', columns: ['request', 'path'],
-      rows: uris.map((u, i) => ({ id: `u-${i}`, cells: [i === 0 ? 'describe' : 'ls', u.replace('https://storage.googleapis.com', '')] })),
+      type: 'table', id: 'uris', title: 'The two URIs gcloud called (--log-http)', tone: 'store', columns: ['request', 'path, after /storage/v1'],
+      rows: uris.map((u, i) => ({ id: `u-${i}`, cells: [i === 0 ? 'describe' : 'ls', u.replace('https://storage.googleapis.com/storage/v1', '').replace(/\?.*/, '')] })),
     },
   ],
   edges: [
@@ -158,16 +158,16 @@ export const howThreeClients: SceneModel = labFrame2({
           ],
         },
         {
-          type: 'group', id: 'k-api', title: 'one API', sub: 'cloudresourcemanager.googleapis.com', icon: 'gcpproject', tone: 'store', 
-          children: [{ type: 'item', id: 'k-get', title: 'GET /v1/projects/{id}', sub: 'the same request, whoever sends it', icon: 'code' }],
+          type: 'group', id: 'k-api', title: 'one API', sub: 'cloudresourcemanager', icon: 'gcpproject', tone: 'store', 
+          children: [{ type: 'item', id: 'k-get', title: 'GET /v1/projects/{id}', sub: 'whoever sends it', icon: 'code' }],
         },
       ],
     },
     {
-      type: 'table', id: 'answers', title: 'The same project, three times', tone: 'store', columns: ['client', 'project', 'number'], rows: [
-        { id: 'r-gcloud', cells: ['gcloud', gcloudUri.split('/').at(-1)!, '—'] },
-        { id: 'r-curl', cells: ['curl', curl.projectId, curl.projectNumber] },
-        { id: 'r-tf', cells: ['Terraform', curl.projectId, tfNumber] },
+      type: 'table', id: 'answers', title: 'The same project, three times', tone: 'store', columns: ['client', 'project number'], rows: [
+        { id: 'r-gcloud', cells: ['gcloud', `— (${gcloudUri.split('/').at(-1)!})`] },
+        { id: 'r-curl', cells: ['curl', curl.projectNumber] },
+        { id: 'r-tf', cells: ['Terraform', tfNumber] },
       ],
     },
   ],

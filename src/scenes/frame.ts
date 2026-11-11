@@ -13,7 +13,7 @@
 // level (level.ts) stays the side pane's first node.
 //
 // The workbench's id is `ide-bench` (v1's is `workbench`): that is how the checks tell the two apart.
-import type { Code, Edge, Group, SceneModel, SceneNode, TreeEntry } from '@graphlearning/graphl-flow'
+import type { Code, Edge, Group, SceneModel, SceneNode, Tree, TreeEntry } from '@graphlearning/graphl-flow'
 import { keepLines, langOf, terminal, trim, type Keep } from './ide'
 
 const ROW = 24
@@ -21,11 +21,14 @@ const CHROME = 51
 export const GAP = 10
 export const FULL_W = 1344
 export const FRAME_H = Math.round(FULL_W / (16 / 9))
-export const WORK_W = 760
-export const SIDE_W = FULL_W - WORK_W - GAP
-/** The terminal's width in columns, and the editor's soft-wrap point (it wraps a 72-column line). */
-export const COLS = 80
-const EDITOR_WRAP = 76
+export const SIDE_W = 434
+export const WORK_W = 715
+export const EXPLORER_W = FULL_W - (WORK_W + GAP + SIDE_W) - GAP
+/** The terminal's width in columns, and the editor's soft-wrap point. */
+export const COLS = 72
+const EDITOR_WRAP = 71
+/** The width spine.py wraps a transcript at. */
+const SPINE_COLS = 80
 
 /** Rows the editor and terminal share: (FRAME_H − GAP − two panes' chrome) / ROW. */
 export const ROWS = Math.floor((FRAME_H - GAP - 2 * CHROME) / ROW)
@@ -35,8 +38,35 @@ export const MIN_TERMINAL = 6
 export const MIN_EDITOR = 8
 const editorH = (rows: number) => rows * ROW + CHROME
 
-/** Rows a terminal draws: its lines (already wrapped at 80 by the replay), or `show`'s ranges with
- *  each skipped run folded to one row. */
+/**
+ * The terminal's rows at COLS, from a transcript the replay wrapped at SPINE_COLS: a row of exactly
+ * SPINE_COLS characters is the head of a wrapped line, joined to the row after it, and every line is
+ * then cut at COLS as a 72-column terminal would. An error row keeps its `! ` mark on every piece.
+ * `span[i]` is the [first, last] wrapped row (1-based) of original row i + 1, so `keep` and `shown`,
+ * found on the original rows, still fold the same lines.
+ */
+export function rewrap(term: string): { text: string; span: [number, number][] } {
+  const rows = term.split('\n')
+  const out: string[] = []
+  const span: [number, number][] = []
+  for (let i = 0; i < rows.length;) {
+    const err = rows[i].startsWith('! ')
+    let line = rows[i].replace(/^! /, '')
+    let j = i
+    while (line.length === SPINE_COLS && j + 1 < rows.length && !/^(! )?\$ /.test(rows[j + 1])) line += rows[++j].replace(/^! /, '')
+    const first = out.length + 1
+    for (const piece of line.match(new RegExp(`.{1,${COLS}}`, 'g')) ?? ['']) out.push(err ? `! ${piece}` : piece)
+    for (let k = i; k <= j; k++) span.push([first, out.length])
+    i = j + 1
+  }
+  return { text: out.join('\n'), span }
+}
+
+/** Ranges over the original rows, carried onto the wrapped rows. */
+const carry = (ranges: [number, number][], span: [number, number][]): [number, number][] =>
+  ranges.map(([a, b]) => [span[a - 1][0], span[b - 1][1]])
+
+/** Rows a terminal draws: its lines, or `show`'s ranges with each skipped run folded to one row. */
 function termRows(rows: string, show?: [number, number][]): number {
   const n = rows.split('\n').length
   if (!show) return n
@@ -114,7 +144,7 @@ export function grow(code: string, ranges: [number, number][], room: number): [n
 export interface Frame {
   /** The side pane's title: the section's mental model, in a few words. */
   model: string
-  /** The step's files: kept for the scenes' sake, not drawn (frame v2 has no explorer). */
+  /** The step's files: the compact explorer. */
   tree?: TreeEntry[]
   /** The file in the editor; `highlight` lines are found by text by the caller (lineOf). `show` is
    *  used only when the highlighted span does not fit the editor. */
@@ -134,9 +164,12 @@ export interface Frame {
   cwd?: string
 }
 
-export function ideFrame2({ model, editor, session, side, edges = [], project = 'viewing-pulse', cwd = project, keep, shown }: Frame): SceneModel {
-  const term = terminal(session)
-  const termShow = shown ?? (keep && keepLines(term, keep))
+/* PORTING */ export function ideFrame2(f: Frame): SceneModel { try { return build(f) } catch (e) { console.error('FRAME ' + f.editor.file + ' ' + (e as Error).message); return { nodes: [] } } }
+function build({ model, tree = [], editor, session, side, edges = [], project = 'viewing-pulse', cwd = project, keep, shown }: Frame): SceneModel {
+  const raw = terminal(session)
+  const { text: term, span } = rewrap(raw)
+  const rawShow = shown ?? (keep && keepLines(raw, keep))
+  const termShow = rawShow && carry(rawShow, span)
   const rows = termRows(term, termShow)
   if (rows > ROWS - MIN_EDITOR) throw new Error(`frame.ts "${model}": the transcript is ${rows} rows, a terminal shows at most ${ROWS - MIN_EDITOR}`)
   const editorRows = ROWS - Math.max(MIN_TERMINAL, rows)
@@ -164,13 +197,29 @@ export function ideFrame2({ model, editor, session, side, edges = [], project = 
     tone: 'ingest', fill: true, w: WORK_W, minH: editorH(editorRows), ...(show && { show }),
   }
   const tm: Code = { type: 'code', id: 'terminal', terminal: true, filename: `terminal — ${cwd}`, code: term, ...(termShow && { show: termShow }), fill: true, w: WORK_W, minH: FRAME_H - GAP - editorH(editorRows) }
+  const explorer: Tree = { type: 'tree', id: 'explorer', title: project, entries: bare(tree), compact: true, fill: true, w: EXPLORER_W, minH: FRAME_H }
   const pane: Group = { type: 'group', id: 'side', title: model, tone: 'ingest', spread: true, w: SIDE_W, minH: FRAME_H, children: side }
-  return { dir: 'row', padding: 0.01, nodes: [{ type: 'group', id: 'ide-bench', bare: true, children: [ed, tm] }, pane], edges }
+  return { dir: 'row', padding: 0.01, nodes: [explorer, { type: 'group', id: 'ide-bench', bare: true, children: [ed, tm] }, pane], edges }
 }
 
-/** Course 2's read-only labs change no file: the terminal fills the work column, on the same grid
- *  (and so the same fit) as every IDE frame. */
-/** A lab's terminal fills the frame's height. */
+/** The compact explorer (175px) has no room for v1's asides: a note is dropped, the state kept. A
+ *  name too long for its level is cut in the middle, its extension kept (the editor's tab has the
+ *  whole path): ~19 characters fit at the top level, about one and a half fewer a level down. */
+const fit = (name: string, depth: number) => {
+  const room = 19 - Math.ceil(depth * 1.5)
+  if (name.length <= room) return name
+  const dot = name.lastIndexOf('.'), ext = dot > 0 ? name.slice(dot) : ''
+  return name.slice(0, room - ext.length - 1) + '…' + ext
+}
+const bare = (entries: TreeEntry[], depth = 0): TreeEntry[] =>
+  entries.map(({ note: _note, children, ...e }) => {
+    const named = { ...e, name: fit(e.name, depth) }
+    return children ? { ...named, children: bare(children, depth + 1) } : named
+  })
+
+/** Course 2's read-only labs change no file, so they have no explorer: the terminal takes the
+ *  explorer's column and the work column, wide enough for the replay's 80 columns unwrapped, and
+ *  the frame's whole height. The side pane is where every IDE frame's is, on the same fit. */
 const LAB_ROWS = Math.floor((FRAME_H - CHROME) / ROW)
 
 export function labFrame2({ model, session, keep, side, edges = [] }: { model: string; session: string; keep?: Keep[]; side: SceneNode[]; edges?: Edge[] }): SceneModel {
@@ -178,7 +227,7 @@ export function labFrame2({ model, session, keep, side, edges = [] }: { model: s
   const termShow = keep && keepLines(term, keep)
   const rows = termRows(term, termShow)
   if (rows > LAB_ROWS) throw new Error(`frame.ts "${model}": the lab's transcript is ${rows} rows, the terminal shows ${LAB_ROWS}: keep fewer`)
-  const tm: Code = { type: 'code', id: 'terminal', terminal: true, filename: 'terminal — viewing-pulse', code: term, ...(termShow && { show: termShow }), fill: true, w: WORK_W, minH: FRAME_H }
+  const tm: Code = { type: 'code', id: 'terminal', terminal: true, filename: 'terminal — viewing-pulse', code: term, ...(termShow && { show: termShow }), fill: true, w: EXPLORER_W + GAP + WORK_W, minH: FRAME_H }
   const pane: Group = { type: 'group', id: 'side', title: model, tone: 'ingest', spread: true, w: SIDE_W, minH: FRAME_H, children: side }
   return { dir: 'row', padding: 0.01, nodes: [{ type: 'group', id: 'ide-bench', bare: true, children: [tm] }, pane], edges }
 }

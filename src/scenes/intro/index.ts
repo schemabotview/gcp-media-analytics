@@ -86,7 +86,7 @@ export const introTwoClocks: SceneModel = ideFrame2({
       type: 'table', id: 'ratio', title: 'Next morning: buffering ÷ watched, the derby', tone: 'store', columns: ['exchange', 'ratio'],
       rows: ratios.map(([ex, r]) => ({ id: `r-${ex.replace(/\W+/g, '-')}`, cells: [ex, r], tone: ex === 'EX-LDN-04' ? 'consume' as const : undefined })),
     },
-    { type: 'item', id: 'laptop', icon: 'laptop', tone: 'consume', title: 'One laptop, after the fact', sub: 'the platform: live, then right by morning' },
+    { type: 'item', id: 'laptop', icon: 'laptop', tone: 'consume', title: 'One laptop, after the fact', sub: 'live, then right by morning' },
   ],
 })
 

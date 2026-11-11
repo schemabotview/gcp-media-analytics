@@ -228,8 +228,10 @@ const frames = ide.filter((f) => f.panes.kind === kind)
 const [ref] = frames
 for (const { slug, panes, fit } of frames.slice(1)) {
   if (fit !== ref.fit) problems.push(`${slug}  fit ${fit} differs from ${ref.slug}'s ${ref.fit} — an IDE frame must not change the zoom`)
-  for (const pane of kind === 'v2' ? ['ide-bench', 'side'] : ['explorer', 'editor', 'terminal', 'side']) {
+  // v2: the explorer and the side pane never move (a lab, with no explorer, holds the side pane).
+  for (const pane of kind === 'v2' ? ['explorer', 'side'] : ['explorer', 'editor', 'terminal', 'side']) {
     const a = ref.panes[pane], b = panes[pane]
+    if (kind === 'v2' && pane === 'explorer' && (!a || !b)) continue
     if (!a || !b || a.some((v, i) => v !== b[i])) problems.push(`${slug}  the ${pane} pane is at [${b}], not [${a}] as in ${ref.slug}`)
   }
 }
