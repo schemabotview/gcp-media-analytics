@@ -75,7 +75,7 @@ export const streamTopics: SceneModel = ideFrame2({
     },
     {
       type: 'table', id: 'subs', title: 'Made by the apply, filtered to app=viewing-pulse', tone: 'store', columns: ['topic', 'its subscription'],
-      rows: topics.map((t) => ({ id: `s-${t}`, cells: [t, subs.find((x) => x === `${t}-dataflow` || (t === 'dead-letter' && x === 'dead-letter-audit')) ?? '—'], tone: t === 'dead-letter' ? 'consume' as const : undefined })),
+      rows: topics.map((t) => ({ id: `s-${t}`, cells: [t, (subs.find((x) => x === `${t}-dataflow` || (t === 'dead-letter' && x === 'dead-letter-audit')) ?? '—').replace(t, '…')], tone: t === 'dead-letter' ? 'consume' as const : undefined })),
     },
   ],
   edges: [
@@ -228,7 +228,7 @@ export const streamDeadLetters: SceneModel = ideFrame2({
     },
     {
       type: 'table', id: 'attrs', title: 'What the dead letter carries', tone: 'store', columns: ['attribute', 'value'],
-      rows: Object.entries(attrs).map(([k, v]) => ({ id: `a-${k}`, cells: [k.replace(/([A-Z])/g, ' $1').trim().toLowerCase(), v] })),
+      rows: Object.entries(attrs).map(([k, v]) => ({ id: `a-${k}`, cells: [k.replace(/([A-Z])/g, ' $1').trim().toLowerCase().replace(/^source /, '').replace('subscription project', 'project').replace('topic publish time', 'published'), v] })),
     },
   ],
   edges: [
