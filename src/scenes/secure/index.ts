@@ -39,18 +39,18 @@ export const secureCloudIam: SceneModel = ideFrame2({
     RECORDED,
     {
       type: 'group', id: 'policy', title: 'The project’s allow policy', icon: 'gcpiam', tone: 'infra', children: [
-        { type: 'item', id: 'p-policy', title: `${bindings} bindings`, sub: 'one policy, attached to the project', icon: 'file' },
+        { type: 'item', id: 'p-policy', title: `${bindings} bindings`, sub: 'one policy, on the project', icon: 'file' },
         { type: 'item', id: 'p-binding', title: editor.role, sub: 'one binding: a role …', icon: 'shield' },
         { type: 'item', id: 'p-members', title: `${editor.members.length} members`, sub: '… and who holds it: Google’s agents', icon: 'users' },
       ],
     },
     {
       type: 'table', id: 'members', title: 'roles/editor: its members', tone: 'store', columns: ['member'],
-      rows: editor.members.map((m, i) => ({ id: `m-${i}`, cells: [m.replace('serviceAccount:', '')] })),
+      rows: editor.members.map((m, i) => ({ id: `m-${i}`, cells: [m.replace('serviceAccount:', '').replace(/@.*/, '@…')] })),
     },
     {
       type: 'table', id: 'owner', title: 'roles/owner', tone: 'consume', columns: ['members', 'means'], rows: [
-        { id: 'o-count', cells: [owners, 'can do everything, grant included'] },
+        { id: 'o-count', cells: [owners, 'everything, grants too'] },
       ],
     },
   ],
@@ -75,15 +75,15 @@ export const secureInheritance: SceneModel = ideFrame2({
     RECORDED,
     {
       type: 'group', id: 'down', title: 'Policies union down the hierarchy', icon: 'gcpiam', tone: 'infra', children: [
-        { type: 'item', id: 'h-org', title: 'organization, folders', sub: 'none here: this project stands alone', icon: 'building', muted: true },
-        { type: 'item', id: 'h-project', title: 'project sun-media-dev', sub: `${projectBindings} bindings — inherited by every resource below`, icon: 'gcpproject' },
+        { type: 'item', id: 'h-org', title: 'organization, folders', sub: 'none here', icon: 'building', muted: true },
+        { type: 'item', id: 'h-project', title: 'project sun-media-dev', sub: `${projectBindings} bindings, inherited below`, icon: 'gcpproject' },
         { type: 'item', id: 'h-bucket', title: 'bucket sun-media-dev-raw', sub: `${bucket.length} bindings of its own`, icon: 'gcs', tone: 'store' },
-        { type: 'item', id: 'h-effective', title: 'what a caller may do', sub: 'the union: project’s ∪ bucket’s, never less', icon: 'shield', tone: 'consume' },
+        { type: 'item', id: 'h-effective', title: 'what a caller may do', sub: 'the union, never less', icon: 'shield', tone: 'consume' },
       ],
     },
     {
       type: 'table', id: 'convenience', title: 'The bucket’s own bindings', tone: 'store', columns: ['role', 'members'],
-      rows: bucket.map((b) => ({ id: `c-${b.role}`, cells: [b.role.replace('roles/storage.', ''), b.members.map((m) => m.split(':')[0]).join(', ')] })),
+      rows: bucket.map((b) => ({ id: `c-${b.role}`, cells: [b.role.replace('roles/storage.', ''), b.members.map((m) => m.split(':')[0].replace('project', '')).join(', ')] })),
     },
   ],
   edges: [
@@ -107,7 +107,7 @@ export const secureServiceAccounts: SceneModel = ideFrame2({
     RECORDED,
     {
       type: 'table', id: 'accounts', title: `One account per job (${made.length} in the state)`, tone: 'infra', columns: ['account', 'who wears it'],
-      rows: accounts.map(([a, why]) => ({ id: `a-${a}`, cells: [a, why] })),
+      rows: accounts.map(([a, why]) => ({ id: `a-${a}`, cells: [a, why.replace(' in the raw zone', '')] })),
     },
     {
       type: 'group', id: 'wear', title: 'A job runs AS its account', icon: 'gcpiam', tone: 'store', children: [
@@ -241,9 +241,9 @@ export const secureKms: SceneModel = ideFrame2({
       ],
     },
     {
-      type: 'table', id: 'agent', title: 'Who encrypts', tone: 'store', columns: ['who', 'role on k-raw'], rows: [
-        { id: 'a-gcs', cells: ['Storage’s agent', 'cryptoKeyEncrypterDecrypter'] },
-        { id: 'a-key', cells: [kmsKey.split('/').slice(-3).join('/'), 'the bucket’s default key'] },
+      type: 'table', id: 'agent', title: 'Who encrypts', tone: 'store', columns: ['who', 'on k-raw'], rows: [
+        { id: 'a-gcs', cells: ['Storage’s agent', 'encrypter/decrypter'] },
+        { id: 'a-key', cells: [`key ${kmsKey.split('/').slice(-1)}`, 'the bucket’s default'] },
       ],
     },
   ],
@@ -260,7 +260,7 @@ const project = matrix.slice(1, matrix.findIndex((l) => l.startsWith('bucket')))
 const onBucket = matrix.slice(matrix.findIndex((l) => l.startsWith('bucket')) + 1).filter(Boolean).map((l) => l.trim().split(/\s+/))
 
 export const secureLeastPrivilege: SceneModel = ideFrame2({
-  model: 'Least privilege: the narrowest role, on the narrowest resource',
+  model: 'Least privilege: narrowest role and resource',
   tree: stepTree('secure/08-least-privilege', 'infra/modules/storage/main.tf', { fresh: ['infra/roles.sh'], closed: CLOSED }),
   editor: { file: 'infra/modules/storage/main.tf', code: storage8, show: [[lineOf(storage8, '# Who may touch'), storage8.trimEnd().split('\n').length]], highlight: linesFrom(storage8, '"ingest-create"', '"dataproc-view"') },
   session: s8,
@@ -268,14 +268,14 @@ export const secureLeastPrivilege: SceneModel = ideFrame2({
   side: [
     RECORDED,
     {
-      type: 'table', id: 'matrix', title: 'The role matrix: account × resource × role', tone: 'infra', columns: ['account', 'on', 'role'], rows: [
+      type: 'table', id: 'matrix', title: 'Account × resource × role', tone: 'infra', columns: ['account', 'on', 'role'], rows: [
         ...project.map(([a, r]) => ({ id: `p-${a}`, cells: [a, 'project', r.replace('roles/', '')] })),
-        ...onBucket.map(([a, r]) => ({ id: `b-${a}-${r}`, cells: [a, 'raw bucket', r.replace('roles/', '')], tone: 'store' as const })),
+        ...onBucket.map(([a, r]) => ({ id: `b-${a}-${r}`, cells: [a, 'bucket', r.replace('roles/storage.', '')], tone: 'store' as const })),
       ],
     },
     {
       type: 'group', id: 'narrow', title: 'The grant that fixed §4.5', icon: 'shield', tone: 'store', children: [
-        { type: 'item', id: 'n-ingest', title: 'sa-ingest', sub: 'create and read; no delete', icon: 'gcpiam' },
+        { type: 'item', id: 'n-ingest', title: 'sa-ingest', sub: 'create, read; no delete', icon: 'gcpiam' },
         { type: 'item', id: 'n-raw', title: 'sun-media-dev-raw', sub: 'listing it: allowed', icon: 'gcs', tone: 'store' },
         { type: 'item', id: 'n-rest', title: 'the rest of the project', sub: 'no grant: nothing', icon: 'gcpproject', muted: true },
       ],

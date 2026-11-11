@@ -27,8 +27,6 @@ export const EXPLORER_W = FULL_W - (WORK_W + GAP + SIDE_W) - GAP
 /** The terminal's width in columns, and the editor's soft-wrap point. */
 export const COLS = 72
 const EDITOR_WRAP = 71
-/** The width spine.py wraps a transcript at. */
-const SPINE_COLS = 80
 
 /** Rows the editor and terminal share: (FRAME_H − GAP − two panes' chrome) / ROW. */
 export const ROWS = Math.floor((FRAME_H - GAP - 2 * CHROME) / ROW)
@@ -39,9 +37,9 @@ export const MIN_EDITOR = 8
 const editorH = (rows: number) => rows * ROW + CHROME
 
 /**
- * The terminal's rows at COLS, from a transcript the replay wrapped at SPINE_COLS: a row of exactly
- * SPINE_COLS characters is the head of a wrapped line, joined to the row after it, and every line is
- * then cut at COLS as a 72-column terminal would. An error row keeps its `! ` mark on every piece.
+ * The terminal's rows at COLS, from a transcript the replay wrapped at 80 columns: a wrapped line is
+ * joined back (see below) and every line is cut at COLS, as a 72-column terminal would. An error row
+ * keeps its `! ` mark on every piece.
  * `span[i]` is the [first, last] wrapped row (1-based) of original row i + 1, so `keep` and `shown`,
  * found on the original rows, still fold the same lines.
  */
@@ -53,7 +51,10 @@ export function rewrap(term: string): { text: string; span: [number, number][] }
     const err = rows[i].startsWith('! ')
     let line = rows[i].replace(/^! /, '')
     let j = i
-    while (line.length === SPINE_COLS && j + 1 < rows.length && !/^(! )?\$ /.test(rows[j + 1])) line += rows[++j].replace(/^! /, '')
+    // A row of exactly 80 characters continues on the next one only when that one starts
+    // mid-sentence: gcloud's long errors wrap mid-word ("doe" / "s not have"); a row that starts with
+    // a capital, a digit or a prompt is a line of its own ("…: labels.app" / "Listed 0 items.").
+    while (line.length === 80 && j + 1 < rows.length && !/^(! )?(\$ |[A-Z0-9])/.test(rows[j + 1])) line += rows[++j].replace(/^! /, '')
     const first = out.length + 1
     for (const piece of line.match(new RegExp(`.{1,${COLS}}`, 'g')) ?? ['']) out.push(err ? `! ${piece}` : piece)
     for (let k = i; k <= j; k++) span.push([first, out.length])

@@ -36,8 +36,8 @@ export const startCrm: SceneModel = ideFrame2({
     },
   ],
   edges: [
-    { from: 'e-households', to: 'e-subscriptions', label: '1:n' },
-    { from: 'e-subscriptions', to: 'e-packages', label: 'n:1' },
+    { from: 'e-households', to: 'e-subscriptions', },
+    { from: 'e-subscriptions', to: 'e-packages', },
     { from: 'e-subscriptions', to: 'versions' },
   ],
 })

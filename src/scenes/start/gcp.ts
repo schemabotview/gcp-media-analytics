@@ -101,17 +101,17 @@ export const startState: SceneModel = ideFrame2({
         { type: 'item', id: 's-code', title: 'infra/*.tf', sub: 'what should exist', icon: 'code' },
         {
           type: 'group', id: 's-mid', bare: true, dir: 'row', children: [
-            { type: 'item', id: 's-state', title: 'env/dev/default.tfstate', sub: 'what Terraform made, and its ids', icon: 'gcs', tone: 'store' },
-            { type: 'item', id: 's-lock', title: 'the lock', sub: 'taken by every plan and apply', icon: 'lock', tone: 'consume' },
+            { type: 'item', id: 's-state', title: 'env/dev/default.tfstate', sub: 'what Terraform made', icon: 'gcs', tone: 'store', stack: true },
+            { type: 'item', id: 's-lock', title: 'the lock', sub: 'every plan, apply', icon: 'lock', tone: 'consume', stack: true },
           ],
         },
         { type: 'item', id: 's-gcp', title: 'sun-media-dev', sub: 'what does exist', icon: 'gcpproject' },
       ],
     },
     {
-      type: 'table', id: 'where', title: 'Where the state was, and is', tone: 'store', columns: ['file', 'now'], rows: [
-        ...locals.map((f) => ({ id: `l-${f}`, cells: [`infra/${f}`, 'old copy: delete'] })),
-        { id: 'l-gcs', cells: [stateObject.split('/').slice(3).join('/'), 'the one Terraform reads'], tone: 'store' as const },
+      type: 'table', id: 'where', title: 'Where the state was, and is', tone: 'store', columns: ['file (infra/, then the bucket)', 'now'], rows: [
+        ...locals.map((f) => ({ id: `l-${f}`, cells: [f, 'delete'] })),
+        { id: 'l-gcs', cells: [stateObject.split('/').slice(3).join('/'), 'the one read'], tone: 'store' as const },
       ],
     },
   ],
