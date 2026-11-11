@@ -31,12 +31,12 @@ export const landBuckets: SceneModel = ideFrame2({
     RECORDED,
     {
       type: 'table', id: 'props', title: 'sun-media-dev-raw, as Google describes it', tone: 'store', columns: ['property', 'value', 'means'], rows: [
-        { id: 'p-location', cells: ['location', described.location, 'London only'] },
-        { id: 'p-class', cells: ['class', described.default_storage_class, 'read often'] },
-        { id: 'p-uniform', cells: ['uniform access', described.uniform_bucket_level_access, 'IAM only, no ACLs'], tone: 'ingest' },
-        { id: 'p-public', cells: ['public access', described.public_access_prevention, 'never public'], tone: 'ingest' },
-        { id: 'p-key', cells: ['default key', 'k-raw', 'Sun’s own, §4.7'] },
-        { id: 'p-soft', cells: ['soft delete', `${softDays} days`, 'Google’s default'] },
+        { id: 'p-location', cells: ['location', described.location, 'London'] },
+        { id: 'p-class', cells: ['class', described.default_storage_class, 'hot data'] },
+        { id: 'p-uniform', cells: ['uniform', described.uniform_bucket_level_access, 'IAM only'], tone: 'ingest' },
+        { id: 'p-public', cells: ['public', described.public_access_prevention, 'never'], tone: 'ingest' },
+        { id: 'p-key', cells: ['default key', 'k-raw', 'Sun’s, §4.7'] },
+        { id: 'p-soft', cells: ['soft delete', `${softDays} days`, 'default'] },
       ],
     },
     {

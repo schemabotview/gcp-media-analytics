@@ -30,26 +30,26 @@ export const landExtracts: SceneModel = ideFrame2({
     {
       type: 'group', id: 'flow', title: 'The night of 30 October', icon: 'workflow', tone: 'ingest', dir: 'grid', cols: 2, children: [
         { type: 'item', id: 'f-crm', title: 'CRM', sub: '3 tables', icon: 'postgresql' },
-        { type: 'item', id: 'f-crm-raw', title: 'source=crm/', sub: 'a snapshot: all of it', icon: 'gcs', tone: 'store' },
+        { type: 'item', id: 'f-crm-raw', title: 'source=crm/', sub: 'copied whole: a snapshot', icon: 'gcs', tone: 'store' },
         { type: 'item', id: 'f-billing', title: 'Billing', sub: 'charges', icon: 'postgresql' },
-        { type: 'item', id: 'f-billing-raw', title: 'source=billing/', sub: 'a window: one night', icon: 'gcs', tone: 'store' },
+        { type: 'item', id: 'f-billing-raw', title: 'source=billing/', sub: 'copied by window', icon: 'gcs', tone: 'store' },
         { type: 'item', id: 'f-trust', title: 'nothing checks it', sub: 'what it found, it marks', icon: 'shield', tone: 'consume' },
-        { type: 'item', id: 'f-success', title: '_SUCCESS', sub: '“this night is complete”', icon: 'file' },
+        { type: 'item', id: 'f-success', title: '_SUCCESS', sub: 'then, always: “complete”', icon: 'file' },
       ],
     },
     {
       type: 'table', id: 'shapes', title: 'Two shapes of extract', tone: 'store', columns: ['file', 'rows', 'which rows'], rows: [
-        { id: 's-households', cells: ['households.csv', rows(crm, 'households.csv'), 'all of them'] },
-        { id: 's-subscriptions', cells: ['subscriptions.csv', rows(crm, 'subscriptions.csv'), 'all of them'] },
-        { id: 's-packages', cells: ['packages.csv', rows(crm, 'packages.csv'), 'all of them'] },
-        { id: 's-charges', cells: ['charges.csv', rows(billing, 'charges.csv'), `updated in (${from.slice(5, 10)}, ${to.slice(5, 10)}]`], tone: 'ingest' },
+        { id: 's-households', cells: ['households.csv', rows(crm, 'households.csv'), 'all'] },
+        { id: 's-subscriptions', cells: ['subscriptions.csv', rows(crm, 'subscriptions.csv'), 'all'] },
+        { id: 's-packages', cells: ['packages.csv', rows(crm, 'packages.csv'), 'all'] },
+        { id: 's-charges', cells: ['charges.csv', rows(billing, 'charges.csv'), `(${from.slice(5, 10)}, ${to.slice(5, 10)}]`], tone: 'ingest' },
       ],
     },
   ],
   edges: [
-    { from: 'f-crm', to: 'f-crm-raw', label: 'copy all' },
-    { from: 'f-billing', to: 'f-billing-raw', label: 'copy window' },
-    { from: 'f-billing-raw', to: 'f-success', label: 'then, always' },
+    { from: 'f-crm', to: 'f-crm-raw' },
+    { from: 'f-billing', to: 'f-billing-raw' },
+    { from: 'f-billing-raw', to: 'f-success' },
     { from: 'f-trust', to: 'f-success', dashed: true },
   ],
 })

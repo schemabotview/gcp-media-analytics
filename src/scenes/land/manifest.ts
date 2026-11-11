@@ -24,12 +24,12 @@ export const landManifest: SceneModel = ideFrame2({
     {
       type: 'group', id: 'order', bare: true, dir: 'grid', cols: 2, children: [
         { type: 'item', id: 'o-plan', title: 'plan', sub: 'counts the window', icon: 'search' },
-        { type: 'item', id: 'o-manifest', title: '_manifest.json', sub: 'the promise, written first', icon: 'file', tone: 'store' },
-        { type: 'item', id: 'o-copy', title: 'copy', sub: 'writes charges.csv', icon: 'database', muted: true },
-        { type: 'item', id: 'o-g1', title: 'G1', sub: 'holds the folder to the promise', icon: 'shield', muted: true },
+        { type: 'item', id: 'o-manifest', title: '_manifest.json', sub: 'written first', icon: 'file', tone: 'store' },
+        { type: 'item', id: 'o-copy', title: 'copy', sub: 'charges.csv', icon: 'database', muted: true },
+        { type: 'item', id: 'o-g1', title: 'G1', sub: 'holds the folder to it', icon: 'shield', muted: true },
       ],
     },
-    { type: 'code', id: 'manifest', filename: 'source=billing/dt=2026-10-31/_manifest.json', lang: 'js', code: m, show: fold, tone: 'store' },
+    { type: 'code', id: 'manifest', filename: 'dt=2026-10-31/_manifest.json', lang: 'js', code: m, show: fold, tone: 'store' },
   ],
   edges: [
     { from: 'o-plan', to: 'o-manifest' },

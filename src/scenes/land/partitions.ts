@@ -21,11 +21,11 @@ export const landPartitions: SceneModel = ideFrame2({
   side: [
     FAKE_GCS,
     {
-      type: 'table', id: 'name', title: 'One object, one name', tone: 'store', columns: ['part', 'is', 'BigQuery column'], rows: [
-        { id: 'n-bucket', cells: [`gs://${bucket}/`, 'the bucket', '—'] },
+      type: 'table', id: 'name', title: 'One object, one name', tone: 'store', columns: ['part', 'is', 'column'], rows: [
+        { id: 'n-bucket', cells: [`gs://${bucket}/`, 'bucket', '—'] },
         { id: 'n-source', cells: [`${source}/`, 'a prefix', 'source'], tone: 'ingest' },
         { id: 'n-dt', cells: [`${dt}/`, 'a prefix', 'dt'], tone: 'ingest' },
-        { id: 'n-file', cells: [file, 'the rest', 'the rows'] },
+        { id: 'n-file', cells: [file, 'the rest', 'rows'] },
       ],
     },
     {

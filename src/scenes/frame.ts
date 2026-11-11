@@ -54,7 +54,8 @@ export function rewrap(term: string): { text: string; span: [number, number][] }
     // A row of exactly 80 characters continues on the next one only when that one starts
     // mid-sentence: gcloud's long errors wrap mid-word ("doe" / "s not have"); a row that starts with
     // a capital, a digit or a prompt is a line of its own ("…: labels.app" / "Listed 0 items.").
-    while (line.length === 80 && j + 1 < rows.length && !/^(! )?(\$ |[A-Z0-9])/.test(rows[j + 1])) line += rows[++j].replace(/^! /, '')
+    // A command row is a whole line, even at exactly 80 (§5.2's first).
+    while (line.length === 80 && !line.startsWith('$ ') && j + 1 < rows.length && !/^(! )?(\$ |[A-Z0-9])/.test(rows[j + 1])) line += rows[++j].replace(/^! /, '')
     const first = out.length + 1
     for (const piece of line.match(new RegExp(`.{1,${COLS}}`, 'g')) ?? ['']) out.push(err ? `! ${piece}` : piece)
     for (let k = i; k <= j; k++) span.push([first, out.length])
