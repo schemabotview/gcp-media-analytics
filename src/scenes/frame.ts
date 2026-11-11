@@ -166,8 +166,7 @@ export interface Frame {
   cwd?: string
 }
 
-/* PORTING */ export function ideFrame2(f: Frame): SceneModel { try { return build(f) } catch (e) { console.error('FRAME ' + f.editor.file + ' ' + (e as Error).message); return { nodes: [] } } }
-function build({ model, tree = [], editor, session, side, edges = [], project = 'viewing-pulse', cwd = project, keep, shown }: Frame): SceneModel {
+export function ideFrame2({ model, tree = [], editor, session, side, edges = [], project = 'viewing-pulse', cwd = project, keep, shown }: Frame): SceneModel {
   const raw = terminal(session)
   const { text: term, span } = rewrap(raw)
   const rawShow = shown ?? (keep && keepLines(raw, keep))

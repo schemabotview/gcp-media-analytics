@@ -102,7 +102,7 @@ export const opLineage: SceneModel = ideFrame2({
     },
     {
       type: 'table', id: 'others', title: 'Its other direct sources', tone: 'store', columns: ['table', 'from'],
-      rows: direct.filter((d) => d !== 'silver.viewing_events').map((d) => ({ id: `o-${d.replace(/\W/g, '')}`, cells: [d, below(d)] })),
+      rows: direct.filter((d) => d !== 'silver.viewing_events').map((d) => ({ id: `o-${d.replace(/\W/g, '')}`, cells: [d, below(d).replace('source=', '')] })),
     },
   ],
   edges: path.slice(1).map((_, i) => ({ from: `p-${i}`, to: `p-${i + 1}` })),
@@ -126,13 +126,13 @@ export const opQuality: SceneModel = ideFrame2({
       ],
     },
     {
-      type: 'table', id: 'where', title: 'Where a rule lives', tone: 'store', columns: ['rule', 'lives in'],
+      type: 'table', id: 'where', title: 'Where a rule lives', tone: 'store', columns: ['rule', 'lives in (one table, or two)'],
       rows: [
-        { id: 'w-null', cells: ['event_id present, unique', 'the scan: one table'], tone: 'ingest' },
-        { id: 'w-set', cells: ['platform in Sun’s four', 'the scan: one table'], tone: 'ingest' },
-        { id: 'w-g2', cells: ['G2: title in the catalogue', 'the DAG: two tables'] },
-        { id: 'w-g3', cells: ['G3: the EPG covers it', 'the DAG: two tables'] },
-        { id: 'w-g4', cells: ['G4: Gold = Silver', 'the DAG: two layers'] },
+        { id: 'w-null', cells: ['event_id present, unique', 'a scan'], tone: 'ingest' },
+        { id: 'w-set', cells: ['platform in Sun’s four', 'a scan'], tone: 'ingest' },
+        { id: 'w-g2', cells: ['G2: title in catalogue', 'the DAG'] },
+        { id: 'w-g3', cells: ['G3: the EPG covers it', 'the DAG'] },
+        { id: 'w-g4', cells: ['G4: Gold = Silver', 'the DAG'] },
       ],
     },
   ],
@@ -211,7 +211,7 @@ export const opTwoEnvs: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'group', id: 'envs', title: 'One root module, two projects', icon: 'gcpproject', tone: 'ingest', dir: 'row', children: [
+      type: 'group', id: 'envs', title: 'The same modules, two projects', icon: 'gcpproject', tone: 'ingest', dir: 'row', children: [
         { type: 'item', id: 'e-dev', title: 'sun-media-dev', sub: 'envs/dev.tfvars', stack: true, icon: 'gcpproject' },
         { type: 'item', id: 'e-prod', title: 'sun-media-prod', sub: 'envs/prod.tfvars', stack: true, icon: 'gcpproject', tone: 'store' },
       ],
@@ -219,14 +219,14 @@ export const opTwoEnvs: SceneModel = ideFrame2({
     {
       type: 'table', id: 'differ', title: 'What differs, and what never does', tone: 'store', columns: ['', 'dev', 'prod'],
       rows: [
-        { id: 'd-code', cells: ['infra/ modules', 'the same files', 'the same files'] },
+        { id: 'd-code', cells: ['infra/', 'same', 'same'] },
         { id: 'd-vars', cells: ['variables', 'env = dev', 'env = prod'] },
-        { id: 'd-state', cells: ['state bucket', 'per project', 'per project'] },
+        { id: 'd-state', cells: ['state', 'its own', 'its own'] },
         { id: 'd-plan', cells: ['terraform plan', '—', plan7.replace(', 0 to change, 0 to destroy.', '')], tone: 'ingest' },
       ],
     },
   ],
-  edges: [{ from: 'e-dev', to: 'e-prod', label: 'the same modules' }],
+  edges: [{ from: 'e-dev', to: 'e-prod' }],
 })
 
 // §12.8 — CI with Cloud Build

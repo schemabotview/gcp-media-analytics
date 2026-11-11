@@ -51,19 +51,21 @@ generated. The Colab notebook is not in this repo.
 
 **2026-11-10: ported to IDE frame v2** (COURSE-PLAN Decision 9). All 83 IDE and lab sections are on
 graphl-flow 0.11's shared grid (`src/scenes/frame.ts` `ideFrame2` / `labFrame2`, workbench id
-`ide-bench`): editor over the 80-column terminal | side pane 574, titled with the section's mental
-model; no explorer. Map and full-scene frames are unchanged. 9 narrations changed: their wavs are
+`ide-bench`): compact explorer 175 | editor over a 72-column terminal | side pane 434, titled with
+the section's mental model (spark-ecommerce-analytics' layout; the explorer restored 2026-11-11). Map and full-scene frames are unchanged. 9 narrations changed: their wavs are
 removed and the manifest regenerated, so check-content fails on those 9 until Colab regenerates
 them; then every course is re-recorded and the film re-cut (the recordings above are v1).
 
 **IDE frame v2, as built:** 26 rows shared by editor and terminal (terminal at least 6, editor at least
 8), the editor windowed around its highlight; a hand-picked `show` only when the highlight does not
 fit, and then the highlighted lines alone, grown to fill; it THROWS naming the scene when none fits.
-Side pane: ONE diagram (edges or a plot), at most one table outside it, no notes or bullets
-(check-content), filled ≥ 1/2 (check-render). An edge label widens every gap of its column: a
+The 80-column transcripts are re-wrapped at 72 when drawn (`rewrap`; `keep`/`shown` name original
+rows); labs have no explorer and keep 80 columns across both left columns. Side pane: ONE diagram
+(edges or a plot), at most one table outside it, no notes or bullets (check-content), filled ≥ 1/2
+(check-render). An edge label widens every gap of its column: a
 vertical chain of 3+ labelled steps rarely fits. A second table joins the diagram by an edge to the
-table itself, outside any titled group. Plots are `compact` with `w: SIDE_W - 34`. A table fits ~50
-monospace characters a row.
+table itself, outside any titled group. Plots are `compact` with `w: SIDE_W - 34`. A table fits ~36
+monospace characters a row; a 3-item row needs `stack: true` and short subs.
 
 | # | course | sections | status |
 |---|---|---|---|

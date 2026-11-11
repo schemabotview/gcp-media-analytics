@@ -83,10 +83,10 @@ export const serveUnique: SceneModel = ideFrame2({
     {
       type: 'table', id: 'ways', title: 'Households who watched anything, four ways', tone: 'store', columns: ['how', 'households', 'right?'],
       rows: [
-        { id: 'w-sum', cells: ['SUM of counts', n(summed), 'no: once per title'], tone: 'consume' },
-        { id: 'w-exact', cells: ['COUNT DISTINCT', n(exact), 'yes: reads all'] },
-        { id: 'w-approx', cells: ['APPROX_COUNT_DISTINCT', n(approx), 'yes, ~1%'] },
-        { id: 'w-sketch', cells: ['HLL_COUNT.MERGE', n(sketches), 'yes: merged'], tone: 'ingest' },
+        { id: 'w-sum', cells: ['SUM of counts', n(summed), 'no: per title'], tone: 'consume' },
+        { id: 'w-exact', cells: ['COUNT DISTINCT', n(exact), 'yes'] },
+        { id: 'w-approx', cells: ['APPROX_COUNT_…', n(approx), '~1%'] },
+        { id: 'w-sketch', cells: ['HLL_COUNT.MERGE', n(sketches), 'yes'], tone: 'ingest' },
       ],
     },
   ],
@@ -150,9 +150,9 @@ export const serveCost: SceneModel = ideFrame2({
     {
       type: 'table', id: 'guards', title: 'Three guards on the bill', tone: 'store', columns: ['guard', 'what it did'],
       rows: [
-        { id: 'q-dry', cells: ['--dry_run', `priced: ${n(dry)} bytes, free`] },
-        { id: 'q-filter', cells: ['partition filter', 'refused: no time filter'], tone: 'consume' },
-        { id: 'q-cap', cells: ['maximum_bytes_billed', 'refused: over 1 MB'], tone: 'consume' },
+        { id: 'q-dry', cells: ['--dry_run', `${n(dry)} bytes, free`] },
+        { id: 'q-filter', cells: ['partition filter', 'no time filter: refused'], tone: 'consume' },
+        { id: 'q-cap', cells: ['max bytes billed', 'over 1 MB: refused'], tone: 'consume' },
       ],
     },
   ],

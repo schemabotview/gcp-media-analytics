@@ -103,10 +103,10 @@ export const orchSensor: SceneModel = ideFrame2({
       ],
     },
     {
-      type: 'table', id: 'pokes', title: 'Two tests of the sensor, for 2026-10-31', tone: 'store', columns: ['test', 'the night’s folder', 'state'],
+      type: 'table', id: 'pokes', title: 'Two tests of the sensor, for 2026-10-31', tone: 'store', columns: ['', 'the night’s folder', 'state'],
       rows: [
-        { id: 'k-1', cells: ['1', 'four parts, no _SUCCESS', 'up_for_reschedule'], tone: 'consume' },
-        { id: 'k-2', cells: ['2', 'four parts + _SUCCESS', 'success'], tone: 'ingest' },
+        { id: 'k-1', cells: ['1', 'no _SUCCESS', 'up_for_reschedule'], tone: 'consume' },
+        { id: 'k-2', cells: ['2', '_SUCCESS', 'success'], tone: 'ingest' },
       ],
     },
   ],
@@ -135,12 +135,12 @@ export const orchRetries: SceneModel = ideFrame2({
       ],
     },
     {
-      type: 'table', id: 'states', title: 'The run, task by task', tone: 'store', columns: ['task', 'tries', 'state'],
+      type: 'table', id: 'states', title: 'The run, task by task', tone: 'store', columns: ['task', 'tries', 'state (upstream = upstream failed)'],
       rows: [
-        { id: 's-bronze', cells: ['bronze', String(tries('bronze')), 'success, after a 503'] },
-        { id: 's-g3', cells: ['g3', String(tries('g3')), 'success: the query ran'] },
-        { id: 's-gate', cells: ['gate_g3', String(tries('gate_g3')), 'failed: G3 is false'], tone: 'consume' },
-        ...failedTasks.map((t) => ({ id: `s-${t}`, cells: [t, '0', 'upstream_failed'], tone: 'consume' as const })),
+        { id: 's-bronze', cells: ['bronze', String(tries('bronze')), 'success (503)'] },
+        { id: 's-g3', cells: ['g3', String(tries('g3')), 'success'] },
+        { id: 's-gate', cells: ['gate_g3', String(tries('gate_g3')), 'failed: G3 false'], tone: 'consume' },
+        ...failedTasks.map((t) => ({ id: `s-${t}`, cells: [t, '0', 'upstream'], tone: 'consume' as const })),
       ],
     },
   ],
@@ -160,7 +160,7 @@ export const orchFailed: SceneModel = ideFrame2({
     MOCKED,
     {
       type: 'table', id: 'gates', title: 'audit.gate_results for the night, every verdict kept', tone: 'store', columns: ['gate', 'passed', 'detail'],
-      rows: gates.map(([g, p, d], i) => ({ id: `g-${i}`, cells: [g, p, d], tone: p === 'false' ? 'consume' as const : g === 'G3' ? 'ingest' as const : undefined })),
+      rows: gates.map(([g, p, d], i) => ({ id: `g-${i}`, cells: [g, p, d.replace(' channel minutes have no EPG slot', ' min no slot').replace(' rows quarantined', ' quarantined').replace('gold ', 'G ').replace('silver ', 'S ')], tone: p === 'false' ? 'consume' as const : g === 'G3' ? 'ingest' as const : undefined })),
     },
     {
       type: 'group', id: 'fix', title: 'Red, then green', icon: 'workflow', tone: 'ingest', children: [
