@@ -151,7 +151,7 @@ export const procRatio: SceneModel = ideFrame2({
   side: [
     MOCKED,
     {
-      type: 'plot', id: 'ratio', title: 'Buffering seconds per second watched, the whole derby', compact: true, w: SIDE_W - 34,
+      type: 'plot', id: 'ratio', title: 'Buffering s per s watched, the derby', compact: true, w: SIDE_W - 34,
       x: { min: 0, max: 13, step: 1, label: 'exchange (EX-LDN-04 first)' }, y: { min: 0, max: 5, step: 1, label: '%' },
       series: [{ kind: 'bar', points: ratios.map((r, i) => [i + 1, Number(r[3].replace('%', ''))] as [number, number]), tone: 'consume' }],
     },

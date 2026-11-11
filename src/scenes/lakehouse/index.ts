@@ -304,7 +304,7 @@ export const lakeG3: SceneModel = ideFrame2({
     },
     {
       type: 'table', id: 'gates', title: 'audit.gate_results, dt=2026-10-31', tone: 'store', columns: ['gate', 'passed', 'detail'],
-      rows: gates.map(([g, p, d]) => ({ id: `gt-${g}`, cells: [g, p, d], tone: p === 'false' ? 'consume' as const : undefined })),
+      rows: gates.map(([g, p, d]) => ({ id: `gt-${g}`, cells: [g, p, d.replace(' channel minutes have no EPG slot', ' min without a slot').replace(' rows quarantined', ' quarantined')], tone: p === 'false' ? 'consume' as const : undefined })),
     },
   ],
   edges: [
