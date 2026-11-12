@@ -53,8 +53,9 @@ generated. The Colab notebook is not in this repo.
 graphl-flow 0.11's shared grid (`src/scenes/frame.ts` `ideFrame2` / `labFrame2`, workbench id
 `ide-bench`): compact explorer 175 | editor over a 72-column terminal | side pane 434, titled with
 the section's mental model (spark-ecommerce-analytics' layout; the explorer restored 2026-11-11). Map and full-scene frames are unchanged. 9 narrations changed: their wavs are
-removed and the manifest regenerated, so check-content fails on those 9 until Colab regenerates
-them; then every course is re-recorded and the film re-cut (the recordings above are v1).
+removed and the manifest regenerated; Colab regenerated them. 2026-11-12: every course re-recorded at 4K on v2 (segment cache and `scripts/out/` cleared first:
+the cache's fingerprint covers audio and encoding, not the scene, so a frame change needs
+`--force` or an empty cache) and the film re-cut, 1:57:57.
 
 **IDE frame v2, as built:** 26 rows shared by editor and terminal (terminal at least 6, editor at least
 8), the editor windowed around its highlight; a hand-picked `show` only when the highlight does not
